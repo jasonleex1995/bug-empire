@@ -18,7 +18,7 @@ import {
 } from '../sim/config';
 import { effectiveStats } from '../sim/combat';
 import { BARRACKS_LEVEL_SPAWN_MULT, BARRACKS_MODULES, DEFENSE_MODULES, MODULE_BY_ID, RESOURCE_MODULES, type ModuleDef } from '../sim/data/modules';
-import { FAMILY_NAME, UNIT_BY_ID, type Family } from '../sim/data/units';
+import { FAMILY_NAME, FAMILY_SHORT, UNIT_BY_ID, type Family } from '../sim/data/units';
 import { ATK_PER_LEVEL, MAX_UPGRADE_LEVEL, SPECIAL_TRACK, TRACKS, TRACK_NAME, type Track } from '../sim/data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from '../sim/state';
 import {
@@ -667,7 +667,7 @@ function drawIntelPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: UiSt
   ctx.stroke();
   text(ctx, '레인별 최근 목격', x0 + 14, y0 + 18, 12, C.dim);
   const fams: Family[] = ['ant', 'beetle', 'mantis'];
-  fams.forEach((f, i) => text(ctx, FAMILY_NAME[f].slice(0, 2), x0 + 70 + i * 70, y0 + 40, 11, C.mute, 'center'));
+  fams.forEach((f, i) => text(ctx, FAMILY_SHORT[f], x0 + 70 + i * 70, y0 + 40, 11, C.mute, 'center'));
   for (let row = 0; row < ROWS; row++) {
     const y = y0 + 58 + row * 22;
     text(ctx, `${row + 1}`, x0 + 24, y, 12, C.text, 'center', 600);

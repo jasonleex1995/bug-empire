@@ -99,11 +99,11 @@ export const STRATEGY_SPECS: StrategySpec[] = [
 
   // --- Family focus -------------------------------------------------------------
   { id: 'std2_ant_4L', name: '표준 개미 4레인', farms: 2, lanes: 4, family: 'ant', defense: 0 },
-  { id: 'std2_beetle_4L', name: '표준 딱정벌레 4레인', farms: 2, lanes: 4, family: 'beetle', defense: 0 },
+  { id: 'std2_beetle_4L', name: '표준 풍뎅이 4레인', farms: 2, lanes: 4, family: 'beetle', defense: 0 },
   { id: 'std2_mantis_4L', name: '표준 사마귀 4레인', farms: 2, lanes: 4, family: 'mantis', defense: 0 },
-  { id: 'rush1_beetle_2L', name: '러시 딱정벌레 2레인', farms: 1, lanes: 2, family: 'beetle', defense: 0 },
+  { id: 'rush1_beetle_2L', name: '러시 풍뎅이 2레인', farms: 1, lanes: 2, family: 'beetle', defense: 0 },
   { id: 'rush1_mantis_2L', name: '러시 사마귀 2레인', farms: 1, lanes: 2, family: 'mantis', defense: 0 },
-  { id: 'eco3_beetle_4L', name: '경제 딱정벌레 4레인', farms: 3, lanes: 4, family: 'beetle', defense: 0 },
+  { id: 'eco3_beetle_4L', name: '경제 풍뎅이 4레인', farms: 3, lanes: 4, family: 'beetle', defense: 0 },
 
   // --- Defense usage ------------------------------------------------------------
   { id: 'std2_mix_4L_def1', name: '표준 혼합 + 디펜스1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1 },
