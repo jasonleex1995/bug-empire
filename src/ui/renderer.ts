@@ -760,10 +760,10 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   ctx.restore();
 
   // Brand first — large title clear under the trio.
-  glowCircle(ctx, W / 2, 430, 170, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 430, 10, C.mineral);
+  glowCircle(ctx, W / 2, 428, 190, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 428, 12, C.mineral);
 
-  text(ctx, '난이도', W / 2, 498, 14, C.mute, 'center', 400);
+  text(ctx, '난이도', W / 2, 508, 14, C.mute, 'center', 400);
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const totalW = diffs.length * 128 + (diffs.length - 1) * 16;
   const startX = Math.round(W / 2 - totalW / 2);
