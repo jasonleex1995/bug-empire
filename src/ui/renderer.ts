@@ -728,22 +728,20 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number): void {
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    // Zoom + lift hard so the ant's face clears the title band.
-    const scale = Math.max(W / imgW, H / imgH) * 1.12;
+    // Zoom + lift so the trio (esp. ant face) sits in the upper art, above the UI strip.
+    const scale = Math.max(W / imgW, H / imgH) * 1.14;
     const dw = imgW * scale;
     const dh = imgH * scale;
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2 - 110;
+    const dy = (H - dh) / 2 - 130;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
   }
 
-  // Keep the trio clear; darken only the lowest ground for brand + CTA.
-  const veil = ctx.createLinearGradient(0, H * 0.55, 0, H);
+  // Light veil only — the menu draws its own dark UI strip later.
+  const veil = ctx.createLinearGradient(0, H * 0.6, 0, H);
   veil.addColorStop(0, 'rgba(10,12,14,0)');
-  veil.addColorStop(0.3, 'rgba(10,12,14,0.18)');
-  veil.addColorStop(0.6, 'rgba(10,12,14,0.58)');
-  veil.addColorStop(1, 'rgba(10,12,14,0.92)');
+  veil.addColorStop(1, 'rgba(10,12,14,0.25)');
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, W, H);
 
@@ -785,12 +783,19 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   const t = ui.now / 1000;
   drawMenuBackdrop(ctx, t);
 
-  // Title on the dark ground; ant face should sit fully above it.
-  glowCircle(ctx, W / 2, 598, 120, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 598, 10, C.mineral);
+  // Solid dark ground strip for brand + CTA — keeps the ant fully in the art above.
+  const stripTop = H - 150;
+  const strip = ctx.createLinearGradient(0, stripTop - 30, 0, H);
+  strip.addColorStop(0, 'rgba(8,10,12,0)');
+  strip.addColorStop(0.22, 'rgba(8,10,12,0.75)');
+  strip.addColorStop(1, 'rgba(8,10,12,0.96)');
+  ctx.fillStyle = strip;
+  ctx.fillRect(0, stripTop - 30, W, H - (stripTop - 30));
 
-  // CTA on the near-black bottom strip.
-  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 652, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
+  glowCircle(ctx, W / 2, stripTop + 42, 110, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, stripTop + 42, 10, C.mineral);
+
+  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: stripTop + 78, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
 }
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
