@@ -719,11 +719,11 @@ const MENU_TOP_CROP = 0.14;
  * Trim the already-dark lower strip of the PNG so the soft fade starts on
  * textured dirt, not on a muddy near-black pad (avoids a double-dark seam).
  */
-const MENU_BOTTOM_CROP = 0.12;
+const MENU_BOTTOM_CROP = 0.16;
 /** Dark underground band for BUG EMPIRE + 시작하기. */
 const MENU_UI_BAND = 170;
-/** Soft fade height above the CTA band (px) — long enough to hide foliage cut. */
-const MENU_GROUND_FADE = 160;
+/** Soft fade height above the CTA band (px). */
+const MENU_GROUND_FADE = 200;
 
 /**
  * Title/difficulty backdrop: crop marked top sky, pin the trio high, cover the
@@ -758,17 +758,21 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Long soft fade: textured dirt → underground, no hard cut line.
+    // Soft dirt → underground over a long band, then solid black for the CTA.
+    // Gradient ends before full opacity so it never stamps a 1px "fog wall".
     const fadeTop = H - uiBand - MENU_GROUND_FADE;
-    const fade = ctx.createLinearGradient(0, fadeTop, 0, H);
+    // Keep fading under the title; only go solid once the CTA button zone starts.
+    const solidTop = H - uiBand + 80;
+    const fade = ctx.createLinearGradient(0, fadeTop, 0, solidTop);
     fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.25, 'rgba(8,10,12,0.18)');
-    fade.addColorStop(0.45, 'rgba(8,10,12,0.45)');
-    fade.addColorStop(0.65, 'rgba(8,10,12,0.78)');
-    fade.addColorStop(0.82, 'rgba(8,10,12,0.94)');
-    fade.addColorStop(1, 'rgba(8,10,12,1)');
+    fade.addColorStop(0.2, 'rgba(8,10,12,0.2)');
+    fade.addColorStop(0.42, 'rgba(8,10,12,0.48)');
+    fade.addColorStop(0.68, 'rgba(8,10,12,0.82)');
+    fade.addColorStop(1, 'rgba(8,10,12,0.97)');
     ctx.fillStyle = fade;
-    ctx.fillRect(0, fadeTop, W, H - fadeTop);
+    ctx.fillRect(0, fadeTop, W, Math.max(1, solidTop - fadeTop));
+    ctx.fillStyle = '#080a0c';
+    ctx.fillRect(0, solidTop, W, H - solidTop);
   }
 
   const moteBand = Math.max(80, H - uiBand - 40);
