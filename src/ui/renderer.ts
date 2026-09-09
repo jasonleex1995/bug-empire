@@ -720,20 +720,20 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    const cover = Math.max(W / imgW, (H * 0.72) / imgH);
+    // Cover width; bias upward so the trio sits above the title band.
+    const cover = Math.max(W / imgW, (H * 0.7) / imgH);
     const dw = imgW * cover;
     const dh = imgH * cover;
     const dx = (W - dw) / 2;
-    const dy = -dh * 0.06;
+    const dy = -dh * 0.18;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
-    // Soft bottom fade into UI band
-    const fade = ctx.createLinearGradient(0, H * 0.42, 0, H * 0.78);
+    const fade = ctx.createLinearGradient(0, H * 0.48, 0, H * 0.82);
     fade.addColorStop(0, 'rgba(8,14,10,0)');
-    fade.addColorStop(0.55, 'rgba(8,14,10,0.55)');
+    fade.addColorStop(0.45, 'rgba(8,14,10,0.5)');
     fade.addColorStop(1, 'rgba(8,14,10,0.92)');
     ctx.fillStyle = fade;
-    ctx.fillRect(0, H * 0.42, W, H * 0.58);
+    ctx.fillRect(0, H * 0.48, W, H * 0.52);
   }
 
   // Floating pollen over the art
@@ -741,7 +741,7 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   for (let i = 0; i < 18; i++) {
     const seed = i * 97.3;
     const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = 40 + ((seed * 7.1 + Math.sin(t * 0.5 + i) * 24) % (H * 0.45));
+    const y = 40 + ((seed * 7.1 + Math.sin(t * 0.5 + i) * 24) % (H * 0.4));
     const a = 0.1 + (i % 3) * 0.05;
     ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(180,220,180,${a})`;
     ctx.beginPath();
@@ -750,31 +750,31 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   }
   ctx.restore();
 
-  // Brand first — large chunky pixel title.
-  glowCircle(ctx, W / 2, 400, 200, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 400, 10, C.mineral);
+  // Brand first — large chunky pixel title under the trio.
+  glowCircle(ctx, W / 2, 448, 180, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 448, 10, C.mineral);
 
-  text(ctx, '난이도', W / 2, 472, 14, C.mute, 'center', 400);
+  text(ctx, '난이도', W / 2, 508, 14, C.mute, 'center', 400);
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const totalW = diffs.length * 128 + (diffs.length - 1) * 16;
   const startX = Math.round(W / 2 - totalW / 2);
   diffs.forEach((d, i) => {
-    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: 492, w: 128, h: 44, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
+    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: 526, w: 128, h: 40, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
       active: ui.difficulty === d,
-      size: 16,
+      size: 15,
     });
   });
 
-  const start: Button = { id: 'start', x: W / 2 - 140, y: 562, w: 280, h: 56, onClick: () => api.startGame() };
+  const start: Button = { id: 'start', x: W / 2 - 140, y: 586, w: 280, h: 52, onClick: () => api.startGame() };
   const hovered = inRect(start, ui.hover.x, ui.hover.y);
-  glowCircle(ctx, W / 2, 590, hovered ? 100 : 80, C.amberGlow);
+  glowCircle(ctx, W / 2, 612, hovered ? 100 : 80, C.amberGlow);
   ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
   rr(ctx, start.x, start.y, start.w, start.h, 2);
   ctx.fill();
   ctx.strokeStyle = C.mineral;
   ctx.lineWidth = 2;
   ctx.stroke();
-  text(ctx, '전쟁 시작', W / 2, 590, 22, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+  text(ctx, '전쟁 시작', W / 2, 612, 22, C.mineral, 'center', 400, FONT_KO_DISPLAY);
   buttons.push(start);
 }
 
