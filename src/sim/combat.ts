@@ -48,11 +48,26 @@ export function rollDamage(state: GameState, base: number): number {
   return base * (1 - DAMAGE_VARIANCE + 2 * DAMAGE_VARIANCE * state.rng.next());
 }
 
-export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst): number {
+export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst, scale = 1): number {
   const a = effectiveStats(state, attacker);
   const t = effectiveStats(state, target);
   const mult = FAMILY_MULT[a.def.family][t.def.family];
-  return Math.max(1, rollDamage(state, a.dmg * mult) - (a.def.pierce ? 0 : t.armor));
+  return Math.max(1, rollDamage(state, a.dmg * mult * scale) - (a.def.pierce ? 0 : t.armor));
+}
+
+/** Hit primary (+ optional splash around it) and apply on-hit slow. */
+export function resolveUnitAttack(state: GameState, attacker: UnitInst, primary: UnitInst): void {
+  const def = UNIT_BY_ID[attacker.defId];
+  damageUnit(state, primary, unitAttackDamage(state, attacker, primary), attacker.side, false);
+  if (def.slowOnHit > 0) primary.slowUntil = Math.max(primary.slowUntil, state.t + def.slowOnHit);
+
+  if (def.splashRadius <= 0 || def.splashMult <= 0) return;
+  for (const e of state.units) {
+    if (e === primary || e.side === attacker.side || e.row !== attacker.row || e.hp <= 0) continue;
+    if (Math.abs(e.x - primary.x) > def.splashRadius) continue;
+    damageUnit(state, e, unitAttackDamage(state, attacker, e, def.splashMult), attacker.side, false);
+    if (def.slowOnHit > 0) e.slowUntil = Math.max(e.slowUntil, state.t + def.slowOnHit);
+  }
 }
 
 export function damageModule(state: GameState, target: ModuleInst, dmg: number, attackerSide: Side): boolean {

@@ -188,7 +188,7 @@ export function drawInsect(
       glowCircle(ctx, 9, -4, 6, C.mintGlow);
     }
   } else if (family === 'beetle') {
-    // Domed shell, short head, stubby legs.
+    // Domed shell, short head, stubby legs. Horn grows with tier; T3 adds jaws.
     ctx.beginPath();
     ctx.ellipse(0, 0, 9, 6.5, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -205,18 +205,20 @@ export function drawInsect(
     ctx.ellipse(8, 0, 3.2, 2.8, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    if (tier >= 2) {
-      // Horn
+    if (tier >= 1) {
+      // Small horn (코뿔소) → larger (장수)
+      const tip = tier >= 2 ? 16 : 13;
+      const lift = tier >= 2 ? -6 : -4;
       ctx.beginPath();
       ctx.moveTo(10, -1);
-      ctx.lineTo(16, -6);
+      ctx.lineTo(tip, lift);
       ctx.lineTo(11, 0);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
     }
     if (tier >= 3) {
-      // Mandibles
+      // Mandibles (사슴벌레)
       ctx.beginPath();
       ctx.moveTo(10, 1);
       ctx.quadraticCurveTo(15, 4, 14, 7);

@@ -41,7 +41,17 @@ export interface AiProfile {
   noBarracksUpgrades?: boolean;
 }
 
-const ALL_UNITS_BALANCED = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'flower_chafer', 'small_mantis'];
+const ALL_UNITS_BALANCED = [
+  'fire_ant',
+  'kabuto_beetle',
+  'king_mantis',
+  'stag_beetle',
+  'acid_ant',
+  'black_ant',
+  'rhino_beetle',
+  'leaf_mantis',
+  'orchid_mantis',
+];
 
 export const PROFILES: Record<string, AiProfile> = {
   balanced: {
@@ -60,7 +70,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 3,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant'],
+    unlockOrder: ['fire_ant', 'kabuto_beetle', 'orchid_mantis', 'stag_beetle', 'acid_ant', 'king_mantis'],
     priority: ['farm', 'barracks', 'defense'],
     barracksUpgradeBias: 0.5,
   },
@@ -79,8 +89,8 @@ export const PROFILES: Record<string, AiProfile> = {
     cheatVision: false,
     concentrateLanes: 2,
     barracksPerLane: 5,
-    unitPrefs: ['soldier_ant', 'worker_ant', 'small_mantis', 'flower_chafer', 'rhino_beetle', 'king_mantis'],
-    unlockOrder: ['soldier_ant', 'rhino_beetle'],
+    unitPrefs: ['fire_ant', 'black_ant', 'leaf_mantis', 'rhino_beetle', 'kabuto_beetle', 'orchid_mantis'],
+    unlockOrder: ['fire_ant', 'kabuto_beetle'],
     priority: ['barracks', 'farm'],
     barracksUpgradeBias: 0.8,
   },
@@ -120,7 +130,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 3,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['rhino_beetle', 'king_mantis', 'stag_beetle'],
+    unlockOrder: ['kabuto_beetle', 'orchid_mantis', 'stag_beetle', 'king_mantis'],
     priority: ['farm', 'barracks', 'defense'],
     barracksUpgradeBias: 0.5,
   },
@@ -140,7 +150,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 2,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['rhino_beetle', 'stag_beetle', 'king_mantis'],
+    unlockOrder: ['kabuto_beetle', 'stag_beetle', 'king_mantis'],
     priority: ['farm', 'defense', 'barracks'],
     barracksUpgradeBias: 0.3,
   },

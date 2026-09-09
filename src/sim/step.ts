@@ -17,7 +17,7 @@ import {
   otherSide,
   type Side,
 } from './config';
-import { damageCastle, damageModule, damageUnit, effectiveStats, rollDamage, unitAttackDamage } from './combat';
+import { damageCastle, damageModule, damageUnit, effectiveStats, resolveUnitAttack, rollDamage } from './combat';
 import { BARRACKS_LEVEL_SPAWN_MULT, MODULE_BY_ID } from './data/modules';
 import { UNIT_BY_ID } from './data/units';
 import type { GameState, ModuleInst, UnitInst } from './state';
@@ -121,7 +121,7 @@ function stepUnit(state: GameState, u: UnitInst, dt: number): void {
     if (u.atkTimer <= 0) {
       u.atkTimer = stats.atkInterval;
       if (target.kind === 'unit') {
-        damageUnit(state, target.unit, unitAttackDamage(state, u, target.unit), u.side, false);
+        resolveUnitAttack(state, u, target.unit);
       } else if (target.kind === 'module') {
         damageModule(state, target.module, rollDamage(state, stats.dmg * stats.def.siegeMult), u.side);
       } else {
