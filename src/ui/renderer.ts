@@ -721,7 +721,7 @@ const MENU_TOP_CROP = 0.14;
  */
 const MENU_UI_BAND = 220;
 /** Soft dirt→underground blend straddling the art/black edge (px). Positions stay fixed. */
-const MENU_EDGE_FADE = 160;
+const MENU_EDGE_FADE = 200;
 
 /** Bayer 4×4 thresholds (0…1) — breaks straight crop lines in the soft edge. */
 const MENU_BAYER_4 = [
@@ -735,7 +735,7 @@ const MENU_BAYER_4 = [
  * Title backdrop matching the collage mockup positions, with a soft ground edge:
  * - crop empty top sky so the trio sits high
  * - let textured dirt run past the band edge (no hard clip)
- * - dithered soft-fade into underground black (no straight crop line)
+ * - long dithered dissolve into underground (texture still behind the title)
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
   const artH = Math.max(0, H - uiBand);
@@ -748,8 +748,8 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = imgH - srcY;
-    // Cover the art band and past it so dirt can soft-fade (no hard crop line).
-    const coverH = artH + Math.floor(MENU_EDGE_FADE * 0.4);
+    // Cover through the fade so dirt remains available under the title.
+    const coverH = artH + Math.floor(MENU_EDGE_FADE * 0.5);
     const scale = Math.max(W / imgW, coverH / Math.max(1, srcH));
     const dw = imgW * scale;
     const dh = srcH * scale;
@@ -767,22 +767,22 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Bias fade upward onto mid-tone dirt; dither so the seam isn't a ruler line.
-    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.7));
-    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.3));
+    // Long dissolve: keep dirt texture through the title, solid black only near the button.
+    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.6));
+    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.45));
     const fadeH = Math.max(1, fadeBot - fadeTop);
     const img = ctx.getImageData(0, fadeTop, W, fadeH);
     const data = img.data;
     for (let y = 0; y < fadeH; y++) {
       const u = y / fadeH;
-      // smoothstep ease — linger longer on dirt, settle into black
-      const s = u * u * (3 - 2 * u);
-      const base = Math.min(1, s * 1.08);
+      // Ease-in so mid-band (around the title) still shows dirt, then settles to black.
+      const s = u * u * (1.35 - 0.35 * u);
+      const base = Math.min(1, s);
       for (let x = 0; x < W; x++) {
         const thr = MENU_BAYER_4[((y & 3) << 2) | (x & 3)];
         let a = base;
-        if (base > 0.08 && base < 0.95) {
-          a = Math.max(0, Math.min(1, base + (base > thr ? 0.1 : -0.1)));
+        if (base > 0.05 && base < 0.92) {
+          a = Math.max(0, Math.min(1, base + (base > thr ? 0.14 : -0.14)));
         }
         const i = (y * W + x) * 4;
         const ia = 1 - a;
