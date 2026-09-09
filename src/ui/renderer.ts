@@ -713,48 +713,60 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 
 // ---------------------------------------------------------------------------
 
-/** Full-bleed dusk banner behind title / difficulty screens. */
-function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number): void {
-  // Warm dusk fallback while the PNG loads (no leafy green letterbox).
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#101820');
-  g.addColorStop(0.45, '#2a3038');
-  g.addColorStop(0.72, '#6a4830');
-  g.addColorStop(1, '#120e0c');
-  ctx.fillStyle = g;
+/** Top sky slice to discard — matches the red box the user marked. */
+const MENU_TOP_CROP = 0.14;
+/** Solid black “underground” band for BUG EMPIRE + 시작하기. */
+const MENU_UI_BAND = 170;
+
+/** Dusk banner for title / difficulty: crop the top, fill the bottom in black. */
+function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
+  const artH = H - uiBand;
+  ctx.fillStyle = '#080a0c';
   ctx.fillRect(0, 0, W, H);
 
   const hero = getMenuHeroImage();
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    // Zoom + lift so the trio (esp. ant face) sits in the upper art, above the UI strip.
-    const scale = Math.max(W / imgW, H / imgH) * 1.14;
+    const srcY = Math.floor(imgH * MENU_TOP_CROP);
+    const srcH = imgH - srcY;
+    // Cover only the art band so the cropped trio sits above the black strip.
+    const scale = Math.max(W / imgW, artH / srcH);
     const dw = imgW * scale;
-    const dh = imgH * scale;
+    const dh = srcH * scale;
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2 - 130;
+    const dy = (artH - dh) / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, W, artH);
+    ctx.clip();
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(hero, dx, dy, dw, dh);
+    ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
+    ctx.restore();
+  } else {
+    const g = ctx.createLinearGradient(0, 0, 0, artH);
+    g.addColorStop(0, '#101820');
+    g.addColorStop(0.55, '#3a3028');
+    g.addColorStop(1, '#1a1410');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, artH);
   }
 
-  // Light veil only — the menu draws its own dark UI strip later.
-  const veil = ctx.createLinearGradient(0, H * 0.6, 0, H);
-  veil.addColorStop(0, 'rgba(10,12,14,0)');
-  veil.addColorStop(1, 'rgba(10,12,14,0.25)');
-  ctx.fillStyle = veil;
-  ctx.fillRect(0, 0, W, H);
+  // Hard black underground for the CTA (not green letterbox).
+  if (uiBand > 0) {
+    ctx.fillStyle = '#080a0c';
+    ctx.fillRect(0, artH, W, uiBand);
+  }
 
-  // Amber pollen motes
   ctx.save();
-  for (let i = 0; i < 22; i++) {
+  for (let i = 0; i < 18; i++) {
     const seed = i * 97.3;
     const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 22) % (H * 0.7)) + 20;
+    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % Math.max(80, artH - 40)) + 12;
     const a = 0.1 + (i % 3) * 0.05;
     ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
     ctx.beginPath();
-    ctx.arc(x, y, 1.3 + (i % 3) * 0.5, 0, Math.PI * 2);
+    ctx.arc(x, y, 1.2 + (i % 3) * 0.45, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
@@ -781,29 +793,21 @@ function drawCtaButton(
 
 function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
   const t = ui.now / 1000;
-  drawMenuBackdrop(ctx, t);
+  drawMenuBackdrop(ctx, t, MENU_UI_BAND);
 
-  // Solid dark ground strip for brand + CTA — keeps the ant fully in the art above.
-  const stripTop = H - 150;
-  const strip = ctx.createLinearGradient(0, stripTop - 30, 0, H);
-  strip.addColorStop(0, 'rgba(8,10,12,0)');
-  strip.addColorStop(0.22, 'rgba(8,10,12,0.75)');
-  strip.addColorStop(1, 'rgba(8,10,12,0.96)');
-  ctx.fillStyle = strip;
-  ctx.fillRect(0, stripTop - 30, W, H - (stripTop - 30));
-
-  glowCircle(ctx, W / 2, stripTop + 42, 110, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, stripTop + 42, 10, C.mineral);
-
-  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: stripTop + 78, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
+  const artH = H - MENU_UI_BAND;
+  // Brand + CTA live entirely inside the black underground band.
+  glowCircle(ctx, W / 2, artH + 48, 110, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, artH + 48, 10, C.mineral);
+  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: artH + 88, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
 }
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
   const t = ui.now / 1000;
-  drawMenuBackdrop(ctx, t);
+  drawMenuBackdrop(ctx, t, 0);
 
   // Extra dim so the pick list is the focus.
-  ctx.fillStyle = 'rgba(8,10,12,0.35)';
+  ctx.fillStyle = 'rgba(8,10,12,0.4)';
   ctx.fillRect(0, 0, W, H);
 
   text(ctx, '난이도 선택', W / 2, 300, 28, C.mineral, 'center', 400, FONT_KO_DISPLAY);
