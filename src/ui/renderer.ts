@@ -721,7 +721,7 @@ const MENU_TOP_CROP = 0.14;
  */
 const MENU_UI_BAND = 220;
 /** Soft dirt→underground blend straddling the art/black edge (px). Positions stay fixed. */
-const MENU_EDGE_FADE = 110;
+const MENU_EDGE_FADE = 160;
 
 /**
  * Title backdrop matching the collage mockup positions, with a soft ground edge:
@@ -740,8 +740,8 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = imgH - srcY;
-    // Cover the art band and a bit past it so dirt can soft-fade (no hard crop line).
-    const coverH = artH + Math.floor(MENU_EDGE_FADE * 0.55);
+    // Cover the art band and past it so dirt can soft-fade (no hard crop line).
+    const coverH = artH + Math.floor(MENU_EDGE_FADE * 0.4);
     const scale = Math.max(W / imgW, coverH / Math.max(1, srcH));
     const dw = imgW * scale;
     const dh = srcH * scale;
@@ -759,14 +759,15 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Soften only the seam — title/button coordinates stay on the mockup band.
-    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.45));
-    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.55));
+    // Start the fade higher on mid-tone dirt so the blend is visible, not a late fog on already-black ground.
+    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.65));
+    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.35));
     const fade = ctx.createLinearGradient(0, fadeTop, 0, fadeBot);
     fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.28, 'rgba(8,10,12,0.25)');
-    fade.addColorStop(0.55, 'rgba(8,10,12,0.62)');
-    fade.addColorStop(0.8, 'rgba(8,10,12,0.9)');
+    fade.addColorStop(0.22, 'rgba(8,10,12,0.18)');
+    fade.addColorStop(0.45, 'rgba(8,10,12,0.45)');
+    fade.addColorStop(0.7, 'rgba(8,10,12,0.78)');
+    fade.addColorStop(0.88, 'rgba(8,10,12,0.94)');
     fade.addColorStop(1, 'rgba(8,10,12,1)');
     ctx.fillStyle = fade;
     ctx.fillRect(0, fadeTop, W, fadeBot - fadeTop);
