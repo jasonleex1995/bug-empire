@@ -785,10 +785,10 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   const t = ui.now / 1000;
   drawMenuBackdrop(ctx, t);
 
-  glowCircle(ctx, W / 2, 470, 180, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 470, 12, C.mineral);
+  glowCircle(ctx, W / 2, 520, 170, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 520, 12, C.mineral);
 
-  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 560, w: 300, h: 56, onClick: () => api.toDifficulty() }, '시작하기');
+  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 600, w: 300, h: 56, onClick: () => api.toDifficulty() }, '시작하기');
 }
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
