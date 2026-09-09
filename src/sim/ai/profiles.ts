@@ -41,7 +41,7 @@ export interface AiProfile {
   noBarracksUpgrades?: boolean;
 }
 
-const ALL_UNITS_BALANCED = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'ladybug', 'small_mantis'];
+const ALL_UNITS_BALANCED = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'flower_chafer', 'small_mantis'];
 
 export const PROFILES: Record<string, AiProfile> = {
   balanced: {
@@ -79,7 +79,7 @@ export const PROFILES: Record<string, AiProfile> = {
     cheatVision: false,
     concentrateLanes: 2,
     barracksPerLane: 5,
-    unitPrefs: ['soldier_ant', 'worker_ant', 'small_mantis', 'ladybug', 'rhino_beetle', 'king_mantis'],
+    unitPrefs: ['soldier_ant', 'worker_ant', 'small_mantis', 'flower_chafer', 'rhino_beetle', 'king_mantis'],
     unlockOrder: ['soldier_ant', 'rhino_beetle'],
     priority: ['barracks', 'farm'],
     barracksUpgradeBias: 0.8,

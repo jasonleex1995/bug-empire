@@ -64,9 +64,8 @@ export const UNITS: UnitDef[] = [
   { id: 'soldier_ant', name: '병정개미', short: '병', family: 'ant', tier: 2, hp: 120, dmg: 14, atkInterval: 1.0, armor: 1, speed: 1.1, range: 0.4, siegeMult: 0.8, pierce: false, body: 0.18, spawnInterval: 7, unlockGas: 60 },
   { id: 'acid_ant', name: '산성개미', short: '산', family: 'ant', tier: 3, hp: 80, dmg: 10, atkInterval: 0.5, armor: 0, speed: 1.2, range: 1.4, siegeMult: 0.7, pierce: true, body: 0.2, spawnInterval: 12, unlockGas: 120 },
 
-  // 풍뎅이류: 껍질이 두껍고 느리다. 이름은 개미/사마귀처럼 계열이 한눈에 들어오게.
-  // T1 무당벌레는 엄밀히는 무당벌레과지만, 에셋·인지도·갑옷 정체성이 맞아 같은 계열로 둔다.
-  { id: 'ladybug', name: '무당벌레', short: '무', family: 'beetle', tier: 1, hp: 115, dmg: 9, atkInterval: 0.9, armor: 2, speed: 0.7, range: 0.3, siegeMult: 1, pierce: false, body: 0.3, spawnInterval: 10, unlockGas: 0 },
+  // 풍뎅이류: 둥근 갑옷 껍질 계열. 꽃무지→장수(뿔)→사슴(턱)으로 커지지만 실루엣은 비슷한 딱정벌레.
+  { id: 'flower_chafer', name: '꽃무지', short: '꽃', family: 'beetle', tier: 1, hp: 115, dmg: 9, atkInterval: 0.9, armor: 2, speed: 0.7, range: 0.3, siegeMult: 1, pierce: false, body: 0.3, spawnInterval: 10, unlockGas: 0 },
   { id: 'rhino_beetle', name: '장수풍뎅이', short: '장', family: 'beetle', tier: 2, hp: 220, dmg: 20, atkInterval: 0.9, armor: 3, speed: 0.6, range: 0.3, siegeMult: 1.25, pierce: false, body: 0.36, spawnInterval: 14, unlockGas: 60 },
   { id: 'stag_beetle', name: '사슴벌레', short: '사', family: 'beetle', tier: 3, hp: 350, dmg: 30, atkInterval: 1.0, armor: 5, speed: 0.55, range: 0.35, siegeMult: 2, pierce: false, body: 0.42, spawnInterval: 18, unlockGas: 120 },
 

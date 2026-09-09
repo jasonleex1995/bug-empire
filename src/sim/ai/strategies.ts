@@ -32,18 +32,18 @@ export interface StrategySpec {
 
 const FAMILY_UNITS: Record<Family, string[]> = {
   ant: ['soldier_ant', 'acid_ant', 'worker_ant'],
-  beetle: ['rhino_beetle', 'stag_beetle', 'ladybug'],
+  beetle: ['rhino_beetle', 'stag_beetle', 'flower_chafer'],
   mantis: ['king_mantis', 'small_mantis'],
 };
 
-const MIX_UNITS = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'ladybug', 'small_mantis'];
+const MIX_UNITS = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'flower_chafer', 'small_mantis'];
 
 const T2 = ['soldier_ant', 'rhino_beetle', 'king_mantis'];
 const T3 = ['stag_beetle', 'acid_ant'];
 
 function unlockOrderFor(family: Family | 'mix', mode: StrategySpec['unlock']): string[] {
   if (mode === 'none') return [];
-  const pool = family === 'mix' ? [...T2, ...T3] : FAMILY_UNITS[family].filter((u) => !['worker_ant', 'ladybug', 'small_mantis'].includes(u));
+  const pool = family === 'mix' ? [...T2, ...T3] : FAMILY_UNITS[family].filter((u) => !['worker_ant', 'flower_chafer', 'small_mantis'].includes(u));
   if (mode === 't2') return pool.filter((u) => T2.includes(u));
   return pool;
 }
