@@ -861,7 +861,7 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
   glowCircle(ctx, W / 2, titleCy, 90, C.amberGlow);
   drawPixelTitle(ctx, W / 2, titleCy, 10, C.mineral);
 
-  text(ctx, '난이도 선택', W / 2, artH + 78, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
+  text(ctx, '난이도 선택', W / 2, artH + 84, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
 
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const gap = 14;
@@ -869,7 +869,8 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
   const bh = 48;
   const totalW = diffs.length * bw + (diffs.length - 1) * gap;
   const startX = Math.round(W / 2 - totalW / 2);
-  const rowY = artH + 88;
+  // Lower in the underground band now that the back button is gone.
+  const rowY = artH + 128;
   diffs.forEach((d, i) => {
     drawCtaButton(
       ctx,
@@ -890,15 +891,6 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
       { glow: false, size: 18 },
     );
   });
-
-  drawCtaButton(
-    ctx,
-    buttons,
-    ui,
-    { id: 'back_menu', x: W / 2 - 80, y: artH + 148, w: 160, h: 36, onClick: () => api.toMenu() },
-    '뒤로',
-    { glow: false, size: 16 },
-  );
 }
 
 function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
