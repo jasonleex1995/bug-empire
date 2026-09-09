@@ -723,11 +723,19 @@ const MENU_UI_BAND = 220;
 /** Soft dirt→underground blend straddling the art/black edge (px). Positions stay fixed. */
 const MENU_EDGE_FADE = 160;
 
+/** Bayer 4×4 thresholds (0…1) — breaks straight crop lines in the soft edge. */
+const MENU_BAYER_4 = [
+  0.03125, 0.53125, 0.15625, 0.65625,
+  0.78125, 0.28125, 0.90625, 0.40625,
+  0.21875, 0.71875, 0.09375, 0.59375,
+  0.96875, 0.46875, 0.84375, 0.34375,
+];
+
 /**
  * Title backdrop matching the collage mockup positions, with a soft ground edge:
  * - crop empty top sky so the trio sits high
  * - let textured dirt run past the band edge (no hard clip)
- * - soft-fade into full-width underground black for title + CTA
+ * - dithered soft-fade into underground black (no straight crop line)
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
   const artH = Math.max(0, H - uiBand);
@@ -759,18 +767,31 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Start the fade higher on mid-tone dirt so the blend is visible, not a late fog on already-black ground.
-    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.65));
-    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.35));
-    const fade = ctx.createLinearGradient(0, fadeTop, 0, fadeBot);
-    fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.22, 'rgba(8,10,12,0.18)');
-    fade.addColorStop(0.45, 'rgba(8,10,12,0.45)');
-    fade.addColorStop(0.7, 'rgba(8,10,12,0.78)');
-    fade.addColorStop(0.88, 'rgba(8,10,12,0.94)');
-    fade.addColorStop(1, 'rgba(8,10,12,1)');
-    ctx.fillStyle = fade;
-    ctx.fillRect(0, fadeTop, W, fadeBot - fadeTop);
+    // Bias fade upward onto mid-tone dirt; dither so the seam isn't a ruler line.
+    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.7));
+    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.3));
+    const fadeH = Math.max(1, fadeBot - fadeTop);
+    const img = ctx.getImageData(0, fadeTop, W, fadeH);
+    const data = img.data;
+    for (let y = 0; y < fadeH; y++) {
+      const u = y / fadeH;
+      // smoothstep ease — linger longer on dirt, settle into black
+      const s = u * u * (3 - 2 * u);
+      const base = Math.min(1, s * 1.08);
+      for (let x = 0; x < W; x++) {
+        const thr = MENU_BAYER_4[((y & 3) << 2) | (x & 3)];
+        let a = base;
+        if (base > 0.08 && base < 0.95) {
+          a = Math.max(0, Math.min(1, base + (base > thr ? 0.1 : -0.1)));
+        }
+        const i = (y * W + x) * 4;
+        const ia = 1 - a;
+        data[i] = data[i] * ia + 8 * a;
+        data[i + 1] = data[i + 1] * ia + 10 * a;
+        data[i + 2] = data[i + 2] * ia + 12 * a;
+      }
+    }
+    ctx.putImageData(img, 0, fadeTop);
     if (fadeBot < H) {
       ctx.fillStyle = '#080a0c';
       ctx.fillRect(0, fadeBot, W, H - fadeBot);
