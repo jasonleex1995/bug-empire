@@ -715,32 +715,32 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   const t = ui.now / 1000;
   fillBg(ctx, W, H, t);
 
-  // Full roster hero — contain + slight shrink so nothing is edge-clipped on canvas.
+  // Full roster hero — contain (no canvas crop); fill most of the upper screen.
   const hero = getMenuHeroImage();
   let artBottom = 420;
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    const padX = 56;
-    const topPad = 8;
-    const maxH = 455;
+    const padX = 24;
+    const topPad = 6;
+    const maxH = 500;
     const availW = W - padX * 2;
-    const scale = Math.min(availW / imgW, maxH / imgH) * 0.94;
+    const scale = Math.min(availW / imgW, maxH / imgH);
     const dw = imgW * scale;
     const dh = imgH * scale;
     const dx = (W - dw) / 2;
-    const dy = topPad + Math.max(0, (maxH - dh) * 0.08);
+    const dy = topPad;
     artBottom = dy + dh;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
 
-    const fade = ctx.createLinearGradient(0, artBottom - 36, 0, H);
+    const fade = ctx.createLinearGradient(0, artBottom - 40, 0, H);
     fade.addColorStop(0, 'rgba(8,14,10,0)');
     fade.addColorStop(0.22, 'rgba(8,14,10,0.48)');
     fade.addColorStop(0.48, 'rgba(8,14,10,0.88)');
     fade.addColorStop(1, 'rgba(8,14,10,0.95)');
     ctx.fillStyle = fade;
-    ctx.fillRect(0, artBottom - 36, W, H - (artBottom - 36));
+    ctx.fillRect(0, artBottom - 40, W, H - (artBottom - 40));
   }
 
   // Floating pollen over the art
