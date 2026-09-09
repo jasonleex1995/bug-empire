@@ -715,12 +715,14 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 
 /** Top sky slice to discard — matches the red box the user marked. */
 const MENU_TOP_CROP = 0.14;
-/** Solid black “underground” band for BUG EMPIRE + 시작하기. */
+/** Dark underground band for BUG EMPIRE + 시작하기. */
 const MENU_UI_BAND = 170;
 
-/** Dusk banner for title / difficulty: crop the top, fill the bottom in black. */
+/**
+ * Title/difficulty backdrop: crop the marked top sky, keep the natural ground,
+ * then soft-fade into black for the CTA (no hard dirt/black seam).
+ */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
-  const artH = H - uiBand;
   ctx.fillStyle = '#080a0c';
   ctx.fillRect(0, 0, W, H);
 
@@ -730,39 +732,41 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = imgH - srcY;
-    // Cover only the art band so the cropped trio sits above the black strip.
-    const scale = Math.max(W / imgW, artH / srcH);
+    // Cover the full canvas with the cropped source so ground continues into the CTA zone.
+    const scale = Math.max(W / imgW, H / srcH);
     const dw = imgW * scale;
     const dh = srcH * scale;
     const dx = (W - dw) / 2;
-    const dy = (artH - dh) / 2;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, 0, W, artH);
-    ctx.clip();
+    const dy = (H - dh) / 2;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
-    ctx.restore();
   } else {
-    const g = ctx.createLinearGradient(0, 0, 0, artH);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#101820');
     g.addColorStop(0.55, '#3a3028');
-    g.addColorStop(1, '#1a1410');
+    g.addColorStop(1, '#080a0c');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, artH);
+    ctx.fillRect(0, 0, W, H);
   }
 
-  // Hard black underground for the CTA (not green letterbox).
   if (uiBand > 0) {
-    ctx.fillStyle = '#080a0c';
-    ctx.fillRect(0, artH, W, uiBand);
+    // Soft fade from the painted ground into underground black — no hard cut line.
+    const fadeTop = H - uiBand - 70;
+    const fade = ctx.createLinearGradient(0, fadeTop, 0, H);
+    fade.addColorStop(0, 'rgba(8,10,12,0)');
+    fade.addColorStop(0.28, 'rgba(8,10,12,0.35)');
+    fade.addColorStop(0.55, 'rgba(8,10,12,0.78)');
+    fade.addColorStop(0.78, 'rgba(8,10,12,0.94)');
+    fade.addColorStop(1, 'rgba(8,10,12,1)');
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, fadeTop, W, H - fadeTop);
   }
 
   ctx.save();
   for (let i = 0; i < 18; i++) {
     const seed = i * 97.3;
     const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % Math.max(80, artH - 40)) + 12;
+    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % (H - uiBand - 40)) + 12;
     const a = 0.1 + (i % 3) * 0.05;
     ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
     ctx.beginPath();
@@ -796,7 +800,7 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   drawMenuBackdrop(ctx, t, MENU_UI_BAND);
 
   const artH = H - MENU_UI_BAND;
-  // Brand + CTA live entirely inside the black underground band.
+  // Brand + CTA in the faded underground — ground edge stays soft above.
   glowCircle(ctx, W / 2, artH + 48, 110, C.amberGlow);
   drawPixelTitle(ctx, W / 2, artH + 48, 10, C.mineral);
   drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: artH + 88, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
