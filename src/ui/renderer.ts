@@ -767,7 +767,7 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Long dissolve: keep dirt texture through the title, solid black only near the button.
+    // Ordered-dither dissolve: speckled dirt→black edge (breaks the ruler-line crop look).
     const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.6));
     const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.45));
     const fadeH = Math.max(1, fadeBot - fadeTop);
@@ -775,15 +775,13 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const data = img.data;
     for (let y = 0; y < fadeH; y++) {
       const u = y / fadeH;
-      // Ease-in so mid-band (around the title) still shows dirt, then settles to black.
-      const s = u * u * (1.35 - 0.35 * u);
-      const base = Math.min(1, s);
+      // Density of black speckles grows downward; title band still keeps dirt flecks.
+      const density = Math.min(1, u * u * (1.25 - 0.15 * u));
       for (let x = 0; x < W; x++) {
         const thr = MENU_BAYER_4[((y & 3) << 2) | (x & 3)];
-        let a = base;
-        if (base > 0.05 && base < 0.92) {
-          a = Math.max(0, Math.min(1, base + (base > thr ? 0.14 : -0.14)));
-        }
+        // Binary-ish dissolve with a little soft mix so it isn't strobing.
+        const cover = density > thr;
+        const a = cover ? Math.min(1, 0.55 + density * 0.45) : density * 0.22;
         const i = (y * W + x) * 4;
         const ia = 1 - a;
         data[i] = data[i] * ia + 8 * a;
