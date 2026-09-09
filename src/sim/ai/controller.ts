@@ -7,10 +7,11 @@ import {
   isUnlocked,
   moduleCost,
   place,
+  rechargeEmergency,
   unlock,
   upgradeModule,
 } from '../actions';
-import { COLS, MID, ROWS, castleX, otherSide, type Side } from '../config';
+import { COLS, MID, ROWS, castleX, moduleSpan, otherSide, type Side } from '../config';
 import { DEFENSE_MODULES, MODULE_BY_ID, RESOURCE_MODULES } from '../data/modules';
 import { FAMILY_MULT, UNIT_BY_ID, type Family } from '../data/units';
 import { TRACKS, type Track } from '../data/upgrades';
@@ -31,6 +32,8 @@ export class AiController {
   private nextDecision = 0;
   private laneOffset: number;
   private gasToggle = 0;
+  /** Extra barracks per lane beyond the profile quota, raised when minerals sit idle. */
+  private bonusBarracks = 0;
 
   constructor(
     public readonly side: Side,
@@ -90,13 +93,16 @@ export class AiController {
     const p = state.players[this.side];
     const cx = castleX(this.side);
     for (let row = 0; row < ROWS; row++) {
-      if (!p.emergencyCharges[row]) continue;
       let hpNear = 0;
       for (const u of state.units) {
         if (u.side === this.side || u.row !== row) continue;
         if (Math.abs(u.x - cx) <= 1.2) hpNear += u.hp;
       }
-      if (hpNear >= 60) emergency(state, this.side, row);
+      if (hpNear < 200) continue;
+      // A serious blob at the gate: buy the charge back if needed, then wipe. Only reactive
+      // profiles (hard/hell) spend gas on this; normal uses the free charge only.
+      if (!p.emergencyCharges[row] && this.profile.reactive && hpNear >= 500) rechargeEmergency(state, this.side, row);
+      if (p.emergencyCharges[row]) emergency(state, this.side, row);
     }
   }
 
@@ -104,22 +110,31 @@ export class AiController {
     const p = state.players[this.side];
     const prof = this.profile;
 
+    let unlockedCount = 0;
     for (const id of prof.unlockOrder) {
-      if (isUnlocked(state, this.side, id)) continue;
+      if (isUnlocked(state, this.side, id)) {
+        unlockedCount++;
+        continue;
+      }
       const u = UNIT_BY_ID[id];
       if (p.gas >= u.unlockGas) {
         unlock(state, this.side, id);
         return;
       }
+      // Save up for the first two unlocks instead of nickel-and-diming gas into small upgrades;
+      // later unlocks are bought opportunistically.
+      if (unlockedCount < 2) return;
       break;
     }
 
     this.gasToggle = (this.gasToggle + 1) % 10;
     const preferBarracks = this.gasToggle / 10 < prof.barracksUpgradeBias;
+    const canBarracks = !prof.noBarracksUpgrades;
+    const canCastle = !prof.noCastleUpgrades;
 
-    if (preferBarracks && this.tryBarracksUpgrade(state)) return;
-    if (this.tryCastleUpgrade(state, lanes)) return;
-    if (!preferBarracks) this.tryBarracksUpgrade(state);
+    if (preferBarracks && canBarracks && this.tryBarracksUpgrade(state)) return;
+    if (canCastle && this.tryCastleUpgrade(state, lanes)) return;
+    if (!preferBarracks && canBarracks) this.tryBarracksUpgrade(state);
   }
 
   private tryBarracksUpgrade(state: GameState): boolean {
@@ -179,7 +194,9 @@ export class AiController {
       const pressured = lanes
         .filter((l) => l.enemyHp > l.ownHp + 40 && l.nearestThreat < COLS + 1)
         .sort((a, b) => a.nearestThreat - b.nearestThreat)[0];
-      if (pressured) {
+      // A lane already lost to a big blob is not worth feeding: anything built there dies before it
+      // finishes. Save for the emergency wipe / counter-pushes elsewhere instead.
+      if (pressured && pressured.enemyHp < 350) {
         if (prof.buildBarracks && this.tryBarracks(state, [pressured.row], pressured.enemyFamily)) return;
         if (prof.buildDefense && this.tryDefense(state, pressured.row, lanes)) return;
       }
@@ -211,9 +228,12 @@ export class AiController {
         // Nothing affordable right now; wait unless the lanes already hold enough barracks.
         const wantsMore = laneRows.some((row) => {
           const n = state.modules.filter((m) => m.side === this.side && m.row === row && MODULE_BY_ID[m.defId].kind === 'barracks').length;
-          return n < prof.barracksPerLane && this.freeColsIn(state, row).length > 0;
+          return n < this.barracksQuota() && this.freeColsIn(state, row).length > 0;
         });
-        return wantsMore ? 'wait' : 'skip';
+        if (wantsMore) return 'wait';
+        // Quota met and minerals idle: raise the quota so spare cells turn into production.
+        if (p.minerals >= 250 && this.bonusBarracks < COLS) this.bonusBarracks++;
+        return 'skip';
       }
       case 'defense': {
         if (!prof.buildDefense) return 'skip';
@@ -225,24 +245,36 @@ export class AiController {
     }
   }
 
+  private barracksQuota(): number {
+    return this.profile.barracksPerLane + this.bonusBarracks;
+  }
+
+  /** Empty cells in a lane that are not directly under enemy units (a build there dies before it finishes). */
   private freeColsIn(state: GameState, row: number): number[] {
     const cols: number[] = [];
-    for (let c = 0; c < COLS; c++) if (!moduleAt(state, this.side, row, c)) cols.push(c);
+    for (let c = 0; c < COLS; c++) {
+      if (moduleAt(state, this.side, row, c)) continue;
+      const [a, b] = moduleSpan(this.side, c);
+      const contested = state.units.some((u) => u.side !== this.side && u.row === row && u.hp > 0 && u.x > a - 0.8 && u.x < b + 0.8);
+      if (!contested) cols.push(c);
+    }
     return cols;
   }
 
   private tryFarm(state: GameState, farms: number): boolean {
     const p = state.players[this.side];
     // Honey pots once the economy is rolling; aphid farms early.
-    const def = farms >= 3 && p.minerals >= moduleCost(state, this.side, RESOURCE_MODULES[1].id) ? RESOURCE_MODULES[1] : RESOURCE_MODULES[0];
+    const honeyOk = (this.profile.honeyEarly || farms >= 3) && p.minerals >= moduleCost(state, this.side, RESOURCE_MODULES[1].id);
+    const def = honeyOk ? RESOURCE_MODULES[1] : RESOURCE_MODULES[0];
     if (p.minerals < moduleCost(state, this.side, def.id)) return false;
-    // Lowest free column (closest to castle) across lanes, preferring lanes with fewer modules.
+    // Lowest free column (closest to castle), preferring lanes that already have a barracks in front of it.
     let best: { row: number; col: number; score: number } | null = null;
     for (let row = 0; row < ROWS; row++) {
       const free = this.freeColsIn(state, row);
       if (free.length === 0) continue;
       const col = free[0];
-      const score = col * 10 + (COLS - free.length);
+      const guarded = state.modules.some((m) => m.side === this.side && m.row === row && m.col > col && MODULE_BY_ID[m.defId].kind === 'barracks');
+      const score = col * 10 + (COLS - free.length) + (guarded ? 0 : 100);
       if (!best || score < best.score) best = { row, col, score };
     }
     if (!best) return false;
@@ -266,11 +298,17 @@ export class AiController {
     const unitId = this.pickUnit(state, counter);
     if (!unitId) return false;
     const defId = `barracks_${unitId}`;
-    // Lane with the fewest barracks first.
+    // A lone barracks' trickle dies at the enemy castle wall, so bring each opened lane up to a
+    // two-barracks stack before opening the next one; after that, fill the thinnest lane first.
+    const stackTo = Math.min(2, this.barracksQuota());
     const ranked = rows
       .map((row) => ({ row, n: state.modules.filter((m) => m.side === this.side && m.row === row && MODULE_BY_ID[m.defId].kind === 'barracks').length }))
-      .filter((l) => l.n < this.profile.barracksPerLane)
-      .sort((a, b) => a.n - b.n);
+      .filter((l) => l.n < this.barracksQuota())
+      .sort((a, b) => {
+        const aOpen = a.n > 0 && a.n < stackTo ? 0 : 1;
+        const bOpen = b.n > 0 && b.n < stackTo ? 0 : 1;
+        return aOpen - bOpen || a.n - b.n;
+      });
     for (const { row } of ranked) {
       const free = this.freeColsIn(state, row);
       // Keep the front-most column for defenses when possible.
@@ -290,8 +328,11 @@ export class AiController {
     if (free.length === 0) return false;
     const col = free[free.length - 1];
     const lane = lanes[row];
+    const [wall, mushroom, turret] = DEFENSE_MODULES;
+    const style = this.profile.defenseStyle ?? 'auto';
     // Under heavy pressure a wall buys the most time per mineral; otherwise take the best turret we can afford.
-    const order = lane.enemyHp > 200 ? [DEFENSE_MODULES[0], DEFENSE_MODULES[2], DEFENSE_MODULES[1]] : [DEFENSE_MODULES[2], DEFENSE_MODULES[1], DEFENSE_MODULES[0]];
+    const order =
+      style === 'wall' ? [wall] : style === 'turret' ? [turret] : style === 'mushroom' ? [mushroom] : lane.enemyHp > 200 ? [wall, turret, mushroom] : [turret, mushroom, wall];
     for (const def of order) {
       if (p.minerals >= def.cost) return place(state, this.side, row, col, def.id).ok;
     }
