@@ -715,14 +715,20 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 
 /** Top sky slice to discard — matches the red box the user marked. */
 const MENU_TOP_CROP = 0.14;
-/** Dark underground band for BUG EMPIRE + 시작하기. */
-const MENU_UI_BAND = 170;
+/**
+ * Full-width underground band for BUG EMPIRE + 시작하기.
+ * Sized from the user's collage mockup (~y 500→720 on a 720p frame).
+ */
+const MENU_UI_BAND = 220;
 
 /**
- * Title/difficulty backdrop: crop the marked top sky, keep the natural ground,
- * then soft-fade into black for the CTA (no hard dirt/black seam).
+ * Title backdrop matching the collage mockup:
+ * - crop empty top sky so the trio sits high
+ * - fill only the upper art band (clip at artH)
+ * - solid full-width black underground for title + CTA (no muddy soft-fade / over-zoom)
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
+  const artH = Math.max(0, H - uiBand);
   ctx.fillStyle = '#080a0c';
   ctx.fillRect(0, 0, W, H);
 
@@ -732,48 +738,48 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = imgH - srcY;
-    // Cover the full canvas with the cropped source so ground continues into the CTA zone.
-    const scale = Math.max(W / imgW, H / srcH);
+    // Cover the art band; pin to top after sky crop so bugs stay high like the mockup.
+    const scale = Math.max(W / imgW, artH / Math.max(1, srcH));
     const dw = imgW * scale;
     const dh = srcH * scale;
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2;
+    const dy = 0;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, W, artH);
+    ctx.clip();
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
-  } else {
-    const g = ctx.createLinearGradient(0, 0, 0, H);
+    ctx.restore();
+  } else if (artH > 0) {
+    const g = ctx.createLinearGradient(0, 0, 0, artH);
     g.addColorStop(0, '#101820');
     g.addColorStop(0.55, '#3a3028');
-    g.addColorStop(1, '#080a0c');
+    g.addColorStop(1, '#1a1410');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, W, artH);
   }
 
+  // Full-width underground — collage mockup layout (hard band, not a floating title box).
   if (uiBand > 0) {
-    // Soft fade from the painted ground into underground black — no hard cut line.
-    const fadeTop = H - uiBand - 70;
-    const fade = ctx.createLinearGradient(0, fadeTop, 0, H);
-    fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.28, 'rgba(8,10,12,0.35)');
-    fade.addColorStop(0.55, 'rgba(8,10,12,0.78)');
-    fade.addColorStop(0.78, 'rgba(8,10,12,0.94)');
-    fade.addColorStop(1, 'rgba(8,10,12,1)');
-    ctx.fillStyle = fade;
-    ctx.fillRect(0, fadeTop, W, H - fadeTop);
+    ctx.fillStyle = '#080a0c';
+    ctx.fillRect(0, artH, W, uiBand);
   }
 
-  ctx.save();
-  for (let i = 0; i < 18; i++) {
-    const seed = i * 97.3;
-    const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % (H - uiBand - 40)) + 12;
-    const a = 0.1 + (i % 3) * 0.05;
-    ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
-    ctx.beginPath();
-    ctx.arc(x, y, 1.2 + (i % 3) * 0.45, 0, Math.PI * 2);
-    ctx.fill();
+  if (artH > 40) {
+    ctx.save();
+    for (let i = 0; i < 18; i++) {
+      const seed = i * 97.3;
+      const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
+      const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % Math.max(40, artH - 40)) + 12;
+      const a = 0.1 + (i % 3) * 0.05;
+      ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.2 + (i % 3) * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
   }
-  ctx.restore();
 }
 
 function drawCtaButton(
@@ -800,10 +806,18 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   drawMenuBackdrop(ctx, t, MENU_UI_BAND);
 
   const artH = H - MENU_UI_BAND;
-  // Brand + CTA in the faded underground — ground edge stays soft above.
-  glowCircle(ctx, W / 2, artH + 48, 110, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, artH + 48, 10, C.mineral);
-  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: artH + 88, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
+  // Collage mockup positions (720p): title ~y514 straddling the art/black edge, button ~y600.
+  const titleCy = artH + 14;
+  const buttonY = artH + 100;
+  glowCircle(ctx, W / 2, titleCy, 90, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, titleCy, 10, C.mineral);
+  drawCtaButton(
+    ctx,
+    buttons,
+    ui,
+    { id: 'to_difficulty', x: W / 2 - 150, y: buttonY, w: 300, h: 48, onClick: () => api.toDifficulty() },
+    '시작하기',
+  );
 }
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
