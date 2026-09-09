@@ -861,7 +861,7 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
   glowCircle(ctx, W / 2, titleCy, 90, C.amberGlow);
   drawPixelTitle(ctx, W / 2, titleCy, 10, C.mineral);
 
-  text(ctx, '난이도 선택', W / 2, artH + 68, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
+  text(ctx, '난이도 선택', W / 2, artH + 78, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
 
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const gap = 14;
