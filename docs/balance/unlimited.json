@@ -1,0 +1,6374 @@
+{
+  "args": {
+    "games": 8,
+    "jobs": 4,
+    "limit": 1800,
+    "timeLimit": null,
+    "only": null,
+    "out": "/tmp/balance/unlimited_v4",
+    "seed": 4242
+  },
+  "specs": [
+    {
+      "id": "rush1_mix_2L",
+      "name": "러시(농장1) 혼합 2레인",
+      "farms": 1,
+      "lanes": 2,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "rush1_mix_4L",
+      "name": "러시(농장1) 혼합 4레인",
+      "farms": 1,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "rush1_ant_1L",
+      "name": "러시 개미 1레인 올인",
+      "farms": 1,
+      "lanes": 1,
+      "family": "ant",
+      "defense": 0
+    },
+    {
+      "id": "std2_mix_4L",
+      "name": "표준(농장2) 혼합 4레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "eco3_mix_4L",
+      "name": "경제(농장3) 혼합 4레인",
+      "farms": 3,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "greedy5_mix_4L",
+      "name": "탐욕(농장5) 혼합 4레인",
+      "farms": 5,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "ecoOnly12",
+      "name": "경제 올인(농장12)",
+      "farms": 12,
+      "lateFarms": 14,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1
+    },
+    {
+      "id": "honey_eco",
+      "name": "꿀단지 경제(농장3)",
+      "farms": 3,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "honeyEarly": true
+    },
+    {
+      "id": "std2_mix_1L",
+      "name": "표준 혼합 1레인 올인",
+      "farms": 2,
+      "lanes": 1,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "std2_mix_2L",
+      "name": "표준 혼합 2레인",
+      "farms": 2,
+      "lanes": 2,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "std2_mix_3L",
+      "name": "표준 혼합 3레인",
+      "farms": 2,
+      "lanes": 3,
+      "family": "mix",
+      "defense": 0
+    },
+    {
+      "id": "std2_ant_4L",
+      "name": "표준 개미 4레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "ant",
+      "defense": 0
+    },
+    {
+      "id": "std2_beetle_4L",
+      "name": "표준 딱정벌레 4레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "beetle",
+      "defense": 0
+    },
+    {
+      "id": "std2_mantis_4L",
+      "name": "표준 사마귀 4레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mantis",
+      "defense": 0
+    },
+    {
+      "id": "rush1_beetle_2L",
+      "name": "러시 딱정벌레 2레인",
+      "farms": 1,
+      "lanes": 2,
+      "family": "beetle",
+      "defense": 0
+    },
+    {
+      "id": "rush1_mantis_2L",
+      "name": "러시 사마귀 2레인",
+      "farms": 1,
+      "lanes": 2,
+      "family": "mantis",
+      "defense": 0
+    },
+    {
+      "id": "eco3_beetle_4L",
+      "name": "경제 딱정벌레 4레인",
+      "farms": 3,
+      "lanes": 4,
+      "family": "beetle",
+      "defense": 0
+    },
+    {
+      "id": "std2_mix_4L_def1",
+      "name": "표준 혼합 + 디펜스1/레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1
+    },
+    {
+      "id": "std2_mix_4L_def2",
+      "name": "표준 혼합 + 디펜스2/레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 2
+    },
+    {
+      "id": "std2_mix_4L_wall",
+      "name": "표준 혼합 + 가시덤불1/레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1,
+      "defenseStyle": "wall"
+    },
+    {
+      "id": "std2_mix_4L_turret",
+      "name": "표준 혼합 + 포탑1/레인",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1,
+      "defenseStyle": "turret"
+    },
+    {
+      "id": "turtle3_def2",
+      "name": "터틀(농장3→디펜스2→병영)",
+      "farms": 3,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 2,
+      "defenseFirst": true
+    },
+    {
+      "id": "defenseOnly",
+      "name": "디펜스 올인",
+      "farms": 4,
+      "lateFarms": 8,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 4,
+      "defenseFirst": true,
+      "noBarracks": true
+    },
+    {
+      "id": "wallFirst_rush",
+      "name": "벽 먼저 → 러시",
+      "farms": 1,
+      "lanes": 2,
+      "family": "mix",
+      "defense": 1,
+      "defenseStyle": "wall",
+      "defenseFirst": true
+    },
+    {
+      "id": "std2_castleFocus",
+      "name": "표준 + 성 업그레이드 집중",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "gasBias": 0.1
+    },
+    {
+      "id": "std2_barracksFocus",
+      "name": "표준 + 병영 업그레이드 집중",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "gasBias": 0.9
+    },
+    {
+      "id": "std2_noUnlock",
+      "name": "표준 T1만 (해금 없음)",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "unlock": "none"
+    },
+    {
+      "id": "std2_t2only",
+      "name": "표준 T2까지만 해금",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "unlock": "t2"
+    },
+    {
+      "id": "std2_noCastle",
+      "name": "표준 성 업그레이드 없음",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "noCastleUpgrades": true,
+      "gasBias": 1
+    },
+    {
+      "id": "std2_noBarracksUp",
+      "name": "표준 병영 업그레이드 없음",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 0,
+      "noBarracksUpgrades": true,
+      "gasBias": 0
+    },
+    {
+      "id": "std2_mix_4L_react",
+      "name": "표준 혼합 반응형",
+      "farms": 2,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1,
+      "reactive": true
+    },
+    {
+      "id": "eco3_mix_4L_react",
+      "name": "경제 혼합 반응형",
+      "farms": 3,
+      "lanes": 4,
+      "family": "mix",
+      "defense": 1,
+      "reactive": true
+    },
+    {
+      "id": "rush1_mix_2L_react",
+      "name": "러시 혼합 2레인 반응형",
+      "farms": 1,
+      "lanes": 2,
+      "family": "mix",
+      "defense": 0,
+      "reactive": true
+    }
+  ],
+  "ranked": [
+    {
+      "id": "std2_noBarracksUp",
+      "name": "표준 병영 업그레이드 없음",
+      "wins": 395,
+      "losses": 116,
+      "draws": 1,
+      "games": 512,
+      "winRate": 0.771484375,
+      "ci": [
+        0.7331719397437221,
+        0.8057531876597289
+      ],
+      "avgDuration": 456.48105468752203,
+      "worst": {
+        "vs": "std2_mix_3L",
+        "rate": 0.5625
+      },
+      "best": {
+        "vs": "std2_mix_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_barracksFocus",
+      "name": "표준 + 병영 업그레이드 집중",
+      "wins": 355,
+      "losses": 120,
+      "draws": 37,
+      "games": 512,
+      "winRate": 0.693359375,
+      "ci": [
+        0.6521016843782845,
+        0.7317370754270511
+      ],
+      "avgDuration": 525.2533203124602,
+      "worst": {
+        "vs": "std2_mix_4L_def1",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "std2_mix_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_castleFocus",
+      "name": "표준 + 성 업그레이드 집중",
+      "wins": 352,
+      "losses": 140,
+      "draws": 20,
+      "games": 512,
+      "winRate": 0.6875,
+      "ci": [
+        0.6460793438632031,
+        0.7261279383722739
+      ],
+      "avgDuration": 505.27802734372665,
+      "worst": {
+        "vs": "std2_noBarracksUp",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_noCastle",
+      "name": "표준 성 업그레이드 없음",
+      "wins": 347,
+      "losses": 165,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.677734375,
+      "ci": [
+        0.6360584326334309,
+        0.7167630536522818
+      ],
+      "avgDuration": 451.7259765625183,
+      "worst": {
+        "vs": "std2_t2only",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L_def2",
+      "name": "표준 혼합 + 디펜스2/레인",
+      "wins": 343,
+      "losses": 137,
+      "draws": 32,
+      "games": 512,
+      "winRate": 0.669921875,
+      "ci": [
+        0.6280561103513702,
+        0.7092567391745308
+      ],
+      "avgDuration": 517.6872070312103,
+      "worst": {
+        "vs": "std2_noBarracksUp",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L_turret",
+      "name": "표준 혼합 + 포탑1/레인",
+      "wins": 343,
+      "losses": 136,
+      "draws": 33,
+      "games": 512,
+      "winRate": 0.669921875,
+      "ci": [
+        0.6280561103513702,
+        0.7092567391745308
+      ],
+      "avgDuration": 532.9631835937033,
+      "worst": {
+        "vs": "std2_castleFocus",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L_def1",
+      "name": "표준 혼합 + 디펜스1/레인",
+      "wins": 340,
+      "losses": 123,
+      "draws": 49,
+      "games": 512,
+      "winRate": 0.6640625,
+      "ci": [
+        0.6220626182266088,
+        0.7036187537294335
+      ],
+      "avgDuration": 564.2940429686712,
+      "worst": {
+        "vs": "std2_t2only",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "std2_mix_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_t2only",
+      "name": "표준 T2까지만 해금",
+      "wins": 339,
+      "losses": 130,
+      "draws": 43,
+      "games": 512,
+      "winRate": 0.662109375,
+      "ci": [
+        0.6200663404470772,
+        0.7017378723190122
+      ],
+      "avgDuration": 545.1721679686895,
+      "worst": {
+        "vs": "std2_castleFocus",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "eco3_mix_4L_react",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L",
+      "name": "표준(농장2) 혼합 4레인",
+      "wins": 338,
+      "losses": 140,
+      "draws": 34,
+      "games": 512,
+      "winRate": 0.66015625,
+      "ci": [
+        0.6180708336172251,
+        0.6998562199589113
+      ],
+      "avgDuration": 515.2668945312158,
+      "worst": {
+        "vs": "std2_mix_4L_def1",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "wallFirst_rush",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_ant_4L",
+      "name": "표준 개미 4레인",
+      "wins": 338,
+      "losses": 161,
+      "draws": 13,
+      "games": 512,
+      "winRate": 0.66015625,
+      "ci": [
+        0.6180708336172251,
+        0.6998562199589113
+      ],
+      "avgDuration": 531.3056640624542,
+      "worst": {
+        "vs": "std2_mix_4L_turret",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "wallFirst_rush",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L_wall",
+      "name": "표준 혼합 + 가시덤불1/레인",
+      "wins": 336,
+      "losses": 147,
+      "draws": 29,
+      "games": 512,
+      "winRate": 0.65625,
+      "ci": [
+        0.6140821200060962,
+        0.6960906151901347
+      ],
+      "avgDuration": 500.6737304687232,
+      "worst": {
+        "vs": "std2_t2only",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "wallFirst_rush",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_3L",
+      "name": "표준 혼합 3레인",
+      "wins": 335,
+      "losses": 177,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.654296875,
+      "ci": [
+        0.6120889069757299,
+        0.6942066690305481
+      ],
+      "avgDuration": 472.3844726562622,
+      "worst": {
+        "vs": "std2_ant_4L",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_noUnlock",
+      "name": "표준 T1만 (해금 없음)",
+      "wins": 316,
+      "losses": 196,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.6171875,
+      "ci": [
+        0.5743588331915975,
+        0.6582707182055755
+      ],
+      "avgDuration": 433.9230468750462,
+      "worst": {
+        "vs": "std2_barracksFocus",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_mix_4L",
+      "name": "러시(농장1) 혼합 4레인",
+      "wins": 312,
+      "losses": 200,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.609375,
+      "ci": [
+        0.5664488826980878,
+        0.6506720319392738
+      ],
+      "avgDuration": 459.63242187504034,
+      "worst": {
+        "vs": "std2_mix_4L",
+        "rate": 0.25
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_2L",
+      "name": "표준 혼합 2레인",
+      "wins": 300,
+      "losses": 212,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.5859375,
+      "ci": [
+        0.5427860728042532,
+        0.6278089315536738
+      ],
+      "avgDuration": 477.10830078128436,
+      "worst": {
+        "vs": "rush1_mix_4L",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "defenseOnly",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_4L_react",
+      "name": "표준 혼합 반응형",
+      "wins": 300,
+      "losses": 195,
+      "draws": 17,
+      "games": 512,
+      "winRate": 0.5859375,
+      "ci": [
+        0.5427860728042532,
+        0.6278089315536738
+      ],
+      "avgDuration": 490.0227539062503,
+      "worst": {
+        "vs": "std2_barracksFocus",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_beetle_4L",
+      "name": "표준 딱정벌레 4레인",
+      "wins": 297,
+      "losses": 204,
+      "draws": 11,
+      "games": 512,
+      "winRate": 0.580078125,
+      "ci": [
+        0.5368858484378707,
+        0.6220776783501976
+      ],
+      "avgDuration": 526.0253906250126,
+      "worst": {
+        "vs": "eco3_beetle_4L",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "eco3_mix_4L",
+      "name": "경제(농장3) 혼합 4레인",
+      "wins": 293,
+      "losses": 213,
+      "draws": 6,
+      "games": 512,
+      "winRate": 0.572265625,
+      "ci": [
+        0.5290283868550651,
+        0.6144265031731917
+      ],
+      "avgDuration": 417.49609375003297,
+      "worst": {
+        "vs": "eco3_beetle_4L",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "honey_eco",
+      "name": "꿀단지 경제(농장3)",
+      "wins": 290,
+      "losses": 212,
+      "draws": 10,
+      "games": 512,
+      "winRate": 0.56640625,
+      "ci": [
+        0.5231423758711392,
+        0.6086810365872589
+      ],
+      "avgDuration": 419.03037109377976,
+      "worst": {
+        "vs": "std2_noCastle",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_mix_2L",
+      "name": "러시(농장1) 혼합 2레인",
+      "wins": 285,
+      "losses": 223,
+      "draws": 4,
+      "games": 512,
+      "winRate": 0.556640625,
+      "ci": [
+        0.5133457653453821,
+        0.5990918511632515
+      ],
+      "avgDuration": 482.26572265628147,
+      "worst": {
+        "vs": "std2_t2only",
+        "rate": 0.1875
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "eco3_beetle_4L",
+      "name": "경제 딱정벌레 4레인",
+      "wins": 256,
+      "losses": 245,
+      "draws": 11,
+      "games": 512,
+      "winRate": 0.5,
+      "ci": [
+        0.45685128225525845,
+        0.5431487177447416
+      ],
+      "avgDuration": 496.04355468752146,
+      "worst": {
+        "vs": "std2_noBarracksUp",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "rush1_ant_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mantis_4L",
+      "name": "표준 사마귀 4레인",
+      "wins": 242,
+      "losses": 270,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.47265625,
+      "ci": [
+        0.429775257928628,
+        0.5159445134120317
+      ],
+      "avgDuration": 453.4480468750527,
+      "worst": {
+        "vs": "std2_castleFocus",
+        "rate": 0.125
+      },
+      "best": {
+        "vs": "std2_mix_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_mantis_2L",
+      "name": "러시 사마귀 2레인",
+      "wins": 210,
+      "losses": 302,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.41015625,
+      "ci": [
+        0.368373647370161,
+        0.45327702989200636
+      ],
+      "avgDuration": 481.9387695312953,
+      "worst": {
+        "vs": "std2_mix_4L_def1",
+        "rate": 0
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_mix_2L_react",
+      "name": "러시 혼합 2레인 반응형",
+      "wins": 208,
+      "losses": 300,
+      "draws": 4,
+      "games": 512,
+      "winRate": 0.40625,
+      "ci": [
+        0.3645589712043474,
+        0.44933738767791415
+      ],
+      "avgDuration": 500.35000000001804,
+      "worst": {
+        "vs": "std2_mix_4L_def1",
+        "rate": 0
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "eco3_mix_4L_react",
+      "name": "경제 혼합 반응형",
+      "wins": 192,
+      "losses": 312,
+      "draws": 8,
+      "games": 512,
+      "winRate": 0.375,
+      "ci": [
+        0.33414196972229804,
+        0.41771984212071733
+      ],
+      "avgDuration": 423.15908203128305,
+      "worst": {
+        "vs": "std2_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_beetle_2L",
+      "name": "러시 딱정벌레 2레인",
+      "wins": 157,
+      "losses": 355,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.306640625,
+      "ci": [
+        0.2682629245729488,
+        0.3478983156217155
+      ],
+      "avgDuration": 549.5366210937539,
+      "worst": {
+        "vs": "std2_noUnlock",
+        "rate": 0
+      },
+      "best": {
+        "vs": "ecoOnly12",
+        "rate": 1
+      }
+    },
+    {
+      "id": "greedy5_mix_4L",
+      "name": "탐욕(농장5) 혼합 4레인",
+      "wins": 147,
+      "losses": 365,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.287109375,
+      "ci": [
+        0.24962055854879447,
+        0.327769089746341
+      ],
+      "avgDuration": 399.29667968755007,
+      "worst": {
+        "vs": "std2_beetle_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "std2_mix_1L",
+        "rate": 1
+      }
+    },
+    {
+      "id": "rush1_ant_1L",
+      "name": "러시 개미 1레인 올인",
+      "wins": 86,
+      "losses": 422,
+      "draws": 4,
+      "games": 512,
+      "winRate": 0.16796875,
+      "ci": [
+        0.1380855381835304,
+        0.2027973995244792
+      ],
+      "avgDuration": 514.7816406250084,
+      "worst": {
+        "vs": "eco3_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "std2_mix_1L",
+      "name": "표준 혼합 1레인 올인",
+      "wins": 83,
+      "losses": 425,
+      "draws": 4,
+      "games": 512,
+      "winRate": 0.162109375,
+      "ci": [
+        0.132721324435414,
+        0.19653013570273692
+      ],
+      "avgDuration": 504.4660156250154,
+      "worst": {
+        "vs": "greedy5_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "turtle3_def2",
+        "rate": 1
+      }
+    },
+    {
+      "id": "ecoOnly12",
+      "name": "경제 올인(농장12)",
+      "wins": 49,
+      "losses": 463,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.095703125,
+      "ci": [
+        0.07314880600516632,
+        0.12427924167458654
+      ],
+      "avgDuration": 378.4699218750473,
+      "worst": {
+        "vs": "rush1_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "defenseOnly",
+        "rate": 1
+      }
+    },
+    {
+      "id": "wallFirst_rush",
+      "name": "벽 먼저 → 러시",
+      "wins": 47,
+      "losses": 465,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.091796875,
+      "ci": [
+        0.06973467141864251,
+        0.1199390578812046
+      ],
+      "avgDuration": 411.3044921875364,
+      "worst": {
+        "vs": "std2_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "defenseOnly",
+        "rate": 1
+      }
+    },
+    {
+      "id": "turtle3_def2",
+      "name": "터틀(농장3→디펜스2→병영)",
+      "wins": 32,
+      "losses": 480,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0.0625,
+      "ci": [
+        0.04461632058907124,
+        0.08690002086148259
+      ],
+      "avgDuration": 421.77773437503237,
+      "worst": {
+        "vs": "rush1_mix_2L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "defenseOnly",
+        "rate": 1
+      }
+    },
+    {
+      "id": "defenseOnly",
+      "name": "디펜스 올인",
+      "wins": 0,
+      "losses": 512,
+      "draws": 0,
+      "games": 512,
+      "winRate": 0,
+      "ci": [
+        0,
+        0.007447247372061501
+      ],
+      "avgDuration": 416.4807617187871,
+      "worst": {
+        "vs": "rush1_mix_4L",
+        "rate": 0
+      },
+      "best": {
+        "vs": "rush1_mix_4L",
+        "rate": 0
+      }
+    }
+  ],
+  "matrix": {
+    "rush1_mix_2L": {
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      }
+    },
+    "rush1_mix_4L": {
+      "rush1_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      }
+    },
+    "rush1_ant_1L": {
+      "rush1_mix_4L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "std2_mix_4L": {
+      "honey_eco": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "std2_noCastle": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "std2_noBarracksUp": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 5,
+        "d": 2
+      }
+    },
+    "eco3_mix_4L": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_ant_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 9,
+        "l": 5,
+        "d": 2
+      },
+      "std2_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      }
+    },
+    "greedy5_mix_4L": {
+      "rush1_mix_2L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "ecoOnly12": {
+      "rush1_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "honey_eco": {
+      "std2_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_mix_2L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 6,
+        "l": 4,
+        "d": 6
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      }
+    },
+    "std2_mix_1L": {
+      "rush1_ant_1L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      }
+    },
+    "std2_mix_2L": {
+      "rush1_mix_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      }
+    },
+    "std2_mix_3L": {
+      "rush1_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      }
+    },
+    "std2_ant_4L": {
+      "std2_mix_4L": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "eco3_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "eco3_mix_4L_react": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 4,
+        "l": 11,
+        "d": 1
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 4,
+        "l": 9,
+        "d": 3
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "std2_noBarracksUp": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 5,
+        "l": 8,
+        "d": 3
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 5,
+        "d": 2
+      }
+    },
+    "std2_beetle_4L": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 2,
+        "l": 3,
+        "d": 11
+      },
+      "std2_mix_4L_turret": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      }
+    },
+    "std2_mantis_4L": {
+      "rush1_mix_2L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      }
+    },
+    "rush1_beetle_2L": {
+      "rush1_mix_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "rush1_mantis_2L": {
+      "std2_mix_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      }
+    },
+    "eco3_beetle_4L": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 3,
+        "l": 2,
+        "d": 11
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      }
+    },
+    "std2_mix_4L_def1": {
+      "rush1_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 7,
+        "l": 6,
+        "d": 3
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 3,
+        "l": 3,
+        "d": 10
+      },
+      "eco3_mix_4L_react": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "eco3_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 9,
+        "l": 4,
+        "d": 3
+      },
+      "std2_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 8,
+        "d": 1
+      },
+      "std2_noCastle": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 3,
+        "d": 10
+      },
+      "std2_noBarracksUp": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      }
+    },
+    "std2_mix_4L_def2": {
+      "rush1_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "std2_mix_4L_turret": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_castleFocus": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 4,
+        "d": 3
+      },
+      "std2_mix_4L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "eco3_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 5,
+        "d": 3
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      }
+    },
+    "std2_mix_4L_wall": {
+      "std2_mix_4L": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "eco3_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "std2_beetle_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "eco3_mix_4L_react": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_mix_4L_turret": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_noCastle": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_noBarracksUp": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 3,
+        "d": 4
+      }
+    },
+    "std2_mix_4L_turret": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "eco3_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 11,
+        "l": 4,
+        "d": 1
+      },
+      "std2_beetle_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_castleFocus": {
+        "w": 4,
+        "l": 7,
+        "d": 5
+      },
+      "std2_noCastle": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 6,
+        "d": 1
+      }
+    },
+    "turtle3_def2": {
+      "rush1_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "defenseOnly": {
+      "rush1_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "wallFirst_rush": {
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      }
+    },
+    "std2_castleFocus": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_noBarracksUp": {
+        "w": 2,
+        "l": 13,
+        "d": 1
+      },
+      "std2_mix_4L": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "eco3_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_mix_4L_turret": {
+        "w": 7,
+        "l": 4,
+        "d": 5
+      },
+      "std2_noUnlock": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 2,
+        "d": 8
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      }
+    },
+    "std2_barracksFocus": {
+      "rush1_mix_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_noUnlock": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 11,
+        "l": 3,
+        "d": 2
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 5,
+        "l": 5,
+        "d": 6
+      },
+      "eco3_mix_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "std2_beetle_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "std2_mix_4L_turret": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "std2_noCastle": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 3,
+        "l": 3,
+        "d": 10
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      }
+    },
+    "std2_noUnlock": {
+      "rush1_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      }
+    },
+    "std2_t2only": {
+      "std2_mix_4L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "eco3_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 8,
+        "l": 7,
+        "d": 1
+      },
+      "std2_beetle_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "std2_mix_4L_turret": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 3,
+        "l": 3,
+        "d": 10
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 7,
+        "l": 7,
+        "d": 2
+      },
+      "std2_noCastle": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 2,
+        "l": 6,
+        "d": 8
+      },
+      "std2_noBarracksUp": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 4,
+        "l": 4,
+        "d": 8
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      }
+    },
+    "std2_noCastle": {
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      }
+    },
+    "std2_noBarracksUp": {
+      "rush1_mix_2L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 13,
+        "l": 2,
+        "d": 1
+      },
+      "rush1_mix_2L_react": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 14,
+        "l": 2,
+        "d": 0
+      }
+    },
+    "std2_mix_4L_react": {
+      "rush1_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 6,
+        "l": 7,
+        "d": 3
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 3,
+        "l": 11,
+        "d": 2
+      },
+      "rush1_mix_2L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 15,
+        "l": 1,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 8,
+        "l": 8,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 4,
+        "l": 9,
+        "d": 3
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 12,
+        "l": 4,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 5,
+        "l": 9,
+        "d": 2
+      },
+      "eco3_mix_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 5,
+        "l": 9,
+        "d": 2
+      },
+      "std2_beetle_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 3,
+        "l": 9,
+        "d": 4
+      },
+      "std2_mix_4L_turret": {
+        "w": 6,
+        "l": 9,
+        "d": 1
+      },
+      "std2_t2only": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      }
+    },
+    "eco3_mix_4L_react": {
+      "std2_mix_4L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 5,
+        "l": 9,
+        "d": 2
+      },
+      "std2_ant_4L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "honey_eco": {
+        "w": 4,
+        "l": 6,
+        "d": 6
+      },
+      "std2_mix_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 9,
+        "l": 7,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "rush1_ant_1L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "rush1_mix_2L_react": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      }
+    },
+    "rush1_mix_2L_react": {
+      "rush1_ant_1L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "greedy5_mix_4L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "std2_mix_3L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mantis_4L": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L_def2": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "turtle3_def2": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_noUnlock": {
+        "w": 4,
+        "l": 12,
+        "d": 0
+      },
+      "std2_noBarracksUp": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "std2_mix_4L": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "eco3_mix_4L": {
+        "w": 1,
+        "l": 15,
+        "d": 0
+      },
+      "std2_ant_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_beetle_4L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_wall": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "std2_mix_4L_turret": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_t2only": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_noCastle": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "rush1_mix_4L": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "ecoOnly12": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_mix_2L": {
+        "w": 11,
+        "l": 5,
+        "d": 0
+      },
+      "rush1_beetle_2L": {
+        "w": 10,
+        "l": 6,
+        "d": 0
+      },
+      "std2_mix_4L_def1": {
+        "w": 0,
+        "l": 16,
+        "d": 0
+      },
+      "defenseOnly": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_barracksFocus": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "std2_mix_4L_react": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      },
+      "rush1_mix_2L": {
+        "w": 6,
+        "l": 6,
+        "d": 4
+      },
+      "honey_eco": {
+        "w": 5,
+        "l": 11,
+        "d": 0
+      },
+      "std2_mix_1L": {
+        "w": 13,
+        "l": 3,
+        "d": 0
+      },
+      "rush1_mantis_2L": {
+        "w": 7,
+        "l": 9,
+        "d": 0
+      },
+      "eco3_beetle_4L": {
+        "w": 6,
+        "l": 10,
+        "d": 0
+      },
+      "wallFirst_rush": {
+        "w": 16,
+        "l": 0,
+        "d": 0
+      },
+      "std2_castleFocus": {
+        "w": 2,
+        "l": 14,
+        "d": 0
+      },
+      "eco3_mix_4L_react": {
+        "w": 3,
+        "l": 13,
+        "d": 0
+      }
+    }
+  }
+}

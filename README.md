@@ -19,10 +19,20 @@ npm run typecheck
 ## 밸런스 시뮬레이션 (렌더링 없이 AI vs AI)
 
 ```bash
+# 두 프로필 맞대결
 npm run sim -- --a balanced --b defenseOnly --games 20
-npm run sim -- --matrix --games 8
 npm run sim -- --a reactive --b rush --games 10 --timeLimit 900 --verbose
+
+# 33개 전략 풀 리그 (진영 교대, Wilson 95% 신뢰구간, 4프로세스 병렬). 약 5~10분.
+npm run tournament -- --games 8 --jobs 4 --out docs/balance/unlimited
+npm run tournament -- --games 8 --jobs 4 --timeLimit 900 --out docs/balance/limit15
+npm run tournament -- --only std2_mix_4L,rush1_mix_2L,defenseOnly --games 20
+
+# 유닛 상성표: 1레인, 병영 2개 vs 2개, 8x8
+npm run duel -- 3
 ```
+
+전략 목록은 `src/sim/ai/strategies.ts`, 최근 결과는 `docs/balance/`에 있다.
 
 ## 구조
 
@@ -35,8 +45,8 @@ src/
     actions.ts    플레이어/AI가 내리는 명령 (설치, 업그레이드, 해금, 비상 방어 ...)
     combat.ts     피해 계산, 가스 보상
     step.ts       한 틱(1/20초) 진행: 이동, 전투, 생산, 시야
-    ai/           AI 프로필과 컨트롤러 (난이도 프리셋 포함)
+    ai/           AI 프로필·전략 카탈로그·컨트롤러 (난이도 프리셋 포함)
   ui/             Canvas 2D 렌더러와 레이아웃
-  headless/       AI vs AI 러너
+  headless/       AI vs AI 러너 (sim), 전략 토너먼트 (tournament), 유닛 상성표 (duel)
   main.ts         브라우저 게임 루프와 입력
 ```
