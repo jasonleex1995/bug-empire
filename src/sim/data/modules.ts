@@ -1,4 +1,4 @@
-import { UNITS, type UnitDef } from './units';
+import { UNITS, type Family, type UnitDef } from './units';
 
 export type ModuleKind = 'resource' | 'defense' | 'barracks';
 
@@ -10,6 +10,8 @@ export interface DefenseAttack {
   slow: number;
   /** Hits every enemy in range instead of the nearest one. */
   aoe: boolean;
+  /** Push enemies away from the tower by this many cells (0 = none). */
+  knockback: number;
 }
 
 export interface ModuleDef {
@@ -20,26 +22,30 @@ export interface ModuleDef {
   cost: number;
   hp: number;
   desc: string;
-  /** resource */
   incomePerSec?: number;
-  /** barracks */
   unitId?: string;
   spawnInterval?: number;
-  /** defense */
   attack?: DefenseAttack;
 }
 
-/** Barracks level -> spawn interval multiplier. Levels are per cell. */
 export const BARRACKS_LEVEL_SPAWN_MULT: Record<1 | 2 | 3, number> = { 1: 1.0, 2: 0.7, 3: 0.5 };
 
-/** Upgrade to level N costs (base cost * mineralRatio) minerals + gas. */
 export const BARRACKS_UPGRADE_COST: Record<2 | 3, { mineralRatio: number; gas: number }> = {
   2: { mineralRatio: 0.5, gas: 25 },
   3: { mineralRatio: 0.8, gas: 50 },
 };
 
-const BARRACKS_COST_BY_TIER: Record<1 | 2 | 3, number> = { 1: 70, 2: 120, 3: 180 };
-const BARRACKS_HP_BY_TIER: Record<1 | 2 | 3, number> = { 1: 260, 2: 340, 3: 420 };
+/** Cheap ant tech vs pricier beetle/mantis tech. */
+const BARRACKS_COST: Record<Family, Record<1 | 2 | 3, number>> = {
+  ant: { 1: 55, 2: 95, 3: 140 },
+  beetle: { 1: 95, 2: 160, 3: 200 },
+  mantis: { 1: 90, 2: 150, 3: 190 },
+};
+const BARRACKS_HP: Record<Family, Record<1 | 2 | 3, number>> = {
+  ant: { 1: 220, 2: 280, 3: 340 },
+  beetle: { 1: 320, 2: 420, 3: 500 },
+  mantis: { 1: 240, 2: 300, 3: 360 },
+};
 
 function barracksFor(u: UnitDef): ModuleDef {
   return {
@@ -47,8 +53,8 @@ function barracksFor(u: UnitDef): ModuleDef {
     name: `${u.name} 병영`,
     short: u.short,
     kind: 'barracks',
-    cost: BARRACKS_COST_BY_TIER[u.tier],
-    hp: BARRACKS_HP_BY_TIER[u.tier],
+    cost: BARRACKS_COST[u.family][u.tier],
+    hp: BARRACKS_HP[u.family][u.tier],
     unitId: u.id,
     spawnInterval: u.spawnInterval,
     desc: `${u.name}을(를) ${u.spawnInterval}초마다 자동 생산`,
@@ -60,15 +66,32 @@ export const RESOURCE_MODULES: ModuleDef[] = [
   { id: 'honey_pot', name: '꿀단지', short: '꿀', kind: 'resource', cost: 150, hp: 180, incomePerSec: 3.5, desc: '초당 미네랄 3.5 (파괴되면 상대에게 큰 가스)' },
 ];
 
+/** Utility defenses: buy time, not kills. */
 export const DEFENSE_MODULES: ModuleDef[] = [
-  { id: 'thorn_wall', name: '가시덤불', short: '덤', kind: 'defense', cost: 40, hp: 450, desc: '공격 없음. 시간을 번다.' },
-  { id: 'poison_mushroom', name: '독버섯', short: '독', kind: 'defense', cost: 70, hp: 100, attack: { dmg: 4, interval: 1.0, range: 1.5, slow: 2.0, aoe: true }, desc: '사거리 내 전체에 약한 피해 + 둔화' },
-  { id: 'spider_turret', name: '거미줄 포탑', short: '거', kind: 'defense', cost: 90, hp: 120, attack: { dmg: 14, interval: 0.9, range: 2.0, slow: 0, aoe: false }, desc: '가장 가까운 적 하나를 공격' },
+  { id: 'thorn_wall', name: '가시덤불', short: '덤', kind: 'defense', cost: 40, hp: 450, desc: '공격 없음. 시간을 번다. 파괴 시 파편+둔화.' },
+  {
+    id: 'poison_mushroom',
+    name: '끈끈이이슬',
+    short: '끈',
+    kind: 'defense',
+    cost: 65,
+    hp: 90,
+    attack: { dmg: 0, interval: 0.8, range: 1.6, slow: 2.2, aoe: true, knockback: 0 },
+    desc: '범위 둔화만 (딜 없음). 파괴 시 파편+둔화.',
+  },
+  {
+    id: 'spider_turret',
+    name: '돌풍돌기',
+    short: '돌',
+    kind: 'defense',
+    cost: 80,
+    hp: 110,
+    attack: { dmg: 0, interval: 2.4, range: 1.8, slow: 0, aoe: false, knockback: 0.55 },
+    desc: '가장 가까운 적을 짧게 뒤로 밀침. 파괴 시 파편+둔화.',
+  },
 ];
 
 export const BARRACKS_MODULES: ModuleDef[] = UNITS.map(barracksFor);
-
 export const MODULES: ModuleDef[] = [...RESOURCE_MODULES, ...DEFENSE_MODULES, ...BARRACKS_MODULES];
 export const MODULE_BY_ID: Record<string, ModuleDef> = Object.fromEntries(MODULES.map((m) => [m.id, m]));
-
 export const STARTING_RESOURCE_MODULE = 'aphid_farm';

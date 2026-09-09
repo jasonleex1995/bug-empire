@@ -19,7 +19,7 @@ import {
 import { effectiveStats } from '../sim/combat';
 import { BARRACKS_LEVEL_SPAWN_MULT, BARRACKS_MODULES, DEFENSE_MODULES, MODULE_BY_ID, RESOURCE_MODULES, type ModuleDef } from '../sim/data/modules';
 import { FAMILY_NAME, FAMILY_SHORT, UNIT_BY_ID, type Family } from '../sim/data/units';
-import { ATK_PER_LEVEL, MAX_UPGRADE_LEVEL, SPECIAL_TRACK, TRACKS, TRACK_NAME, type Track } from '../sim/data/upgrades';
+import { FAMILY_TRACKS, MAX_UPGRADE_LEVEL, TRACKS, type Track } from '../sim/data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from '../sim/state';
 import {
   CARDS_LEFT,
@@ -508,10 +508,12 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
 
     const tooltip = [def.name, def.kind === 'barracks' ? `${cost} 미네랄 · ${FAMILY_NAME[unit!.family]} T${unit!.tier}` : `${cost} 미네랄`, def.desc];
     if (unit) {
+      const tags: string[] = [];
+      if (unit.pierce > 0) tags.push(`관통 ${unit.pierce}`);
+      if (unit.poisonDps > 0) tags.push(`독 ${unit.poisonDps}/s×${unit.poisonDuration}s`);
       tooltip.push(`HP ${unit.hp}  공격 ${unit.dmg}/${unit.atkInterval}s  방어 ${unit.armor}`);
-      tooltip.push(
-        `이동 ${unit.speed}  사거리 ${unit.range}  생산 ${unit.spawnInterval}s${unit.siegeMult !== 1 ? `  공성 x${unit.siegeMult}` : ''}${unit.pierce ? '  방어 관통' : ''}`,
-      );
+      tooltip.push(`이동 ${unit.speed}  사거리 ${unit.range}  생산 ${unit.spawnInterval}s`);
+      if (tags.length) tooltip.push(tags.join(' · '));
       if (locked) tooltip.push(`잠김: 가스 ${unit.unlockGas}로 해금 (클릭)`);
     }
     if (def.kind === 'defense') tooltip.push('디펜스 킬 가스 25%. 업그레이드 불가.');
@@ -563,24 +565,17 @@ function drawUpgradePanel(ctx: CanvasRenderingContext2D, game: GameState, ui: Ui
     TRACKS.forEach((t, ti) => {
       const lvl = me.upgrades[f][t];
       const cost = castleUpgradeCost(game, 0, f, t);
-      const name = t === 'special' ? SPECIAL_TRACK[f].name : TRACK_NAME[t];
-      const label = cost === null ? `${name} MAX` : `${name} ${lvl}/${MAX_UPGRADE_LEVEL}  ${cost}G`;
+      const track = FAMILY_TRACKS[f][t];
+      const label = cost === null ? `${track.name} MAX` : `${track.name} ${lvl}/${MAX_UPGRADE_LEVEL}  ${cost}G`;
       const b: Button = {
         id: `up_${f}_${t}`,
-        x: x0 + 100 + ti * 145,
+        x: x0 + 100 + ti * 200,
         y,
-        w: 138,
+        w: 190,
         h: 28,
         onClick: () => api.castleUpgrade(f, t),
         disabled: cost === null || me.gas < cost,
-        tooltip: [
-          `${FAMILY_NAME[f]} ${name}`,
-          t === 'atk'
-            ? `공격력 +${ATK_PER_LEVEL[f]}/단계 (방어력 고정 감산이라 단단한 상대에 유리)`
-            : t === 'armor'
-              ? '방어력 +1/단계 (다수의 약한 공격에 유리)'
-              : SPECIAL_TRACK[f].desc,
-        ],
+        tooltip: [`${FAMILY_NAME[f]} ${track.name}`, track.desc],
       };
       button(ctx, buttons, b, label, ui, { size: 11, color: cost === null ? C.mineral : C.text });
     });

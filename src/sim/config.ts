@@ -55,6 +55,11 @@ export const SLOW_FACTOR = 0.6;
 /** Every hit rolls its damage in [1 - v, 1 + v]; keeps identical fights from resolving identically. */
 export const DAMAGE_VARIANCE = 0.15;
 
+/** When any module is destroyed: shrapnel + short slow on enemy units in that lane near the wreck. */
+export const MODULE_BACKLASH_DAMAGE = 22;
+export const MODULE_BACKLASH_SLOW = 1.0;
+export const MODULE_BACKLASH_RANGE = 1.25;
+
 export type Side = 0 | 1;
 
 export function otherSide(s: Side): Side {

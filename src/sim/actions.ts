@@ -11,10 +11,10 @@ import {
   inOwnTerritory,
   type Side,
 } from './config';
-import { damageUnit, effectiveStats } from './combat';
+import { damageUnit, effectiveStats, syncUnitMaxHp } from './combat';
 import { BARRACKS_UPGRADE_COST, MODULE_BY_ID } from './data/modules';
 import { UNIT_BY_ID, type Family } from './data/units';
-import { MAX_UPGRADE_LEVEL, UPGRADE_GAS_COST, type Track } from './data/upgrades';
+import { FAMILY_TRACKS, MAX_UPGRADE_LEVEL, UPGRADE_GAS_COST, type Track } from './data/upgrades';
 import { moduleAt, type GameState, type ModuleInst } from './state';
 
 export type ActionResult = { ok: true } | { ok: false; reason: string };
@@ -124,15 +124,7 @@ export function castleUpgrade(state: GameState, side: Side, family: Family, trac
   if (p.gas < cost) return fail('not enough gas');
   p.gas -= cost;
   p.upgrades[family][track] += 1;
-  if (family === 'beetle' && track === 'special') {
-    // Retroactive max-HP upgrade: living beetles gain the extra HP immediately.
-    for (const u of state.units) {
-      if (u.side !== side || UNIT_BY_ID[u.defId].family !== 'beetle') continue;
-      const newMax = effectiveStats(state, u).maxHp;
-      u.hp += newMax - u.maxHp;
-      u.maxHp = newMax;
-    }
-  }
+  if (FAMILY_TRACKS[family][track].effect === 'hp') syncUnitMaxHp(state, side, family);
   return ok;
 }
 

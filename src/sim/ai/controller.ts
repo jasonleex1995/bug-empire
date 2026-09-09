@@ -163,12 +163,12 @@ export class AiController {
     const families = (Object.keys(famCount) as Family[]).filter((f) => famCount[f] > 0).sort((a, b) => famCount[b] - famCount[a]);
     if (families.length === 0) return false;
 
-    // Facing lots of armored beetles: raw attack matters more. Facing ants: armor.
+    // Prefer the family's identity weapon first when facing a counter target.
     const dominantEnemy = lanes.map((l) => l.enemyFamily).filter((f): f is Family => f !== null)[0] ?? null;
     let trackOrder: Track[] = TRACKS;
-    if (dominantEnemy === 'beetle') trackOrder = ['atk', 'special', 'armor'];
-    else if (dominantEnemy === 'ant') trackOrder = ['armor', 'atk', 'special'];
-
+    if (dominantEnemy === 'beetle') trackOrder = ['t0', 't1']; // mantis pierce / beetle armor
+    else if (dominantEnemy === 'ant') trackOrder = ['t1', 't0'];
+    else if (dominantEnemy === 'mantis') trackOrder = ['t0', 't1'];
     for (const fam of families) {
       let cheapest: { track: Track; cost: number } | null = null;
       for (const track of trackOrder) {

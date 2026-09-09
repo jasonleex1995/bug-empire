@@ -32,24 +32,14 @@ export interface StrategySpec {
 
 const FAMILY_UNITS: Record<Family, string[]> = {
   ant: ['fire_ant', 'acid_ant', 'black_ant'],
-  beetle: ['kabuto_beetle', 'stag_beetle', 'rhino_beetle'],
-  mantis: ['orchid_mantis', 'king_mantis', 'leaf_mantis'],
+  beetle: ['kabuto_beetle', 'rhino_beetle'],
+  mantis: ['king_mantis', 'leaf_mantis'],
 };
 
-const MIX_UNITS = [
-  'fire_ant',
-  'kabuto_beetle',
-  'king_mantis',
-  'stag_beetle',
-  'acid_ant',
-  'black_ant',
-  'rhino_beetle',
-  'leaf_mantis',
-  'orchid_mantis',
-];
+const MIX_UNITS = ['fire_ant', 'kabuto_beetle', 'king_mantis', 'acid_ant', 'black_ant', 'rhino_beetle', 'leaf_mantis'];
 
-const T2 = ['fire_ant', 'kabuto_beetle', 'orchid_mantis'];
-const T3 = ['stag_beetle', 'acid_ant', 'king_mantis'];
+const T2 = ['fire_ant', 'kabuto_beetle', 'king_mantis'];
+const T3 = ['acid_ant'];
 
 function unlockOrderFor(family: Family | 'mix', mode: StrategySpec['unlock']): string[] {
   if (mode === 'none') return [];

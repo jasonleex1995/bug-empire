@@ -41,17 +41,7 @@ export interface AiProfile {
   noBarracksUpgrades?: boolean;
 }
 
-const ALL_UNITS_BALANCED = [
-  'fire_ant',
-  'kabuto_beetle',
-  'king_mantis',
-  'stag_beetle',
-  'acid_ant',
-  'black_ant',
-  'rhino_beetle',
-  'leaf_mantis',
-  'orchid_mantis',
-];
+const ALL_UNITS_BALANCED = ['fire_ant', 'kabuto_beetle', 'king_mantis', 'acid_ant', 'black_ant', 'rhino_beetle', 'leaf_mantis'];
 
 export const PROFILES: Record<string, AiProfile> = {
   balanced: {
@@ -70,7 +60,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 3,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['fire_ant', 'kabuto_beetle', 'orchid_mantis', 'stag_beetle', 'acid_ant', 'king_mantis'],
+    unlockOrder: ['fire_ant', 'kabuto_beetle', 'king_mantis', 'acid_ant'],
     priority: ['farm', 'barracks', 'defense'],
     barracksUpgradeBias: 0.5,
   },
@@ -89,7 +79,7 @@ export const PROFILES: Record<string, AiProfile> = {
     cheatVision: false,
     concentrateLanes: 2,
     barracksPerLane: 5,
-    unitPrefs: ['fire_ant', 'black_ant', 'leaf_mantis', 'rhino_beetle', 'kabuto_beetle', 'orchid_mantis'],
+    unitPrefs: ['fire_ant', 'black_ant', 'leaf_mantis', 'rhino_beetle', 'kabuto_beetle', 'king_mantis'],
     unlockOrder: ['fire_ant', 'kabuto_beetle'],
     priority: ['barracks', 'farm'],
     barracksUpgradeBias: 0.8,
@@ -130,7 +120,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 3,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['kabuto_beetle', 'orchid_mantis', 'stag_beetle', 'king_mantis'],
+    unlockOrder: ['kabuto_beetle', 'king_mantis', 'acid_ant'],
     priority: ['farm', 'barracks', 'defense'],
     barracksUpgradeBias: 0.5,
   },
@@ -150,7 +140,7 @@ export const PROFILES: Record<string, AiProfile> = {
     concentrateLanes: 4,
     barracksPerLane: 2,
     unitPrefs: ALL_UNITS_BALANCED,
-    unlockOrder: ['kabuto_beetle', 'stag_beetle', 'king_mantis'],
+    unlockOrder: ['kabuto_beetle', 'king_mantis'],
     priority: ['farm', 'defense', 'barracks'],
     barracksUpgradeBias: 0.3,
   },

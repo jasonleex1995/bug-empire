@@ -39,7 +39,9 @@ export interface UnitInst {
   maxHp: number;
   atkTimer: number;
   slowUntil: number;
-  /** Snapshot of owner's upgrades at spawn time (applied retroactively via lookups anyway). */
+  poisonUntil: number;
+  poisonDps: number;
+  poisonFrom: Side | null;
   spawnedAt: number;
 }
 

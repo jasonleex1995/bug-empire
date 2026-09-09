@@ -17,7 +17,7 @@ import {
   otherSide,
   type Side,
 } from './config';
-import { damageCastle, damageModule, damageUnit, effectiveStats, resolveUnitAttack, rollDamage } from './combat';
+import { applySlow, damageCastle, damageModule, damageUnit, effectiveStats, resolveUnitAttack, rollDamage, tickPoison } from './combat';
 import { BARRACKS_LEVEL_SPAWN_MULT, MODULE_BY_ID } from './data/modules';
 import { UNIT_BY_ID } from './data/units';
 import type { GameState, ModuleInst, UnitInst } from './state';
@@ -107,6 +107,8 @@ function nextEnemyModuleEdge(state: GameState, u: UnitInst): number | null {
 }
 
 function stepUnit(state: GameState, u: UnitInst, dt: number): void {
+  tickPoison(state, u, dt);
+  if (u.hp <= 0) return;
   const stats = effectiveStats(state, u);
   const reach = stats.def.range;
   const d = direction(u.side);
@@ -131,7 +133,6 @@ function stepUnit(state: GameState, u: UnitInst, dt: number): void {
     return;
   }
 
-  // Inside our own grid, chase intruders even if they are behind us.
   let moveDir: 1 | -1 = d;
   if (inOwnTerritory(u.side, u.x)) {
     let nearest: UnitInst | null = null;
@@ -201,6 +202,9 @@ function stepModule(state: GameState, m: ModuleInst, dt: number): void {
         maxHp: 0,
         atkTimer: 0,
         slowUntil: 0,
+        poisonUntil: 0,
+        poisonDps: 0,
+        poisonFrom: null,
         spawnedAt: state.t,
       };
       const st = effectiveStats(state, inst);
@@ -221,8 +225,13 @@ function stepModule(state: GameState, m: ModuleInst, dt: number): void {
     m.atkTimer = def.attack.interval;
     const targets = def.attack.aoe ? inRange : [inRange.reduce((p, c) => (Math.abs(c.x - cx) < Math.abs(p.x - cx) ? c : p))];
     for (const e of targets) {
-      damageUnit(state, e, def.attack.dmg, m.side, true);
-      if (def.attack.slow > 0) e.slowUntil = Math.max(e.slowUntil, state.t + def.attack.slow);
+      if (def.attack.dmg > 0) damageUnit(state, e, def.attack.dmg, m.side, true);
+      if (def.attack.slow > 0) applySlow(state, e, def.attack.slow);
+      if (def.attack.knockback > 0) {
+        // Push away from the tower (toward the attacker's castle direction from tower's view = enemy retreat).
+        const push = e.x >= cx ? def.attack.knockback : -def.attack.knockback;
+        e.x = Math.min(LANE_LENGTH, Math.max(0, e.x + push));
+      }
     }
   }
 }

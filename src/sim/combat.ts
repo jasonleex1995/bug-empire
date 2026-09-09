@@ -1,6 +1,20 @@
-import { AGGRESSOR_GAS_MULT, DAMAGE_VARIANCE, KILL_GAS_BY_TIER, MODULE_DESTROY_GAS_RATIO, PASSIVE_KILL_GAS_MULT, GAS_CAP, inOwnTerritory, type Side } from './config';
+import {
+  AGGRESSOR_GAS_MULT,
+  DAMAGE_VARIANCE,
+  KILL_GAS_BY_TIER,
+  MODULE_BACKLASH_DAMAGE,
+  MODULE_BACKLASH_RANGE,
+  MODULE_BACKLASH_SLOW,
+  MODULE_DESTROY_GAS_RATIO,
+  PASSIVE_KILL_GAS_MULT,
+  GAS_CAP,
+  LANE_LENGTH,
+  inOwnTerritory,
+  moduleCenter,
+  type Side,
+} from './config';
 import { FAMILY_MULT, UNIT_BY_ID, type UnitDef } from './data/units';
-import { ARMOR_PER_LEVEL, ATK_PER_LEVEL, SPECIAL_TRACK } from './data/upgrades';
+import { FAMILY_TRACKS, TRACKS, type Track } from './data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from './state';
 
 function addGas(state: GameState, side: Side, amount: number): void {
@@ -10,25 +24,47 @@ function addGas(state: GameState, side: Side, amount: number): void {
   p.stats.gasEarned += p.gas - before;
 }
 
-/** Effective stats after castle upgrades (applied retroactively to living units). */
-export function effectiveStats(state: GameState, u: UnitInst): { dmg: number; armor: number; speed: number; atkInterval: number; maxHp: number; def: UnitDef } {
+function sumEffect(state: GameState, u: UnitInst, effect: string): number {
   const def = UNIT_BY_ID[u.defId];
-  const up = state.players[u.side].upgrades[def.family];
-  const special = SPECIAL_TRACK[def.family].perLevel * up.special;
+  const tracks = FAMILY_TRACKS[def.family];
+  const lvl = state.players[u.side].upgrades[def.family];
+  let sum = 0;
+  for (const t of TRACKS) {
+    if (tracks[t].effect === effect) sum += tracks[t].perLevel * lvl[t];
+  }
+  return sum;
+}
+
+/** Resist shortens poison/slow durations (beetle specialty). */
+export function resistFactor(state: GameState, u: UnitInst): number {
+  return Math.max(0.25, 1 - sumEffect(state, u, 'resist'));
+}
+
+export function effectiveStats(state: GameState, u: UnitInst): {
+  dmg: number;
+  armor: number;
+  pierce: number;
+  speed: number;
+  atkInterval: number;
+  maxHp: number;
+  def: UnitDef;
+} {
+  const def = UNIT_BY_ID[u.defId];
+  const atkSpd = sumEffect(state, u, 'atkSpeed');
+  const hpFrac = sumEffect(state, u, 'hp');
+  const armorAdd = sumEffect(state, u, 'armor');
+  const pierceAdd = sumEffect(state, u, 'pierce');
   return {
     def,
-    dmg: def.dmg + ATK_PER_LEVEL[def.family] * up.atk,
-    armor: def.armor + ARMOR_PER_LEVEL * up.armor,
-    speed: def.family === 'ant' ? def.speed * (1 + special) : def.speed,
-    atkInterval: def.family === 'mantis' ? def.atkInterval / (1 + special) : def.atkInterval,
-    maxHp: def.family === 'beetle' ? Math.round(def.hp * (1 + special)) : def.hp,
+    dmg: def.dmg,
+    armor: def.armor + armorAdd,
+    pierce: def.pierce + pierceAdd,
+    speed: def.speed,
+    atkInterval: def.atkInterval / (1 + atkSpd),
+    maxHp: Math.round(def.hp * (1 + hpFrac)),
   };
 }
 
-/**
- * Apply damage to a unit. `passive` marks kills by defenses/castle/spells, which pay reduced gas.
- * Returns true if the unit died from this hit.
- */
 export function damageUnit(state: GameState, target: UnitInst, rawDmg: number, attackerSide: Side, passive: boolean): boolean {
   if (target.hp <= 0) return false;
   target.hp -= rawDmg;
@@ -43,30 +79,62 @@ export function damageUnit(state: GameState, target: UnitInst, rawDmg: number, a
   return true;
 }
 
-/** Unit-vs-unit damage with family multiplier and flat armor. */
 export function rollDamage(state: GameState, base: number): number {
   return base * (1 - DAMAGE_VARIANCE + 2 * DAMAGE_VARIANCE * state.rng.next());
 }
 
-export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst, scale = 1): number {
+/** appliedArmor = max(0, armor - pierce); no overpierce bonus damage. */
+export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst): number {
   const a = effectiveStats(state, attacker);
   const t = effectiveStats(state, target);
   const mult = FAMILY_MULT[a.def.family][t.def.family];
-  return Math.max(1, rollDamage(state, a.dmg * mult * scale) - (a.def.pierce ? 0 : t.armor));
+  const appliedArmor = Math.max(0, t.armor - a.pierce);
+  return Math.max(1, rollDamage(state, a.dmg * mult) - appliedArmor);
 }
 
-/** Hit primary (+ optional splash around it) and apply on-hit slow. */
-export function resolveUnitAttack(state: GameState, attacker: UnitInst, primary: UnitInst): void {
+function applyPoison(state: GameState, attacker: UnitInst, target: UnitInst): void {
   const def = UNIT_BY_ID[attacker.defId];
-  damageUnit(state, primary, unitAttackDamage(state, attacker, primary), attacker.side, false);
-  if (def.slowOnHit > 0) primary.slowUntil = Math.max(primary.slowUntil, state.t + def.slowOnHit);
+  if (def.poisonDps <= 0 || def.poisonDuration <= 0) return;
+  const duration = def.poisonDuration * resistFactor(state, target);
+  const dps = def.poisonDps;
+  target.poisonUntil = Math.max(target.poisonUntil, state.t + duration);
+  if (dps >= target.poisonDps) {
+    target.poisonDps = dps;
+    target.poisonFrom = attacker.side;
+  }
+}
 
-  if (def.splashRadius <= 0 || def.splashMult <= 0) return;
+export function applySlow(state: GameState, target: UnitInst, seconds: number): void {
+  if (seconds <= 0) return;
+  const dur = seconds * resistFactor(state, target);
+  target.slowUntil = Math.max(target.slowUntil, state.t + dur);
+}
+
+export function resolveUnitAttack(state: GameState, attacker: UnitInst, primary: UnitInst): void {
+  damageUnit(state, primary, unitAttackDamage(state, attacker, primary), attacker.side, false);
+  applyPoison(state, attacker, primary);
+}
+
+export function tickPoison(state: GameState, u: UnitInst, dt: number): void {
+  if (u.hp <= 0 || state.t >= u.poisonUntil || u.poisonDps <= 0 || u.poisonFrom === null) {
+    if (state.t >= u.poisonUntil) {
+      u.poisonDps = 0;
+      u.poisonFrom = null;
+    }
+    return;
+  }
+  // Poison ignores armor (ant identity).
+  damageUnit(state, u, u.poisonDps * dt, u.poisonFrom, false);
+}
+
+/** Shrapnel + short slow on enemy units near a wrecked module. */
+export function moduleBacklash(state: GameState, wreck: ModuleInst): void {
+  const cx = moduleCenter(wreck.side, wreck.col);
   for (const e of state.units) {
-    if (e === primary || e.side === attacker.side || e.row !== attacker.row || e.hp <= 0) continue;
-    if (Math.abs(e.x - primary.x) > def.splashRadius) continue;
-    damageUnit(state, e, unitAttackDamage(state, attacker, e, def.splashMult), attacker.side, false);
-    if (def.slowOnHit > 0) e.slowUntil = Math.max(e.slowUntil, state.t + def.slowOnHit);
+    if (e.side === wreck.side || e.row !== wreck.row || e.hp <= 0) continue;
+    if (Math.abs(e.x - cx) > MODULE_BACKLASH_RANGE) continue;
+    damageUnit(state, e, MODULE_BACKLASH_DAMAGE, wreck.side, true);
+    applySlow(state, e, MODULE_BACKLASH_SLOW);
   }
 }
 
@@ -77,6 +145,7 @@ export function damageModule(state: GameState, target: ModuleInst, dmg: number, 
   addGas(state, attackerSide, Math.round(target.mineralValue * MODULE_DESTROY_GAS_RATIO));
   state.players[attackerSide].stats.modulesDestroyed += 1;
   state.events.push({ type: 'moduleDestroyed', row: target.row, col: target.col, side: target.side });
+  moduleBacklash(state, target);
   return true;
 }
 
@@ -86,3 +155,15 @@ export function damageCastle(state: GameState, targetSide: Side, dmg: number): v
   state.players[targetSide === 0 ? 1 : 0].stats.castleDamageDealt += dmg;
   state.events.push({ type: 'castleHit', side: targetSide, dmg });
 }
+
+/** Retroactive max-HP sync after hp-track upgrades. */
+export function syncUnitMaxHp(state: GameState, side: Side, family: UnitDef['family']): void {
+  for (const u of state.units) {
+    if (u.side !== side || UNIT_BY_ID[u.defId].family !== family) continue;
+    const newMax = effectiveStats(state, u).maxHp;
+    u.hp += newMax - u.maxHp;
+    u.maxHp = newMax;
+  }
+}
+
+export type { Track };
