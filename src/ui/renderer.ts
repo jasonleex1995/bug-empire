@@ -716,7 +716,7 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 /** Top sky slice to discard — matches the red box the user marked. */
 const MENU_TOP_CROP = 0.14;
 /**
- * Full-width underground band for BUG EMPIRE + 시작하기.
+ * Full-width underground band for BUG EMPIRE + CTA (시작하기 / 난이도 선택).
  * Sized from the user's collage mockup (~y 500→720 on a 720p frame).
  */
 const MENU_UI_BAND = 220;
@@ -852,44 +852,44 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
   const t = ui.now / 1000;
-  drawMenuBackdrop(ctx, t, 0);
+  // Same world as the title — keep the underground band; only the CTA row changes.
+  drawMenuBackdrop(ctx, t, MENU_UI_BAND);
 
-  // Extra dim so the pick list is the focus.
-  ctx.fillStyle = 'rgba(8,10,12,0.4)';
-  ctx.fillRect(0, 0, W, H);
+  const artH = H - MENU_UI_BAND;
+  const titleCy = artH + 14;
+  glowCircle(ctx, W / 2, titleCy, 90, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, titleCy, 10, C.mineral);
 
-  text(ctx, '난이도 선택', W / 2, 300, 28, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+  text(ctx, '난이도 선택', W / 2, artH + 72, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
 
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
-  const gap = 18;
-  const bw = 200;
-  const bh = 56;
+  const gap = 14;
+  const bw = 160;
+  const bh = 48;
   const totalW = diffs.length * bw + (diffs.length - 1) * gap;
   const startX = Math.round(W / 2 - totalW / 2);
+  const rowY = artH + 92;
   diffs.forEach((d, i) => {
-    const b: Button = {
-      id: `diff_${d}`,
-      x: startX + i * (bw + gap),
-      y: 380,
-      w: bw,
-      h: bh,
-      onClick: () => {
-        api.setDifficulty(d);
-        api.startGame();
+    drawCtaButton(
+      ctx,
+      buttons,
+      ui,
+      {
+        id: `diff_${d}`,
+        x: startX + i * (bw + gap),
+        y: rowY,
+        w: bw,
+        h: bh,
+        onClick: () => {
+          api.setDifficulty(d);
+          api.startGame();
+        },
       },
-    };
-    const hovered = inRect(b, ui.hover.x, ui.hover.y);
-    ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
-    rr(ctx, b.x, b.y, b.w, b.h, 2);
-    ctx.fill();
-    ctx.strokeStyle = hovered ? C.mineral : C.panelLine;
-    ctx.lineWidth = hovered ? 2 : 1;
-    ctx.stroke();
-    text(ctx, DIFFICULTIES[d].name, b.x + b.w / 2, b.y + b.h / 2, 18, C.mineral, 'center', 400, FONT_KO_DISPLAY);
-    buttons.push(b);
+      DIFFICULTIES[d].name,
+    );
   });
 
-  button(ctx, buttons, { id: 'back_menu', x: W / 2 - 80, y: 480, w: 160, h: 40, onClick: () => api.toMenu() }, '뒤로', ui, {
+  button(ctx, buttons, { id: 'back_menu', x: W / 2 - 80, y: artH + 156, w: 160, h: 36, onClick: () => api.toMenu() }, '뒤로', ui, {
     size: 14,
     fill: 'rgba(20,24,22,0.7)',
   });
