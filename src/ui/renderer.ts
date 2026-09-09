@@ -722,13 +722,13 @@ const MENU_TOP_CROP = 0.14;
 const MENU_BOTTOM_CROP = 0.12;
 /** Dark underground band for BUG EMPIRE + 시작하기. */
 const MENU_UI_BAND = 170;
-/** Extra soft fade above the CTA band (px). */
-const MENU_GROUND_FADE = 110;
+/** Soft fade height above the CTA band (px) — long enough to hide foliage cut. */
+const MENU_GROUND_FADE = 160;
 
 /**
- * Title/difficulty backdrop: crop marked top sky, pin the trio high, let
- * textured dirt run into the CTA zone, then soft-fade into underground black.
- * (Hard clip at artH + solid black was what made the ground edge look cut.)
+ * Title/difficulty backdrop: crop marked top sky, pin the trio high, cover the
+ * full canvas with textured dirt, then soft-fade into underground black.
+ * (Hard clip at artH + solid black — and any mid-frame image edge — looked cut.)
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
   ctx.fillStyle = '#080a0c';
@@ -740,13 +740,12 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = Math.floor(imgH * (1 - MENU_TOP_CROP - MENU_BOTTOM_CROP));
-    // Cover width and reach through the fade zone; pin to top after sky crop.
-    const coverH = Math.max(1, H - Math.max(0, uiBand - MENU_GROUND_FADE));
-    const scale = Math.max(W / imgW, coverH / srcH);
+    // Full-canvas cover so there is no hard image bottom edge mid-frame.
+    const scale = Math.max(W / imgW, H / srcH);
     const dw = imgW * scale;
     const dh = srcH * scale;
     const dx = (W - dw) / 2;
-    const dy = 0;
+    const dy = 0; // pin after sky crop so bugs sit high
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
   } else {
@@ -763,9 +762,10 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const fadeTop = H - uiBand - MENU_GROUND_FADE;
     const fade = ctx.createLinearGradient(0, fadeTop, 0, H);
     fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.3, 'rgba(8,10,12,0.22)');
-    fade.addColorStop(0.55, 'rgba(8,10,12,0.62)');
-    fade.addColorStop(0.78, 'rgba(8,10,12,0.9)');
+    fade.addColorStop(0.25, 'rgba(8,10,12,0.18)');
+    fade.addColorStop(0.45, 'rgba(8,10,12,0.45)');
+    fade.addColorStop(0.65, 'rgba(8,10,12,0.78)');
+    fade.addColorStop(0.82, 'rgba(8,10,12,0.94)');
     fade.addColorStop(1, 'rgba(8,10,12,1)');
     ctx.fillStyle = fade;
     ctx.fillRect(0, fadeTop, W, H - fadeTop);
