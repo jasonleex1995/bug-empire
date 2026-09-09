@@ -715,12 +715,20 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 
 /** Top sky slice to discard — matches the red box the user marked. */
 const MENU_TOP_CROP = 0.14;
+/**
+ * Trim the already-dark lower strip of the PNG so the soft fade starts on
+ * textured dirt, not on a muddy near-black pad (avoids a double-dark seam).
+ */
+const MENU_BOTTOM_CROP = 0.12;
 /** Dark underground band for BUG EMPIRE + 시작하기. */
 const MENU_UI_BAND = 170;
+/** Extra soft fade above the CTA band (px). */
+const MENU_GROUND_FADE = 110;
 
 /**
- * Title/difficulty backdrop: crop the marked top sky, keep the natural ground,
- * then soft-fade into black for the CTA (no hard dirt/black seam).
+ * Title/difficulty backdrop: crop marked top sky, pin the trio high, let
+ * textured dirt run into the CTA zone, then soft-fade into underground black.
+ * (Hard clip at artH + solid black was what made the ground edge look cut.)
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
   ctx.fillStyle = '#080a0c';
@@ -731,13 +739,14 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
-    const srcH = imgH - srcY;
-    // Cover the full canvas with the cropped source so ground continues into the CTA zone.
-    const scale = Math.max(W / imgW, H / srcH);
+    const srcH = Math.floor(imgH * (1 - MENU_TOP_CROP - MENU_BOTTOM_CROP));
+    // Cover width and reach through the fade zone; pin to top after sky crop.
+    const coverH = Math.max(1, H - Math.max(0, uiBand - MENU_GROUND_FADE));
+    const scale = Math.max(W / imgW, coverH / srcH);
     const dw = imgW * scale;
     const dh = srcH * scale;
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2;
+    const dy = 0;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
   } else {
@@ -750,23 +759,24 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
   }
 
   if (uiBand > 0) {
-    // Soft fade from the painted ground into underground black — no hard cut line.
-    const fadeTop = H - uiBand - 70;
+    // Long soft fade: textured dirt → underground, no hard cut line.
+    const fadeTop = H - uiBand - MENU_GROUND_FADE;
     const fade = ctx.createLinearGradient(0, fadeTop, 0, H);
     fade.addColorStop(0, 'rgba(8,10,12,0)');
-    fade.addColorStop(0.28, 'rgba(8,10,12,0.35)');
-    fade.addColorStop(0.55, 'rgba(8,10,12,0.78)');
-    fade.addColorStop(0.78, 'rgba(8,10,12,0.94)');
+    fade.addColorStop(0.3, 'rgba(8,10,12,0.22)');
+    fade.addColorStop(0.55, 'rgba(8,10,12,0.62)');
+    fade.addColorStop(0.78, 'rgba(8,10,12,0.9)');
     fade.addColorStop(1, 'rgba(8,10,12,1)');
     ctx.fillStyle = fade;
     ctx.fillRect(0, fadeTop, W, H - fadeTop);
   }
 
+  const moteBand = Math.max(80, H - uiBand - 40);
   ctx.save();
   for (let i = 0; i < 18; i++) {
     const seed = i * 97.3;
     const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % (H - uiBand - 40)) + 12;
+    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 18) % moteBand) + 12;
     const a = 0.1 + (i % 3) * 0.05;
     ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
     ctx.beginPath();
