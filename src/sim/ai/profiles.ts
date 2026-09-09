@@ -31,6 +31,14 @@ export interface AiProfile {
   priority: BuildGoal[];
   /** Fraction of gas decisions that go to barracks upgrades vs castle upgrades. */
   barracksUpgradeBias: number;
+  /** Prefer honey pots as soon as affordable instead of after 3 farms. */
+  honeyEarly?: boolean;
+  /** Which defense to reach for when not under heavy pressure. */
+  defenseStyle?: 'auto' | 'wall' | 'turret' | 'mushroom';
+  /** Skip castle upgrades entirely (gas goes to unlocks / barracks). */
+  noCastleUpgrades?: boolean;
+  /** Skip barracks upgrades entirely. */
+  noBarracksUpgrades?: boolean;
 }
 
 const ALL_UNITS_BALANCED = ['soldier_ant', 'rhino_beetle', 'king_mantis', 'stag_beetle', 'acid_ant', 'worker_ant', 'ladybug', 'small_mantis'];

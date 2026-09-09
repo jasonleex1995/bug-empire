@@ -460,7 +460,7 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
     const tooltip = [def.name, def.kind === 'barracks' ? `${cost} 미네랄 · ${FAMILY_NAME[unit!.family]} T${unit!.tier}` : `${cost} 미네랄`, def.desc];
     if (unit) {
       tooltip.push(`HP ${unit.hp}  공격 ${unit.dmg}/${unit.atkInterval}s  방어 ${unit.armor}`);
-      tooltip.push(`이동 ${unit.speed}  사거리 ${unit.range}${unit.siegeMult > 1 ? `  공성 x${unit.siegeMult}` : ''}`);
+      tooltip.push(`이동 ${unit.speed}  사거리 ${unit.range}  생산 ${unit.spawnInterval}s${unit.siegeMult !== 1 ? `  공성 x${unit.siegeMult}` : ''}${unit.pierce ? '  방어 관통' : ''}`);
       if (locked) tooltip.push(`잠김: 가스 ${unit.unlockGas}로 해금 (클릭)`);
     }
     if (def.kind === 'defense') tooltip.push('디펜스 킬 가스 25%. 업그레이드 불가.');

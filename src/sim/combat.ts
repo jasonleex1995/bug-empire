@@ -1,4 +1,4 @@
-import { KILL_GAS_BY_TIER, MODULE_DESTROY_GAS_RATIO, PASSIVE_KILL_GAS_MULT, GAS_CAP, type Side } from './config';
+import { AGGRESSOR_GAS_MULT, DAMAGE_VARIANCE, KILL_GAS_BY_TIER, MODULE_DESTROY_GAS_RATIO, PASSIVE_KILL_GAS_MULT, GAS_CAP, inOwnTerritory, type Side } from './config';
 import { FAMILY_MULT, UNIT_BY_ID, type UnitDef } from './data/units';
 import { ARMOR_PER_LEVEL, ATK_PER_LEVEL, SPECIAL_TRACK } from './data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from './state';
@@ -35,7 +35,8 @@ export function damageUnit(state: GameState, target: UnitInst, rawDmg: number, a
   state.events.push({ type: 'hit', row: target.row, x: target.x, side: target.side });
   if (target.hp > 0) return false;
   const def = UNIT_BY_ID[target.defId];
-  const gas = KILL_GAS_BY_TIER[def.tier] * (passive ? PASSIVE_KILL_GAS_MULT : 1);
+  const inEnemyGrid = inOwnTerritory(target.side, target.x);
+  const gas = KILL_GAS_BY_TIER[def.tier] * (passive ? PASSIVE_KILL_GAS_MULT : 1) * (!passive && inEnemyGrid ? AGGRESSOR_GAS_MULT : 1);
   addGas(state, attackerSide, gas);
   state.players[attackerSide].stats.kills += 1;
   state.events.push({ type: 'unitDied', row: target.row, x: target.x, side: target.side });
@@ -43,11 +44,15 @@ export function damageUnit(state: GameState, target: UnitInst, rawDmg: number, a
 }
 
 /** Unit-vs-unit damage with family multiplier and flat armor. */
+export function rollDamage(state: GameState, base: number): number {
+  return base * (1 - DAMAGE_VARIANCE + 2 * DAMAGE_VARIANCE * state.rng.next());
+}
+
 export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst): number {
   const a = effectiveStats(state, attacker);
   const t = effectiveStats(state, target);
   const mult = FAMILY_MULT[a.def.family][t.def.family];
-  return Math.max(1, a.dmg * mult - t.armor);
+  return Math.max(1, rollDamage(state, a.dmg * mult) - (a.def.pierce ? 0 : t.armor));
 }
 
 export function damageModule(state: GameState, target: ModuleInst, dmg: number, attackerSide: Side): boolean {

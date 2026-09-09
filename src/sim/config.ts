@@ -7,22 +7,23 @@ export const LANE_LENGTH = COLS * 2 + MID;
 
 export const TICK_DT = 1 / 20;
 
-export const START_MINERALS = 100;
+export const START_MINERALS = 150;
 export const START_GAS = 0;
 export const GAS_CAP = 300;
-export const CASTLE_HP = 8000;
+export const CASTLE_HP = 30000;
 /**
- * Barracks in a lane stop spawning while that side already has this many living units in the lane.
- * Keeps blobs readable and makes stacking more barracks into one lane hit diminishing returns.
+ * Barracks in a lane stop spawning while that side's living units in the lane already occupy this much
+ * lane length (sum of unit body sizes, in cells). Small bugs swarm (~24 worker ants), big ones come in
+ * fewer numbers (~9 stag beetles). Keeps blobs readable and stacking barracks in one lane hits a ceiling.
  */
-export const MAX_UNITS_PER_LANE = 12;
+export const LANE_CAPACITY = 3.6;
 
 /** Gas awarded to the killer's side per kill, by unit tier. */
 export const KILL_GAS_BY_TIER: Record<1 | 2 | 3, number> = { 1: 2, 2: 5, 3: 10 };
 /** Kills made by defense modules or the castle give only this fraction of the gas. */
 export const PASSIVE_KILL_GAS_MULT = 0.25;
 /** Destroying a module awards this fraction of its total mineral value as gas. */
-export const MODULE_DESTROY_GAS_RATIO = 0.3;
+export const MODULE_DESTROY_GAS_RATIO = 0.2;
 
 export const SELL_REFUND_RATIO = 0.5;
 /** Each owned resource module multiplies the price of the next one. */
@@ -36,21 +37,23 @@ export const UPGRADE_TIME = 10;
 /** HP fraction a module has while under construction. */
 export const UNDER_CONSTRUCTION_HP_RATIO = 0.5;
 
-export const CASTLE_ATTACK = { dmg: 6, interval: 1.0, range: 1.2 };
+export const CASTLE_ATTACK = { dmg: 7, interval: 1.0, range: 1.5, targets: 2 };
 export const EMERGENCY_RECHARGE_GAS = 80;
 export const ACID_RAIN = { gas: 60, dmg: 60 };
 
 /** Units within this distance of an enemy cell reveal it (fog of war). */
 export const REVEAL_RANGE = 1.0;
 
-/** Minimum spacing between allied units moving in the same direction. */
-export const UNIT_SPACING = 0.3;
+/** Kills scored inside the enemy's grid pay this much more gas: pushing is rewarded, camping is not. */
+export const AGGRESSOR_GAS_MULT = 2.0;
 /** Extra reach added to melee/ranged range to account for body size. */
 export const BODY_RADIUS = 0.12;
 /** Modules and castles are wide targets: several queued units can hit them at once. */
-export const STRUCTURE_REACH_BONUS = 0.6;
+export const STRUCTURE_REACH_BONUS = 0.35;
 
 export const SLOW_FACTOR = 0.6;
+/** Every hit rolls its damage in [1 - v, 1 + v]; keeps identical fights from resolving identically. */
+export const DAMAGE_VARIANCE = 0.15;
 
 export type Side = 0 | 1;
 

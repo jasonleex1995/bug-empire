@@ -30,15 +30,14 @@ export interface ModuleDef {
 }
 
 /** Barracks level -> spawn interval multiplier. Levels are per cell. */
-export const BARRACKS_LEVEL_SPAWN_MULT: Record<1 | 2 | 3, number> = { 1: 1.0, 2: 0.75, 3: 0.55 };
+export const BARRACKS_LEVEL_SPAWN_MULT: Record<1 | 2 | 3, number> = { 1: 1.0, 2: 0.7, 3: 0.5 };
 
 /** Upgrade to level N costs (base cost * mineralRatio) minerals + gas. */
 export const BARRACKS_UPGRADE_COST: Record<2 | 3, { mineralRatio: number; gas: number }> = {
-  2: { mineralRatio: 0.6, gas: 30 },
-  3: { mineralRatio: 0.9, gas: 60 },
+  2: { mineralRatio: 0.5, gas: 25 },
+  3: { mineralRatio: 0.8, gas: 50 },
 };
 
-const SPAWN_INTERVAL_BY_TIER: Record<1 | 2 | 3, number> = { 1: 10, 2: 16, 3: 24 };
 const BARRACKS_COST_BY_TIER: Record<1 | 2 | 3, number> = { 1: 70, 2: 120, 3: 180 };
 const BARRACKS_HP_BY_TIER: Record<1 | 2 | 3, number> = { 1: 260, 2: 340, 3: 420 };
 
@@ -51,8 +50,8 @@ function barracksFor(u: UnitDef): ModuleDef {
     cost: BARRACKS_COST_BY_TIER[u.tier],
     hp: BARRACKS_HP_BY_TIER[u.tier],
     unitId: u.id,
-    spawnInterval: SPAWN_INTERVAL_BY_TIER[u.tier],
-    desc: `${u.name}을(를) ${SPAWN_INTERVAL_BY_TIER[u.tier]}초마다 자동 생산`,
+    spawnInterval: u.spawnInterval,
+    desc: `${u.name}을(를) ${u.spawnInterval}초마다 자동 생산`,
   };
 }
 

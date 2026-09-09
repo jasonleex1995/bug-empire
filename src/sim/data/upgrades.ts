@@ -2,10 +2,11 @@ import type { Family } from './units';
 
 export type Track = 'atk' | 'armor' | 'special';
 export const TRACKS: Track[] = ['atk', 'armor', 'special'];
-export const MAX_UPGRADE_LEVEL = 3;
+/** Deep upgrade ladder so a kill lead keeps converting into strength and stalemates break. */
+export const MAX_UPGRADE_LEVEL = 6;
 
 /** Gas cost to go from level (n-1) to level n. */
-export const UPGRADE_GAS_COST: Record<1 | 2 | 3, number> = { 1: 40, 2: 80, 3: 140 };
+export const UPGRADE_GAS_COST: Record<number, number> = { 1: 40, 2: 70, 3: 100, 4: 140, 5: 190, 6: 250 };
 
 export const TRACK_NAME: Record<Track, string> = { atk: '공격력', armor: '방어력', special: '특성' };
 
@@ -17,7 +18,7 @@ export const SPECIAL_TRACK: Record<Family, { name: string; desc: string; perLeve
 };
 
 /** Flat attack added per level, per family (bigger hitters get bigger increments). */
-export const ATK_PER_LEVEL: Record<Family, number> = { ant: 2, beetle: 4, mantis: 6 };
+export const ATK_PER_LEVEL: Record<Family, number> = { ant: 2, beetle: 3, mantis: 5 };
 export const ARMOR_PER_LEVEL = 1;
 
 export type UpgradeState = Record<Family, Record<Track, number>>;
