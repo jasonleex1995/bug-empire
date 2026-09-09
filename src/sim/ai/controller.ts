@@ -12,7 +12,7 @@ import {
   upgradeModule,
 } from '../actions';
 import { COLS, MID, ROWS, castleX, moduleSpan, otherSide, type Side } from '../config';
-import { DEFENSE_MODULES, MODULE_BY_ID, RESOURCE_MODULES } from '../data/modules';
+import { MODULE_BY_ID, RESOURCE_MODULES, STICKY_DEW, THORN_WALL, WIND_GUST } from '../data/modules';
 import { FAMILY_MULT, UNIT_BY_ID, type Family } from '../data/units';
 import { TRACKS, type Track } from '../data/upgrades';
 import { moduleAt, type GameState } from '../state';
@@ -327,15 +327,20 @@ export class AiController {
     const free = this.freeColsIn(state, row);
     if (free.length === 0) return false;
     const col = free[free.length - 1];
-    const lane = lanes[row];
-    const [wall, mushroom, turret] = DEFENSE_MODULES;
-    const style = this.profile.defenseStyle ?? 'auto';
-    // Under heavy pressure a wall buys the most time per mineral; otherwise take the best turret we can afford.
-    const order =
-      style === 'wall' ? [wall] : style === 'turret' ? [turret] : style === 'mushroom' ? [mushroom] : lane.enemyHp > 200 ? [wall, turret, mushroom] : [turret, mushroom, wall];
-    for (const def of order) {
+    for (const def of this.defensePreference(lanes[row])) {
       if (p.minerals >= def.cost) return place(state, this.side, row, col, def.id).ok;
     }
     return false;
+  }
+
+  /** Wall under pressure; otherwise gust → sticky → wall (or a forced style). */
+  private defensePreference(lane: LaneInfo) {
+    const style = this.profile.defenseStyle ?? 'auto';
+    if (style === 'wall') return [THORN_WALL];
+    if (style === 'gust') return [WIND_GUST];
+    if (style === 'slow') return [STICKY_DEW];
+    return lane.enemyHp > 200
+      ? [THORN_WALL, WIND_GUST, STICKY_DEW]
+      : [WIND_GUST, STICKY_DEW, THORN_WALL];
   }
 }

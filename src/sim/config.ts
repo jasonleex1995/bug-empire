@@ -12,9 +12,8 @@ export const START_GAS = 0;
 export const GAS_CAP = 300;
 export const CASTLE_HP = 30000;
 /**
- * Barracks in a lane stop spawning while that side's living units in the lane already occupy this much
- * lane length (sum of unit body sizes, in cells). Small bugs swarm (~24 worker ants), big ones come in
- * fewer numbers (~9 stag beetles). Keeps blobs readable and stacking barracks in one lane hits a ceiling.
+ * Barracks in a lane stop spawning while that side's living units already occupy this much
+ * lane length (sum of body sizes). Small ants swarm (~24); large beetles fill the lane with fewer.
  */
 export const LANE_CAPACITY = 3.6;
 

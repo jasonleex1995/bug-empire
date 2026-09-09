@@ -1,3 +1,7 @@
+/**
+ * Combat resolution: unit attacks, poison DoT, armor pierce, module/castle damage,
+ * and destroy backlash. Castle upgrades are applied via effectiveStats / resistFactor.
+ */
 import {
   AGGRESSOR_GAS_MULT,
   DAMAGE_VARIANCE,
@@ -8,13 +12,12 @@ import {
   MODULE_DESTROY_GAS_RATIO,
   PASSIVE_KILL_GAS_MULT,
   GAS_CAP,
-  LANE_LENGTH,
   inOwnTerritory,
   moduleCenter,
   type Side,
 } from './config';
 import { FAMILY_MULT, UNIT_BY_ID, type UnitDef } from './data/units';
-import { FAMILY_TRACKS, TRACKS, type Track } from './data/upgrades';
+import { FAMILY_TRACKS, TRACKS, type TrackEffect } from './data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from './state';
 
 function addGas(state: GameState, side: Side, amount: number): void {
@@ -24,7 +27,7 @@ function addGas(state: GameState, side: Side, amount: number): void {
   p.stats.gasEarned += p.gas - before;
 }
 
-function sumEffect(state: GameState, u: UnitInst, effect: string): number {
+function sumEffect(state: GameState, u: UnitInst, effect: TrackEffect): number {
   const def = UNIT_BY_ID[u.defId];
   const tracks = FAMILY_TRACKS[def.family];
   const lvl = state.players[u.side].upgrades[def.family];
@@ -165,5 +168,3 @@ export function syncUnitMaxHp(state: GameState, side: Side, family: UnitDef['fam
     u.maxHp = newMax;
   }
 }
-
-export type { Track };

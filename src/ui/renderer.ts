@@ -516,7 +516,7 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
       if (tags.length) tooltip.push(tags.join(' · '));
       if (locked) tooltip.push(`잠김: 가스 ${unit.unlockGas}로 해금 (클릭)`);
     }
-    if (def.kind === 'defense') tooltip.push('디펜스 킬 가스 25%. 업그레이드 불가.');
+    if (def.kind === 'defense') tooltip.push('늦추기용. 업그레이드 불가. 파괴 시 파편+둔화.');
     if (def.kind === 'resource') tooltip.push('자원 모듈은 하나 지을 때마다 15% 비싸짐');
     buttons.push({
       id: `card_${def.id}`,

@@ -1,3 +1,13 @@
+/**
+ * Barracks units — locked roster (ants 3 / beetles 2 / mantises 2).
+ *
+ * Mid/late triangle: ant ▷ mantis ▷ beetle ▷ ant
+ *   ants   = poison + swarm (cheap)
+ *   beetles = armor soak + resist (expensive)
+ *   mantises = flat pierce (expensive)
+ *
+ * See docs/ROSTER_RPS_DESIGN.md for the design lock.
+ */
 export type Family = 'ant' | 'beetle' | 'mantis';
 export type Tier = 1 | 2 | 3;
 
@@ -19,7 +29,7 @@ export interface UnitDef {
   spawnInterval: number;
   unlockGas: number;
   short: string;
-  /** Poison DPS on units only (never structures). 0 = none. */
+  /** Poison DPS on enemy units only (never structures). */
   poisonDps: number;
   poisonDuration: number;
 }
@@ -36,19 +46,15 @@ export const FAMILY_SHORT: Record<Family, string> = {
   mantis: '사마',
 };
 
-/** Soft RPS: ant ▷ mantis ▷ beetle ▷ ant */
+/** Soft RPS multipliers on top of poison / pierce / armor mechanics. */
 export const FAMILY_MULT: Record<Family, Record<Family, number>> = {
   ant: { ant: 1, beetle: 0.85, mantis: 1.25 },
   beetle: { ant: 1.2, beetle: 1, mantis: 0.85 },
   mantis: { ant: 0.85, beetle: 1.3, mantis: 1 },
 };
 
-/**
- * 개미 3 (저렴) / 풍뎅이 2 / 사마귀 2 (비싼 테크).
- * 독=개미, 저항=풍뎅이 업, 관통=사마귀.
- */
 export const UNITS: UnitDef[] = [
-  // —— 개미 (값싼 계단)
+  // —— Ants (cheap ladder)
   {
     id: 'black_ant',
     name: '검정개미',
@@ -110,7 +116,7 @@ export const UNITS: UnitDef[] = [
     poisonDuration: 3.5,
   },
 
-  // —— 풍뎅이 (비싼 탱)
+  // —— Beetles (expensive tanks)
   {
     id: 'rhino_beetle',
     name: '코뿔소풍뎅이',
@@ -152,7 +158,7 @@ export const UNITS: UnitDef[] = [
     poisonDuration: 0,
   },
 
-  // —— 사마귀 (비싼 관통). 관통 ≈ 공격×1.5
+  // —— Mantises (expensive pierce). Base pierce ≈ attack × 1.5
   {
     id: 'leaf_mantis',
     name: '좀사마귀',

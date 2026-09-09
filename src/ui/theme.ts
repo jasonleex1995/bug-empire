@@ -206,7 +206,7 @@ export function drawInsect(
     ctx.fill();
     ctx.stroke();
     if (tier >= 1) {
-      // Small horn (코뿔소) → larger (장수)
+      // Small horn (코뿔소 T1) → larger horn (장수 T2)
       const tip = tier >= 2 ? 16 : 13;
       const lift = tier >= 2 ? -6 : -4;
       ctx.beginPath();
@@ -215,15 +215,6 @@ export function drawInsect(
       ctx.lineTo(11, 0);
       ctx.closePath();
       ctx.fill();
-      ctx.stroke();
-    }
-    if (tier >= 3) {
-      // Mandibles (사슴벌레)
-      ctx.beginPath();
-      ctx.moveTo(10, 1);
-      ctx.quadraticCurveTo(15, 4, 14, 7);
-      ctx.moveTo(10, -1);
-      ctx.quadraticCurveTo(15, -4, 14, -7);
       ctx.stroke();
     }
   } else {
@@ -307,7 +298,7 @@ export function drawModuleGlyph(
       }
     }
   } else if (kind === 'defense') {
-    if (defId.includes('thorn') || defId.includes('wall') || defId.includes('가시') || defId === 'thorn_wall') {
+    if (defId === 'thorn_wall') {
       ctx.beginPath();
       for (let i = -2; i <= 2; i++) {
         ctx.moveTo(i * 5, 8);
@@ -317,34 +308,29 @@ export function drawModuleGlyph(
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
-    } else if (defId.includes('mushroom') || defId.includes('독')) {
+    } else if (defId === 'sticky_dew') {
       ctx.beginPath();
-      ctx.ellipse(0, -2, 12, 7, 0, Math.PI, 0);
+      ctx.ellipse(0, 4, 14, 6, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.fillRect(-3, -2, 6, 12);
-      ctx.strokeRect(-3, -2, 6, 12);
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      for (const [dx, dy] of [[-5, -4], [4, -3], [0, -6]] as [number, number][]) {
-        ctx.beginPath();
-        ctx.arc(dx, dy, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      ctx.globalAlpha = 0.35;
+      ctx.beginPath();
+      ctx.ellipse(0, 2, 8, 3.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    } else if (defId === 'wind_gust') {
+      ctx.beginPath();
+      ctx.arc(0, 0, 10, 0.2, Math.PI * 1.6);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, 6, -0.4, Math.PI * 1.2);
+      ctx.stroke();
+      glowCircle(ctx, 0, 0, 12, 'rgba(160,200,220,0.3)');
     } else {
-      // Turret: stalk + orb
       ctx.beginPath();
-      ctx.moveTo(-4, 10);
-      ctx.lineTo(4, 10);
-      ctx.lineTo(2, 0);
-      ctx.lineTo(-2, 0);
-      ctx.closePath();
+      ctx.arc(0, -2, 8, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(0, -5, 7, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      glowCircle(ctx, 0, -5, 10, 'rgba(106,158,200,0.35)');
     }
   } else {
     // Barracks: nest mound with entrance + tier notches

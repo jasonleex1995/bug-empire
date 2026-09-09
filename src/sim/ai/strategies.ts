@@ -16,7 +16,7 @@ export interface StrategySpec {
   family: Family | 'mix';
   /** Defense modules per lane (0 = none). */
   defense: number;
-  defenseStyle?: 'auto' | 'wall' | 'turret' | 'mushroom';
+  defenseStyle?: 'auto' | 'wall' | 'slow' | 'gust';
   /** Put defense before barracks in the spend order. */
   defenseFirst?: boolean;
   reactive?: boolean;
@@ -38,16 +38,19 @@ const FAMILY_UNITS: Record<Family, string[]> = {
 
 const MIX_UNITS = ['fire_ant', 'kabuto_beetle', 'king_mantis', 'acid_ant', 'black_ant', 'rhino_beetle', 'leaf_mantis'];
 
-const T2 = ['fire_ant', 'kabuto_beetle', 'king_mantis'];
-const T3 = ['acid_ant'];
+/** Tier-2 unlocks (one per family). */
+const UNLOCK_T2 = ['fire_ant', 'kabuto_beetle', 'king_mantis'];
+/** Only ants have a T3 unit in the locked roster. */
+const UNLOCK_T3 = ['acid_ant'];
+const STARTERS = new Set(['black_ant', 'rhino_beetle', 'leaf_mantis']);
 
 function unlockOrderFor(family: Family | 'mix', mode: StrategySpec['unlock']): string[] {
   if (mode === 'none') return [];
   const pool =
     family === 'mix'
-      ? [...T2, ...T3]
-      : FAMILY_UNITS[family].filter((u) => !['black_ant', 'rhino_beetle', 'leaf_mantis'].includes(u));
-  if (mode === 't2') return pool.filter((u) => T2.includes(u));
+      ? [...UNLOCK_T2, ...UNLOCK_T3]
+      : FAMILY_UNITS[family].filter((u) => !STARTERS.has(u));
+  if (mode === 't2') return pool.filter((u) => UNLOCK_T2.includes(u));
   return pool;
 }
 
@@ -112,7 +115,8 @@ export const STRATEGY_SPECS: StrategySpec[] = [
   { id: 'std2_mix_4L_def1', name: '표준 혼합 + 디펜스1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1 },
   { id: 'std2_mix_4L_def2', name: '표준 혼합 + 디펜스2/레인', farms: 2, lanes: 4, family: 'mix', defense: 2 },
   { id: 'std2_mix_4L_wall', name: '표준 혼합 + 가시덤불1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1, defenseStyle: 'wall' },
-  { id: 'std2_mix_4L_turret', name: '표준 혼합 + 포탑1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1, defenseStyle: 'turret' },
+  { id: 'std2_mix_4L_gust', name: '표준 혼합 + 돌풍1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1, defenseStyle: 'gust' },
+  { id: 'std2_mix_4L_slow', name: '표준 혼합 + 끈끈이1/레인', farms: 2, lanes: 4, family: 'mix', defense: 1, defenseStyle: 'slow' },
   { id: 'turtle3_def2', name: '터틀(농장3→디펜스2→병영)', farms: 3, lanes: 4, family: 'mix', defense: 2, defenseFirst: true },
   { id: 'defenseOnly', name: '디펜스 올인', farms: 4, lateFarms: 8, lanes: 4, family: 'mix', defense: 4, defenseFirst: true, noBarracks: true },
   { id: 'wallFirst_rush', name: '벽 먼저 → 러시', farms: 1, lanes: 2, family: 'mix', defense: 1, defenseStyle: 'wall', defenseFirst: true },

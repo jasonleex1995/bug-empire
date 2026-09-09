@@ -11,7 +11,7 @@ import {
   inOwnTerritory,
   type Side,
 } from './config';
-import { damageUnit, effectiveStats, syncUnitMaxHp } from './combat';
+import { damageUnit, syncUnitMaxHp } from './combat';
 import { BARRACKS_UPGRADE_COST, MODULE_BY_ID } from './data/modules';
 import { UNIT_BY_ID, type Family } from './data/units';
 import { FAMILY_TRACKS, MAX_UPGRADE_LEVEL, UPGRADE_GAS_COST, type Track } from './data/upgrades';

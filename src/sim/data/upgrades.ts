@@ -1,6 +1,11 @@
+/**
+ * Castle upgrades — two tracks per family (design lock).
+ *   ant    → attack speed / HP
+ *   beetle → armor / resist (shortens poison & slow)
+ *   mantis → pierce / armor
+ */
 import type { Family } from './units';
 
-/** Two castle-upgrade axes per family (design lock). */
 export type Track = 't0' | 't1';
 export const TRACKS: Track[] = ['t0', 't1'];
 export const MAX_UPGRADE_LEVEL = 6;
@@ -17,11 +22,6 @@ export interface TrackDef {
   perLevel: number;
 }
 
-/**
- * 개미: 공속 + 체력
- * 풍뎅이: 방어 + 저항
- * 사마귀: 관통 + 방어
- */
 export const FAMILY_TRACKS: Record<Family, Record<Track, TrackDef>> = {
   ant: {
     t0: { effect: 'atkSpeed', name: '공격속도', desc: '개미류 공격주기 −12%/단계', perLevel: 0.12 },

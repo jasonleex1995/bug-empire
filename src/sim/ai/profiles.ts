@@ -33,8 +33,8 @@ export interface AiProfile {
   barracksUpgradeBias: number;
   /** Prefer honey pots as soon as affordable instead of after 3 farms. */
   honeyEarly?: boolean;
-  /** Which defense to reach for when not under heavy pressure. */
-  defenseStyle?: 'auto' | 'wall' | 'turret' | 'mushroom';
+  /** Preferred utility defense: wall / sticky dew / wind gust. */
+  defenseStyle?: 'auto' | 'wall' | 'slow' | 'gust';
   /** Skip castle upgrades entirely (gas goes to unlocks / barracks). */
   noCastleUpgrades?: boolean;
   /** Skip barracks upgrades entirely. */
