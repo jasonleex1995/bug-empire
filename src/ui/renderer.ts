@@ -728,22 +728,22 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number): void {
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    // Slight zoom + lift so the ant's face sits above the title band.
-    const scale = Math.max(W / imgW, H / imgH) * 1.06;
+    // Zoom + lift hard so the ant's face clears the title band.
+    const scale = Math.max(W / imgW, H / imgH) * 1.12;
     const dw = imgW * scale;
     const dh = imgH * scale;
     const dx = (W - dw) / 2;
-    const dy = (H - dh) / 2 - 72;
+    const dy = (H - dh) / 2 - 110;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
   }
 
-  // Keep the sky/trio clear; darken only the lower ground for brand + CTA.
-  const veil = ctx.createLinearGradient(0, H * 0.48, 0, H);
+  // Keep the trio clear; darken only the lowest ground for brand + CTA.
+  const veil = ctx.createLinearGradient(0, H * 0.55, 0, H);
   veil.addColorStop(0, 'rgba(10,12,14,0)');
-  veil.addColorStop(0.35, 'rgba(10,12,14,0.2)');
-  veil.addColorStop(0.65, 'rgba(10,12,14,0.62)');
-  veil.addColorStop(1, 'rgba(10,12,14,0.9)');
+  veil.addColorStop(0.3, 'rgba(10,12,14,0.18)');
+  veil.addColorStop(0.6, 'rgba(10,12,14,0.58)');
+  veil.addColorStop(1, 'rgba(10,12,14,0.92)');
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, W, H);
 
@@ -785,12 +785,12 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   const t = ui.now / 1000;
   drawMenuBackdrop(ctx, t);
 
-  // Title sits on the dark ground; ant face should read clearly above it.
-  glowCircle(ctx, W / 2, 575, 140, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 575, 11, C.mineral);
+  // Title on the dark ground; ant face should sit fully above it.
+  glowCircle(ctx, W / 2, 598, 120, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 598, 10, C.mineral);
 
-  // CTA on the near-black bottom band.
-  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 640, w: 300, h: 52, onClick: () => api.toDifficulty() }, '시작하기');
+  // CTA on the near-black bottom strip.
+  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 652, w: 300, h: 48, onClick: () => api.toDifficulty() }, '시작하기');
 }
 
 function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
