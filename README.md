@@ -2,6 +2,8 @@
 
 곤충 제국 레인 전쟁. Age of War + Plants vs. Zombies + StarCraft 업그레이드를 섞은 싱글 플레이 웹 게임 프로토타입.
 
+플레이: https://jasonleex1995.github.io/bug-empire/
+
 - 기획과 수치: [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md)
 - 배포: GitHub Pages 프로젝트 페이지 (`https://<user>.github.io/bug-empire/`). `main`에 푸시하면 `.github/workflows/deploy.yml`이 빌드·배포한다. 저장소 Settings → Pages에서 Source를 **GitHub Actions**로 한 번 설정해야 한다.
 
