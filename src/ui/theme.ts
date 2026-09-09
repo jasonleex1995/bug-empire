@@ -5,9 +5,10 @@
 import type { Family } from '../sim/data/units';
 import type { ModuleDef } from '../sim/data/modules';
 
-export const FONT_UI = `'IBM Plex Sans KR', 'Noto Sans KR', sans-serif`;
-export const FONT_DISPLAY = `Syne, ${FONT_UI}`;
-export const FONT_KO_DISPLAY = `'Black Han Sans', ${FONT_UI}`;
+/** Pixel fonts — always draw at integer sizes/positions to avoid the “깨진” look. */
+export const FONT_UI = `'Galmuri14', 'Galmuri11', monospace`;
+export const FONT_DISPLAY = `'Press Start 2P', 'Galmuri14', monospace`;
+export const FONT_KO_DISPLAY = `'Galmuri16', 'Galmuri14', monospace`;
 
 export const C = {
   bgDeep: '#0c1410',
@@ -100,14 +101,17 @@ export function text(
   size: number,
   color = C.text,
   align: CanvasTextAlign = 'left',
-  weight: string | number = 500,
+  _weight: string | number = 400,
   font: string = FONT_UI,
 ): void {
-  ctx.font = `${weight} ${size}px ${font}`;
+  // Pixel fonts hate fractional CSS sizes and subpixel positions — both look “깨진”.
+  const px = Math.max(11, Math.round(size));
+  ctx.imageSmoothingEnabled = false;
+  ctx.font = `${px}px ${font}`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
   ctx.textBaseline = 'middle';
-  ctx.fillText(s, x, y);
+  ctx.fillText(s, Math.round(x), Math.round(y));
 }
 
 export function glowCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, color: string): void {

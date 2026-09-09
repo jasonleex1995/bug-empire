@@ -49,7 +49,6 @@ import {
   FONT_KO_DISPLAY,
   FONT_UI,
   KIND_COLOR,
-  drawBrandMark,
   drawCastleFace,
   drawInsect,
   drawModuleGlyph,
@@ -58,6 +57,7 @@ import {
   rr,
   text,
 } from './theme';
+import { drawPixelAntLogo, drawPixelGem, drawPixelOrb, drawPixelTitle } from './pixel';
 
 export const ACID_CARD = 'acid_rain';
 
@@ -137,12 +137,12 @@ function button(
 ): void {
   const hovered = inRect(b, ui.hover.x, ui.hover.y) && !b.disabled;
   ctx.fillStyle = b.disabled ? '#1a221c' : opts.fill ? opts.fill : opts.active ? '#3a4e32' : hovered ? '#2a382c' : C.panelLift;
-  rr(ctx, b.x, b.y, b.w, b.h, 8);
+  rr(ctx, b.x, b.y, b.w, b.h, 2);
   ctx.fill();
   ctx.strokeStyle = opts.active ? C.mineral : hovered ? C.panelLine : 'rgba(47,69,54,0.7)';
-  ctx.lineWidth = opts.active ? 1.5 : 1;
+  ctx.lineWidth = opts.active ? 2 : 1;
   ctx.stroke();
-  text(ctx, label, b.x + b.w / 2, b.y + b.h / 2, opts.size ?? 13, b.disabled ? C.mute : opts.color ?? C.text, 'center', opts.active ? 600 : 500);
+  text(ctx, label, b.x + b.w / 2, b.y + b.h / 2, opts.size ?? 14, b.disabled ? C.mute : opts.color ?? C.text, 'center', 400);
   buttons.push(b);
 }
 
@@ -437,24 +437,12 @@ function drawTopBar(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState,
   ctx.fillRect(0, 63, W, 1);
 
   // Mineral gem + gas orb
-  glowCircle(ctx, 36, 34, 18, C.amberGlow);
-  ctx.fillStyle = C.mineral;
-  ctx.beginPath();
-  ctx.moveTo(36, 22);
-  ctx.lineTo(44, 34);
-  ctx.lineTo(36, 46);
-  ctx.lineTo(28, 34);
-  ctx.closePath();
-  ctx.fill();
-  text(ctx, `${Math.floor(me.minerals)}`, 56, 34, 20, C.mineral, 'left', 700);
+  drawPixelGem(ctx, 22, 18, 3);
+  text(ctx, `${Math.floor(me.minerals)}`, 56, 34, 16, C.mineral, 'left', 400);
 
-  glowCircle(ctx, 160, 34, 16, C.mintGlow);
-  ctx.fillStyle = C.gas;
-  ctx.beginPath();
-  ctx.arc(160, 34, 7, 0, Math.PI * 2);
-  ctx.fill();
-  text(ctx, `${Math.floor(me.gas)}`, 178, 28, 18, C.gas, 'left', 700);
-  text(ctx, `/ ${GAS_CAP}`, 178, 44, 11, C.dim, 'left', 500);
+  drawPixelOrb(ctx, 148, 18, 3);
+  text(ctx, `${Math.floor(me.gas)}`, 182, 28, 16, C.gas, 'left', 400);
+  text(ctx, `/ ${GAS_CAP}`, 182, 46, 11, C.dim, 'left', 400);
 
   text(ctx, '내 성', 280, 18, 11, C.dim);
   bar(ctx, 280, 28, 210, 12, me.castleHp / CASTLE_HP, C.player);
@@ -731,59 +719,38 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
   fillBg(ctx, W, H, ui.now / 1000);
 
-  // Full-bleed canopy atmosphere behind the brand — one composition, not a form dashboard.
   const canopy = ctx.createRadialGradient(W * 0.5, H * 0.28, 20, W * 0.5, H * 0.35, 420);
-  canopy.addColorStop(0, 'rgba(60,100,55,0.28)');
-  canopy.addColorStop(0.55, 'rgba(20,40,25,0.12)');
+  canopy.addColorStop(0, 'rgba(60,100,55,0.22)');
+  canopy.addColorStop(0.55, 'rgba(20,40,25,0.1)');
   canopy.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = canopy;
   ctx.fillRect(0, 0, W, H);
 
-  drawBrandMark(ctx, W / 2, 118, 1.35, ui.now / 1000);
+  drawPixelAntLogo(ctx, W / 2, 130, 4);
+  drawPixelTitle(ctx, W / 2, 230, 5, C.mineral);
 
-  text(ctx, 'BUG EMPIRE', W / 2, 210, 64, C.mineral, 'center', 800, FONT_DISPLAY);
-  text(ctx, '잎 아래의 제국', W / 2, 262, 22, C.text, 'center', 400, FONT_KO_DISPLAY);
-  text(ctx, '네 갈래 레인에서 둥지를 짓고, 병력을 밀고, 성을 부숴라', W / 2, 298, 15, C.dim, 'center', 500);
-
-  // Difficulty — single control row under the hero, not a settings card cluster.
-  text(ctx, '난이도', W / 2 - 200, 360, 13, C.mute, 'left', 600);
-  (Object.keys(DIFFICULTIES) as Difficulty[]).forEach((d, i) => {
-    button(ctx, buttons, { id: `diff_${d}`, x: W / 2 - 200 + i * 140, y: 378, w: 128, h: 40, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
+  text(ctx, '난이도', W / 2, 340, 14, C.mute, 'center', 400);
+  const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
+  const totalW = diffs.length * 128 + (diffs.length - 1) * 16;
+  const startX = Math.round(W / 2 - totalW / 2);
+  diffs.forEach((d, i) => {
+    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: 362, w: 128, h: 44, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
       active: ui.difficulty === d,
-      size: 15,
+      size: 16,
     });
   });
-  const diffDesc: Record<Difficulty, string> = {
-    normal: '정해진 빌드만 따라감 · 자원 보너스 없음',
-    hard: '압박 레인에 반응 · 자원 +15%',
-    hell: '내 빌드를 훔쳐보며 카운터 · 자원 +40%',
-  };
-  text(ctx, diffDesc[ui.difficulty], W / 2, 438, 13, C.dim, 'center');
 
-  text(ctx, '모드', W / 2 - 160, 478, 13, C.mute, 'left', 600);
-  button(ctx, buttons, { id: 'mode_free', x: W / 2 - 160, y: 494, w: 150, h: 38, onClick: () => api.setTimeLimitMode(false) }, '무제한', ui, {
-    active: !ui.timeLimitMode,
-    size: 14,
-  });
-  button(ctx, buttons, { id: 'mode_15', x: W / 2 + 10, y: 494, w: 150, h: 38, onClick: () => api.setTimeLimitMode(true) }, '15분 제한', ui, {
-    active: ui.timeLimitMode,
-    size: 14,
-  });
-
-  // Primary CTA
-  const start: Button = { id: 'start', x: W / 2 - 130, y: 570, w: 260, h: 56, onClick: () => api.startGame() };
+  const start: Button = { id: 'start', x: W / 2 - 140, y: 480, w: 280, h: 56, onClick: () => api.startGame() };
   const hovered = inRect(start, ui.hover.x, ui.hover.y);
-  glowCircle(ctx, W / 2, 598, hovered ? 90 : 70, C.amberGlow);
+  glowCircle(ctx, W / 2, 508, hovered ? 100 : 80, C.amberGlow);
   ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
-  rr(ctx, start.x, start.y, start.w, start.h, 12);
+  rr(ctx, start.x, start.y, start.w, start.h, 2);
   ctx.fill();
   ctx.strokeStyle = C.mineral;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2;
   ctx.stroke();
-  text(ctx, '전쟁 시작', W / 2, 598, 22, C.mineral, 'center', 700, FONT_KO_DISPLAY);
+  text(ctx, '전쟁 시작', W / 2, 508, 22, C.mineral, 'center', 400, FONT_KO_DISPLAY);
   buttons.push(start);
-
-  text(ctx, '미네랄은 채집 · 가스는 오직 전투로  ·  Space 일시정지  ·  1/2/3 배속', W / 2, 680, 12, C.mute, 'center');
 }
 
 function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
@@ -793,7 +760,7 @@ function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, bu
   const title = w === 0 ? '승리' : w === 1 ? '패배' : '무승부';
   const col = w === 0 ? C.player : w === 1 ? C.enemy : C.dim;
   glowCircle(ctx, W / 2, 200, 120, w === 0 ? 'rgba(126,207,106,0.25)' : w === 1 ? 'rgba(224,112,92,0.25)' : 'rgba(140,160,140,0.15)');
-  text(ctx, title, W / 2, 200, 68, col, 'center', 400, FONT_KO_DISPLAY);
+  text(ctx, title, W / 2, 200, 48, col, 'center', 400, FONT_KO_DISPLAY);
   const [me, foe] = game.players;
   const lines = [
     `경과 ${fmtTime(game.t)} · ${DIFFICULTIES[ui.difficulty].name}${game.cfg.timeLimit ? ' · 15분 제한' : ''}`,
@@ -810,6 +777,7 @@ function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, bu
 
 export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui: UiState, api: UiApi): Button[] {
   const buttons: Button[] = [];
+  ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, W, H);
 
   if (ui.screen === 'menu' || !game) {
@@ -848,7 +816,7 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
   if (ui.paused && ui.screen === 'game') {
     ctx.fillStyle = 'rgba(6,12,8,0.35)';
     ctx.fillRect(GRID_LEFT, GRID_TOP, LANE_LENGTH * CELL_W, ROWS * LANE_H);
-    text(ctx, '일시정지', W / 2, GRID_TOP + (LANES_BOTTOM - GRID_TOP) / 2, 42, 'rgba(230,240,228,0.85)', 'center', 400, FONT_KO_DISPLAY);
+    text(ctx, '일시정지', W / 2, GRID_TOP + (LANES_BOTTOM - GRID_TOP) / 2, 32, 'rgba(230,240,228,0.85)', 'center', 400, FONT_KO_DISPLAY);
   }
 
   if (ui.screen === 'end') drawEnd(ctx, game, ui, buttons, api);

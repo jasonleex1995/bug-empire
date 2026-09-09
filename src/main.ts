@@ -11,10 +11,9 @@ import { ACID_CARD, render, type Button, type UiApi, type UiState } from './ui/r
 
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
+ctx.imageSmoothingEnabled = false;
 canvas.width = W;
 canvas.height = H;
-
-const TIME_LIMIT_SECONDS = 15 * 60;
 
 let game: GameState | null = null;
 let ai: AiController | null = null;
@@ -118,7 +117,8 @@ function reasonText(reason: string): string {
 function startGame(): void {
   const preset = DIFFICULTIES[ui.difficulty];
   const seed = (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
-  game = createGame({ seed, timeLimit: ui.timeLimitMode ? TIME_LIMIT_SECONDS : null, resourceMult: [1, preset.resourceMult] });
+  game = createGame({ seed, timeLimit: null, resourceMult: [1, preset.resourceMult] });
+  // Unlimited only for now; 15-minute mode stays in the sim but is not exposed in the menu.
   ai = new AiController(1, preset.profile, seed);
   ui.screen = 'game';
   ui.selectedCard = null;
