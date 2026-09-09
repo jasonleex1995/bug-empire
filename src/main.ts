@@ -87,6 +87,9 @@ const api: UiApi = {
   setTimeLimitMode(on) {
     ui.timeLimitMode = on;
   },
+  toDifficulty() {
+    ui.screen = 'difficulty';
+  },
   startGame() {
     startGame();
   },

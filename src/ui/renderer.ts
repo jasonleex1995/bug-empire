@@ -72,7 +72,7 @@ export interface Effect {
 }
 
 export interface UiState {
-  screen: 'menu' | 'game' | 'end';
+  screen: 'menu' | 'difficulty' | 'game' | 'end';
   difficulty: Difficulty;
   timeLimitMode: boolean;
   selectedCard: string | null;
@@ -106,6 +106,8 @@ export interface UiApi {
   recharge(row: number): void;
   setDifficulty(d: Difficulty): void;
   setTimeLimitMode(on: boolean): void;
+  /** Title → difficulty pick (flow A). */
+  toDifficulty(): void;
   startGame(): void;
   toMenu(): void;
 }
@@ -711,79 +713,127 @@ function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button
 
 // ---------------------------------------------------------------------------
 
-function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
-  const t = ui.now / 1000;
-  fillBg(ctx, W, H, t);
+/** Full-bleed dusk banner behind title / difficulty screens. */
+function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number): void {
+  // Warm dusk fallback while the PNG loads (no leafy green letterbox).
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#101820');
+  g.addColorStop(0.45, '#2a3038');
+  g.addColorStop(0.72, '#6a4830');
+  g.addColorStop(1, '#120e0c');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
 
-  // Full roster hero — contain (no canvas crop); fill most of the upper screen.
   const hero = getMenuHeroImage();
-  let artBottom = 420;
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    const padX = 24;
-    const topPad = 6;
-    const maxH = 500;
-    const availW = W - padX * 2;
-    const scale = Math.min(availW / imgW, maxH / imgH);
+    // Cover the whole canvas — same 16:9 as W×H, so no green margins.
+    const scale = Math.max(W / imgW, H / imgH);
     const dw = imgW * scale;
     const dh = imgH * scale;
     const dx = (W - dw) / 2;
-    const dy = topPad;
-    artBottom = dy + dh;
+    const dy = (H - dh) / 2;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
-
-    const fade = ctx.createLinearGradient(0, artBottom - 40, 0, H);
-    fade.addColorStop(0, 'rgba(8,14,10,0)');
-    fade.addColorStop(0.22, 'rgba(8,14,10,0.48)');
-    fade.addColorStop(0.48, 'rgba(8,14,10,0.88)');
-    fade.addColorStop(1, 'rgba(8,14,10,0.95)');
-    ctx.fillStyle = fade;
-    ctx.fillRect(0, artBottom - 40, W, H - (artBottom - 40));
   }
 
-  // Floating pollen over the art
+  // Soft vignette so brand/CTA read cleanly.
+  const veil = ctx.createLinearGradient(0, H * 0.35, 0, H);
+  veil.addColorStop(0, 'rgba(10,12,14,0)');
+  veil.addColorStop(0.45, 'rgba(10,12,14,0.35)');
+  veil.addColorStop(0.75, 'rgba(10,12,14,0.72)');
+  veil.addColorStop(1, 'rgba(10,12,14,0.88)');
+  ctx.fillStyle = veil;
+  ctx.fillRect(0, 0, W, H);
+
+  // Amber pollen motes
   ctx.save();
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 22; i++) {
     const seed = i * 97.3;
     const x = ((seed * 13 + t * (10 + (i % 4))) % (W + 40)) - 20;
-    const y = 30 + ((seed * 7.1 + Math.sin(t * 0.5 + i) * 20) % Math.max(200, artBottom - 40));
+    const y = ((seed * 7.1 + Math.sin(t * 0.5 + i) * 22) % (H * 0.7)) + 20;
     const a = 0.1 + (i % 3) * 0.05;
-    ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(180,220,180,${a})`;
+    ctx.fillStyle = i % 2 === 0 ? `rgba(232,184,74,${a})` : `rgba(200,160,120,${a})`;
     ctx.beginPath();
-    ctx.arc(x, y, 1.4 + (i % 3) * 0.5, 0, Math.PI * 2);
+    ctx.arc(x, y, 1.3 + (i % 3) * 0.5, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
+}
 
-  // Brand under the fully-visible trio.
-  const titleY = Math.min(H - 200, Math.round(artBottom + 18));
-  glowCircle(ctx, W / 2, titleY, 160, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, titleY, 11, C.mineral);
-
-  text(ctx, '난이도', W / 2, titleY + 58, 14, C.mute, 'center', 400);
-  const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
-  const totalW = diffs.length * 128 + (diffs.length - 1) * 16;
-  const startX = Math.round(W / 2 - totalW / 2);
-  diffs.forEach((d, i) => {
-    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: titleY + 74, w: 128, h: 38, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
-      active: ui.difficulty === d,
-      size: 15,
-    });
-  });
-
-  const start: Button = { id: 'start', x: W / 2 - 140, y: titleY + 130, w: 280, h: 50, onClick: () => api.startGame() };
-  const hovered = inRect(start, ui.hover.x, ui.hover.y);
-  glowCircle(ctx, W / 2, titleY + 155, hovered ? 90 : 70, C.amberGlow);
+function drawCtaButton(
+  ctx: CanvasRenderingContext2D,
+  buttons: Button[],
+  ui: UiState,
+  b: Button,
+  label: string,
+): void {
+  const hovered = inRect(b, ui.hover.x, ui.hover.y);
+  glowCircle(ctx, b.x + b.w / 2, b.y + b.h / 2, hovered ? 100 : 80, C.amberGlow);
   ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
-  rr(ctx, start.x, start.y, start.w, start.h, 2);
+  rr(ctx, b.x, b.y, b.w, b.h, 2);
   ctx.fill();
   ctx.strokeStyle = C.mineral;
   ctx.lineWidth = 2;
   ctx.stroke();
-  text(ctx, '전쟁 시작', W / 2, titleY + 155, 20, C.mineral, 'center', 400, FONT_KO_DISPLAY);
-  buttons.push(start);
+  text(ctx, label, b.x + b.w / 2, b.y + b.h / 2, 20, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+  buttons.push(b);
+}
+
+function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
+  const t = ui.now / 1000;
+  drawMenuBackdrop(ctx, t);
+
+  glowCircle(ctx, W / 2, 470, 180, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 470, 12, C.mineral);
+
+  drawCtaButton(ctx, buttons, ui, { id: 'to_difficulty', x: W / 2 - 150, y: 560, w: 300, h: 56, onClick: () => api.toDifficulty() }, '시작하기');
+}
+
+function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[], api: UiApi): void {
+  const t = ui.now / 1000;
+  drawMenuBackdrop(ctx, t);
+
+  // Extra dim so the pick list is the focus.
+  ctx.fillStyle = 'rgba(8,10,12,0.35)';
+  ctx.fillRect(0, 0, W, H);
+
+  text(ctx, '난이도 선택', W / 2, 300, 28, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+
+  const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
+  const gap = 18;
+  const bw = 200;
+  const bh = 56;
+  const totalW = diffs.length * bw + (diffs.length - 1) * gap;
+  const startX = Math.round(W / 2 - totalW / 2);
+  diffs.forEach((d, i) => {
+    const b: Button = {
+      id: `diff_${d}`,
+      x: startX + i * (bw + gap),
+      y: 380,
+      w: bw,
+      h: bh,
+      onClick: () => {
+        api.setDifficulty(d);
+        api.startGame();
+      },
+    };
+    const hovered = inRect(b, ui.hover.x, ui.hover.y);
+    ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
+    rr(ctx, b.x, b.y, b.w, b.h, 2);
+    ctx.fill();
+    ctx.strokeStyle = hovered ? C.mineral : C.panelLine;
+    ctx.lineWidth = hovered ? 2 : 1;
+    ctx.stroke();
+    text(ctx, DIFFICULTIES[d].name, b.x + b.w / 2, b.y + b.h / 2, 18, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+    buttons.push(b);
+  });
+
+  button(ctx, buttons, { id: 'back_menu', x: W / 2 - 80, y: 480, w: 160, h: 40, onClick: () => api.toMenu() }, '뒤로', ui, {
+    size: 14,
+    fill: 'rgba(20,24,22,0.7)',
+  });
 }
 
 function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
@@ -813,8 +863,9 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, W, H);
 
-  if (ui.screen === 'menu' || !game) {
-    drawMenu(ctx, ui, buttons, api);
+  if (ui.screen === 'menu' || ui.screen === 'difficulty' || !game) {
+    if (ui.screen === 'difficulty') drawDifficulty(ctx, ui, buttons, api);
+    else drawMenu(ctx, ui, buttons, api);
     drawTooltip(ctx, ui, buttons);
     return buttons;
   }
