@@ -818,16 +818,17 @@ function drawCtaButton(
   ui: UiState,
   b: Button,
   label: string,
+  opts: { glow?: boolean; size?: number } = {},
 ): void {
   const hovered = inRect(b, ui.hover.x, ui.hover.y);
-  glowCircle(ctx, b.x + b.w / 2, b.y + b.h / 2, hovered ? 100 : 80, C.amberGlow);
+  if (opts.glow !== false) glowCircle(ctx, b.x + b.w / 2, b.y + b.h / 2, hovered ? 100 : 80, C.amberGlow);
   ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
   rr(ctx, b.x, b.y, b.w, b.h, 2);
   ctx.fill();
   ctx.strokeStyle = C.mineral;
   ctx.lineWidth = 2;
   ctx.stroke();
-  text(ctx, label, b.x + b.w / 2, b.y + b.h / 2, 20, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+  text(ctx, label, b.x + b.w / 2, b.y + b.h / 2, opts.size ?? 20, C.mineral, 'center', 400, FONT_KO_DISPLAY);
   buttons.push(b);
 }
 
@@ -860,7 +861,7 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
   glowCircle(ctx, W / 2, titleCy, 90, C.amberGlow);
   drawPixelTitle(ctx, W / 2, titleCy, 10, C.mineral);
 
-  text(ctx, '난이도 선택', W / 2, artH + 72, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
+  text(ctx, '난이도 선택', W / 2, artH + 68, 16, C.dim, 'center', 500, FONT_KO_DISPLAY);
 
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const gap = 14;
@@ -868,7 +869,7 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
   const bh = 48;
   const totalW = diffs.length * bw + (diffs.length - 1) * gap;
   const startX = Math.round(W / 2 - totalW / 2);
-  const rowY = artH + 92;
+  const rowY = artH + 88;
   diffs.forEach((d, i) => {
     drawCtaButton(
       ctx,
@@ -886,13 +887,18 @@ function drawDifficulty(ctx: CanvasRenderingContext2D, ui: UiState, buttons: But
         },
       },
       DIFFICULTIES[d].name,
+      { glow: false, size: 18 },
     );
   });
 
-  button(ctx, buttons, { id: 'back_menu', x: W / 2 - 80, y: artH + 156, w: 160, h: 36, onClick: () => api.toMenu() }, '뒤로', ui, {
-    size: 14,
-    fill: 'rgba(20,24,22,0.7)',
-  });
+  drawCtaButton(
+    ctx,
+    buttons,
+    ui,
+    { id: 'back_menu', x: W / 2 - 80, y: artH + 148, w: 160, h: 36, onClick: () => api.toMenu() },
+    '뒤로',
+    { glow: false, size: 16 },
+  );
 }
 
 function drawEnd(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
