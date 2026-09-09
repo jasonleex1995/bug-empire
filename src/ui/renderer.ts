@@ -720,12 +720,14 @@ const MENU_TOP_CROP = 0.14;
  * Sized from the user's collage mockup (~y 500→720 on a 720p frame).
  */
 const MENU_UI_BAND = 220;
+/** Soft dirt→underground blend straddling the art/black edge (px). Positions stay fixed. */
+const MENU_EDGE_FADE = 110;
 
 /**
- * Title backdrop matching the collage mockup:
+ * Title backdrop matching the collage mockup positions, with a soft ground edge:
  * - crop empty top sky so the trio sits high
- * - fill only the upper art band (clip at artH)
- * - solid full-width black underground for title + CTA (no muddy soft-fade / over-zoom)
+ * - let textured dirt run past the band edge (no hard clip)
+ * - soft-fade into full-width underground black for title + CTA
  */
 function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MENU_UI_BAND): void {
   const artH = Math.max(0, H - uiBand);
@@ -738,19 +740,15 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     const imgH = hero.naturalHeight || hero.height;
     const srcY = Math.floor(imgH * MENU_TOP_CROP);
     const srcH = imgH - srcY;
-    // Cover the art band; pin to top after sky crop so bugs stay high like the mockup.
-    const scale = Math.max(W / imgW, artH / Math.max(1, srcH));
+    // Cover the art band and a bit past it so dirt can soft-fade (no hard crop line).
+    const coverH = artH + Math.floor(MENU_EDGE_FADE * 0.55);
+    const scale = Math.max(W / imgW, coverH / Math.max(1, srcH));
     const dw = imgW * scale;
     const dh = srcH * scale;
     const dx = (W - dw) / 2;
     const dy = 0;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, 0, W, artH);
-    ctx.clip();
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, 0, srcY, imgW, srcH, dx, dy, dw, dh);
-    ctx.restore();
   } else if (artH > 0) {
     const g = ctx.createLinearGradient(0, 0, 0, artH);
     g.addColorStop(0, '#101820');
@@ -760,10 +758,22 @@ function drawMenuBackdrop(ctx: CanvasRenderingContext2D, t: number, uiBand = MEN
     ctx.fillRect(0, 0, W, artH);
   }
 
-  // Full-width underground — collage mockup layout (hard band, not a floating title box).
   if (uiBand > 0) {
-    ctx.fillStyle = '#080a0c';
-    ctx.fillRect(0, artH, W, uiBand);
+    // Soften only the seam — title/button coordinates stay on the mockup band.
+    const fadeTop = Math.max(0, artH - Math.floor(MENU_EDGE_FADE * 0.45));
+    const fadeBot = Math.min(H, artH + Math.floor(MENU_EDGE_FADE * 0.55));
+    const fade = ctx.createLinearGradient(0, fadeTop, 0, fadeBot);
+    fade.addColorStop(0, 'rgba(8,10,12,0)');
+    fade.addColorStop(0.28, 'rgba(8,10,12,0.25)');
+    fade.addColorStop(0.55, 'rgba(8,10,12,0.62)');
+    fade.addColorStop(0.8, 'rgba(8,10,12,0.9)');
+    fade.addColorStop(1, 'rgba(8,10,12,1)');
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, fadeTop, W, fadeBot - fadeTop);
+    if (fadeBot < H) {
+      ctx.fillStyle = '#080a0c';
+      ctx.fillRect(0, fadeBot, W, H - fadeBot);
+    }
   }
 
   if (artH > 40) {
