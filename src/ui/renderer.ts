@@ -715,34 +715,32 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   const t = ui.now / 1000;
   fillBg(ctx, W, H, t);
 
-  // Full-width roster hero — crop only the bottom UI pad in the art, never the sides.
+  // Full roster hero — contain + slight shrink so nothing is edge-clipped on canvas.
   const hero = getMenuHeroImage();
   let artBottom = 420;
   if (hero) {
     const imgW = hero.naturalWidth || hero.width;
     const imgH = hero.naturalHeight || hero.height;
-    const heroBand = 505;
-    const scale = W / imgW;
-    const dw = W;
+    const padX = 56;
+    const topPad = 8;
+    const maxH = 455;
+    const availW = W - padX * 2;
+    const scale = Math.min(availW / imgW, maxH / imgH) * 0.94;
+    const dw = imgW * scale;
     const dh = imgH * scale;
-    const dx = 0;
-    const dy = 0; // top-align: keep heads/horns; drop the bottom black pad
-    artBottom = heroBand;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, 0, W, heroBand);
-    ctx.clip();
+    const dx = (W - dw) / 2;
+    const dy = topPad + Math.max(0, (maxH - dh) * 0.08);
+    artBottom = dy + dh;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(hero, dx, dy, dw, dh);
-    ctx.restore();
 
-    const fade = ctx.createLinearGradient(0, heroBand - 55, 0, H);
+    const fade = ctx.createLinearGradient(0, artBottom - 36, 0, H);
     fade.addColorStop(0, 'rgba(8,14,10,0)');
-    fade.addColorStop(0.25, 'rgba(8,14,10,0.5)');
-    fade.addColorStop(0.5, 'rgba(8,14,10,0.88)');
+    fade.addColorStop(0.22, 'rgba(8,14,10,0.48)');
+    fade.addColorStop(0.48, 'rgba(8,14,10,0.88)');
     fade.addColorStop(1, 'rgba(8,14,10,0.95)');
     ctx.fillStyle = fade;
-    ctx.fillRect(0, heroBand - 55, W, H - (heroBand - 55));
+    ctx.fillRect(0, artBottom - 36, W, H - (artBottom - 36));
   }
 
   // Floating pollen over the art
