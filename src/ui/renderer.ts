@@ -716,41 +716,41 @@ function drawMenu(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[],
   fillBg(ctx, W, H, t);
 
   // Full-bleed pixel hero: beetle · ant · mantis under a warm dusk canopy.
-  drawPixelRosterHero(ctx, W / 2, 195, 6, t);
+  drawPixelRosterHero(ctx, W / 2, 175, 6, t);
 
   // Soft veil so the brand + controls stay readable over the art.
-  const veil = ctx.createLinearGradient(0, 320, 0, H);
+  const veil = ctx.createLinearGradient(0, 300, 0, H);
   veil.addColorStop(0, 'rgba(8,14,10,0)');
-  veil.addColorStop(0.28, 'rgba(8,14,10,0.4)');
-  veil.addColorStop(1, 'rgba(8,14,10,0.85)');
+  veil.addColorStop(0.3, 'rgba(8,14,10,0.5)');
+  veil.addColorStop(1, 'rgba(8,14,10,0.88)');
   ctx.fillStyle = veil;
-  ctx.fillRect(0, 320, W, H - 320);
+  ctx.fillRect(0, 300, W, H - 300);
 
   // Brand first — larger chunky pixel title.
-  glowCircle(ctx, W / 2, 415, 170, C.amberGlow);
-  drawPixelTitle(ctx, W / 2, 415, 9, C.mineral);
+  glowCircle(ctx, W / 2, 395, 190, C.amberGlow);
+  drawPixelTitle(ctx, W / 2, 395, 10, C.mineral);
 
-  text(ctx, '난이도', W / 2, 478, 14, C.mute, 'center', 400);
+  text(ctx, '난이도', W / 2, 468, 14, C.mute, 'center', 400);
   const diffs = Object.keys(DIFFICULTIES) as Difficulty[];
   const totalW = diffs.length * 128 + (diffs.length - 1) * 16;
   const startX = Math.round(W / 2 - totalW / 2);
   diffs.forEach((d, i) => {
-    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: 498, w: 128, h: 44, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
+    button(ctx, buttons, { id: `diff_${d}`, x: startX + i * 144, y: 488, w: 128, h: 44, onClick: () => api.setDifficulty(d) }, DIFFICULTIES[d].name, ui, {
       active: ui.difficulty === d,
       size: 16,
     });
   });
 
-  const start: Button = { id: 'start', x: W / 2 - 140, y: 568, w: 280, h: 56, onClick: () => api.startGame() };
+  const start: Button = { id: 'start', x: W / 2 - 140, y: 560, w: 280, h: 56, onClick: () => api.startGame() };
   const hovered = inRect(start, ui.hover.x, ui.hover.y);
-  glowCircle(ctx, W / 2, 596, hovered ? 100 : 80, C.amberGlow);
+  glowCircle(ctx, W / 2, 588, hovered ? 100 : 80, C.amberGlow);
   ctx.fillStyle = hovered ? '#5a6e30' : '#3e5428';
   rr(ctx, start.x, start.y, start.w, start.h, 2);
   ctx.fill();
   ctx.strokeStyle = C.mineral;
   ctx.lineWidth = 2;
   ctx.stroke();
-  text(ctx, '전쟁 시작', W / 2, 596, 22, C.mineral, 'center', 400, FONT_KO_DISPLAY);
+  text(ctx, '전쟁 시작', W / 2, 588, 22, C.mineral, 'center', 400, FONT_KO_DISPLAY);
   buttons.push(start);
 }
 

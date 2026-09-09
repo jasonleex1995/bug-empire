@@ -105,265 +105,259 @@ export function drawPixelRosterHero(dest: CanvasRenderingContext2D, cx: number, 
   const c = makePixelCanvas(W, H);
   const ctx = pxCtx(c);
 
-  const skyTop = '#142028';
-  const skyMid = '#2a3840';
-  const skyWarm = '#6a5040';
-  const sunCore = '#f0c060';
-  const sunGlow = '#c88840';
-  const ridge = '#1a2430';
-  const ridgeLit = '#2a3848';
-  const soil = '#2a2218';
-  const soilLit = '#3a3020';
-  const rock = '#3a3428';
-  const rockLit = '#524838';
-  const leaf = '#1e3820';
-  const leafLit = '#2e5030';
-  const flag = '#c04038';
+  const skyTop = '#101820';
+  const skyMid = '#243038';
+  const skyWarm = '#7a5840';
+  const sunCore = '#ffe080';
+  const sunGlow = '#e09848';
+  const ridge = '#141c24';
+  const ridgeLit = '#283848';
+  const soil = '#241c14';
+  const soilLit = '#3a2c1c';
+  const rock = '#3a3224';
+  const rockLit = '#5a4c38';
+  const leaf = '#16301c';
+  const leafLit = '#2a5030';
+  const flag = '#d04030';
   const flagPole = '#6a5840';
 
-  // —— Sky bands (warm dusk, forest-teal not cotton-candy purple)
-  for (let y = 0; y < 52; y++) {
-    const u = y / 52;
-    const col = u < 0.35 ? skyTop : u < 0.62 ? skyMid : skyWarm;
-    fill(ctx, 0, y, W, 1, col);
+  for (let y = 0; y < 54; y++) {
+    const u = y / 54;
+    fill(ctx, 0, y, W, 1, u < 0.3 ? skyTop : u < 0.58 ? skyMid : skyWarm);
   }
-  // Sun + rim glow
+
   const sunX = 80;
-  const sunY = 40;
-  for (let dy = -10; dy <= 10; dy++) {
-    for (let dx = -12; dx <= 12; dx++) {
-      const d = Math.hypot(dx, dy * 1.15);
-      if (d < 5.2) set(ctx, sunX + dx, sunY + dy, sunCore);
-      else if (d < 8.5) set(ctx, sunX + dx, sunY + dy, sunGlow);
-      else if (d < 12 && (dx + dy * 3 + Math.floor(t * 2)) % 3 === 0) set(ctx, sunX + dx, sunY + dy, skyWarm);
+  const sunY = 38;
+  for (let dy = -11; dy <= 11; dy++) {
+    for (let dx = -13; dx <= 13; dx++) {
+      const d = Math.hypot(dx, dy * 1.1);
+      if (d < 6) set(ctx, sunX + dx, sunY + dy, sunCore);
+      else if (d < 9.5) set(ctx, sunX + dx, sunY + dy, sunGlow);
+      else if (d < 13 && (dx + dy * 3 + Math.floor(t * 2)) % 3 === 0) set(ctx, sunX + dx, sunY + dy, '#a87040');
     }
   }
-  // Soft clouds
-  fill(ctx, 18, 14, 18, 2, '#3a4850');
-  fill(ctx, 22, 12, 12, 2, '#4a5860');
-  fill(ctx, 120, 18, 22, 2, '#3a4850');
-  fill(ctx, 126, 16, 12, 2, '#4a5860');
+  fill(ctx, 14, 12, 20, 2, '#3a4850');
+  fill(ctx, 18, 10, 14, 2, '#4a5860');
+  fill(ctx, 118, 16, 24, 2, '#3a4850');
+  fill(ctx, 124, 14, 14, 2, '#4a5860');
 
-  // —— Mountain / pillar ridges
-  const peaks = [
-    [0, 52, 18, 28],
-    [14, 48, 22, 32],
-    [34, 44, 16, 28],
-    [48, 50, 14, 24],
-    [98, 50, 16, 26],
-    [112, 46, 20, 30],
-    [132, 50, 28, 28],
-  ];
-  for (const [x, y, w, h] of peaks) {
-    fill(ctx, x, y, w, h, ridge);
-    fill(ctx, x + 2, y, Math.max(2, w - 6), 2, ridgeLit);
-  }
-  // Jagged tops
   for (let x = 0; x < W; x++) {
-    const jag = 46 + ((x * 5) % 7) - ((x * 3) % 5);
-    if (x < 70 || x > 95) fill(ctx, x, jag, 1, 56 - jag, ridge);
+    if (x >= 68 && x <= 92) continue; // leave sun window
+    const jag = 44 + ((x * 5) % 7) - ((x * 3) % 4);
+    fill(ctx, x, jag, 1, 58 - jag, ridge);
+    if (x % 5 === 0) set(ctx, x, jag, ridgeLit);
   }
+  // Pillar rocks
+  fill(ctx, 8, 40, 10, 22, ridge);
+  fill(ctx, 10, 38, 6, 2, ridgeLit);
+  fill(ctx, 142, 42, 12, 20, ridge);
+  fill(ctx, 145, 40, 6, 2, ridgeLit);
 
-  // —— Ground mound
   fill(ctx, 0, 58, W, H - 58, soil);
-  fill(ctx, 20, 56, 120, 2, soilLit);
-  fill(ctx, 40, 54, 80, 2, rock);
-  // Rocks
-  fill(ctx, 12, 70, 14, 8, rock);
-  fill(ctx, 14, 68, 10, 2, rockLit);
-  fill(ctx, 130, 72, 16, 10, rock);
-  fill(ctx, 134, 70, 10, 2, rockLit);
-  fill(ctx, 70, 78, 20, 6, rock);
-  // Sparse grass
-  for (let i = 0; i < 18; i++) {
-    const gx = 8 + i * 8 + (i % 3);
-    set(ctx, gx, 64 + (i % 4), leafLit);
-    set(ctx, gx, 65 + (i % 4), leaf);
+  fill(ctx, 16, 56, 128, 2, soilLit);
+  fill(ctx, 36, 54, 88, 2, rock);
+  fill(ctx, 10, 72, 16, 10, rock);
+  fill(ctx, 12, 70, 12, 2, rockLit);
+  fill(ctx, 128, 74, 18, 10, rock);
+  fill(ctx, 132, 72, 12, 2, rockLit);
+  for (let i = 0; i < 16; i++) {
+    const gx = 10 + i * 9;
+    set(ctx, gx, 62 + (i % 3), leafLit);
+    set(ctx, gx, 63 + (i % 3), leaf);
   }
-  // Tiny war flags (empire scale cue)
-  for (const fx of [36, 52, 108, 124]) {
-    fill(ctx, fx, 66, 1, 12, flagPole);
-    fill(ctx, fx + 1, 66, 4, 3, flag);
+  for (const fx of [30, 48, 112, 130]) {
+    fill(ctx, fx, 64, 1, 14, flagPole);
+    fill(ctx, fx + 1, 64, 5, 3, flag);
+    set(ctx, fx + 5, 65, '#a02820');
   }
 
-  const breath = Math.sin(t * 2.1) * 0.5;
-  const antenna = Math.round(Math.sin(t * 3.2) * 1);
-  const scythe = Math.round(Math.sin(t * 2.4 + 1) * 1);
+  const breath = Math.round(Math.sin(t * 2.1));
+  const antenna = Math.round(Math.sin(t * 3.2));
+  const scythe = Math.round(Math.sin(t * 2.4 + 1));
 
-  drawPixelBeetle(ctx, 28, 38 + Math.round(breath), W, H);
-  drawPixelMantis(ctx, 112, 30 + Math.round(-breath), scythe, W, H);
-  drawPixelHeroAnt(ctx, 68, 42, antenna, W, H);
+  // Back row first, ant last (foreground).
+  drawPixelBeetle(ctx, 8, 22 + breath, W, H);
+  drawPixelMantis(ctx, 102, 14 - breath, scythe, W, H);
+  drawPixelHeroAnt(ctx, 52, 28, antenna, W, H);
 
-  // Leaf frame (foreground corners)
-  for (let i = 0; i < 22; i++) {
-    fill(ctx, i, 0, 1, 8 + (i % 5), leaf);
-    fill(ctx, W - 1 - i, 0, 1, 7 + ((i + 2) % 5), leaf);
-    if (i % 3 === 0) {
-      set(ctx, i + 2, 6 + (i % 4), leafLit);
-      set(ctx, W - 3 - i, 5 + (i % 4), leafLit);
+  // Leaf canopy frame
+  for (let i = 0; i < 26; i++) {
+    fill(ctx, i, 0, 1, 10 + (i % 6), leaf);
+    fill(ctx, W - 1 - i, 0, 1, 9 + ((i + 2) % 6), leaf);
+    if (i % 2 === 0) {
+      set(ctx, i + 1, 8 + (i % 5), leafLit);
+      set(ctx, W - 2 - i, 7 + (i % 5), leafLit);
     }
   }
-  // Bottom leaf fringe
-  for (let i = 0; i < 10; i++) {
-    fill(ctx, i * 3, H - 4, 4, 4, leaf);
-    fill(ctx, W - 4 - i * 3, H - 5, 4, 5, leaf);
+  for (let i = 0; i < 12; i++) {
+    fill(ctx, i * 4, H - 5, 5, 5, leaf);
+    fill(ctx, W - 5 - i * 4, H - 6, 5, 6, leaf);
   }
-
-  // Rim light accents on bugs (sunset edge)
-  const rim = '#e8c070';
-  setIf(ctx, 48, 36, rim, W, H);
-  setIf(ctx, 49, 40, rim, W, H);
-  setIf(ctx, 95, 48, rim, W, H);
-  setIf(ctx, 96, 52, rim, W, H);
-  setIf(ctx, 128, 34, rim, W, H);
-  setIf(ctx, 130, 42, rim, W, H);
 
   blitPixel(dest, c, cx - (W * scale) / 2, cy - (H * scale) / 2, scale);
 }
 
 /** Kabuto-style tank beetle — left of the trio. */
 function drawPixelBeetle(ctx: Px, ox: number, oy: number, W: number, H: number): void {
-  const shell = '#1a2830';
-  const shellLit = '#2e4850';
-  const shellHi = '#4a7078';
-  const horn = '#0e181c';
-  const hornLit = '#3a5058';
-  const leg = '#121c20';
+  const shell = '#182428';
+  const shellLit = '#3a5860';
+  const shellHi = '#68a0a8';
+  const horn = '#0c1418';
+  const hornLit = '#4a6870';
+  const leg = '#0e1618';
+  const rim = '#e8c878';
 
-  // Body shell
-  fill(ctx, ox + 6, oy + 14, 28, 22, shell);
-  fill(ctx, ox + 8, oy + 12, 24, 2, shell);
-  fill(ctx, ox + 10, oy + 10, 20, 2, shellLit);
-  fill(ctx, ox + 8, oy + 16, 10, 8, shellLit);
-  fill(ctx, ox + 12, oy + 18, 6, 4, shellHi);
-  // Head
-  fill(ctx, ox + 30, oy + 16, 12, 12, shell);
-  fill(ctx, ox + 32, oy + 18, 6, 4, shellLit);
-  setIf(ctx, ox + 38, oy + 20, '#0a1014', W, H); // eye
-  // Twin horns / mandibles (풍뎅이 identity)
-  fill(ctx, ox + 34, oy + 4, 3, 14, horn);
-  fill(ctx, ox + 35, oy + 2, 2, 3, hornLit);
-  fill(ctx, ox + 28, oy + 8, 8, 2, horn);
-  fill(ctx, ox + 26, oy + 6, 3, 4, horn);
-  fill(ctx, ox + 40, oy + 8, 8, 2, horn);
-  fill(ctx, ox + 46, oy + 6, 3, 4, horn);
+  // Domed shell
+  fill(ctx, ox + 4, oy + 22, 34, 26, shell);
+  fill(ctx, ox + 8, oy + 18, 28, 4, shell);
+  fill(ctx, ox + 12, oy + 16, 20, 2, shellLit);
+  fill(ctx, ox + 6, oy + 24, 14, 12, shellLit);
+  fill(ctx, ox + 10, oy + 28, 8, 6, shellHi);
+  // Head plate
+  fill(ctx, ox + 34, oy + 24, 14, 14, shell);
+  fill(ctx, ox + 36, oy + 26, 8, 6, shellLit);
+  fill(ctx, ox + 42, oy + 28, 3, 3, '#060a0c');
+  setIf(ctx, ox + 43, oy + 29, '#c8e0e8', W, H);
+  // Big Y-horn (장수풍뎅이 cue)
+  fill(ctx, ox + 38, oy + 4, 4, 22, horn);
+  fill(ctx, ox + 39, oy + 2, 2, 3, hornLit);
+  fill(ctx, ox + 28, oy + 8, 12, 3, horn);
+  fill(ctx, ox + 26, oy + 6, 4, 5, horn);
+  fill(ctx, ox + 42, oy + 8, 12, 3, horn);
+  fill(ctx, ox + 52, oy + 6, 4, 5, horn);
+  setIf(ctx, ox + 40, oy + 6, rim, W, H);
+  setIf(ctx, ox + 27, oy + 7, rim, W, H);
+  setIf(ctx, ox + 54, oy + 7, rim, W, H);
   // Legs
   for (const [lx, ly] of [
-    [8, 34],
-    [6, 38],
-    [4, 42],
-    [16, 36],
-    [14, 40],
-    [12, 44],
-    [24, 36],
-    [26, 40],
-    [28, 44],
+    [6, 46],
+    [3, 50],
+    [1, 54],
+    [16, 48],
+    [13, 52],
+    [10, 56],
+    [28, 48],
+    [30, 52],
+    [32, 56],
   ] as [number, number][]) {
     setIf(ctx, ox + lx, oy + ly, leg, W, H);
+    setIf(ctx, ox + lx + 1, oy + ly, leg, W, H);
   }
+  setIf(ctx, ox + 8, oy + 20, rim, W, H);
+  setIf(ctx, ox + 20, oy + 18, rim, W, H);
 }
 
 /** Forward red ant — center hero. */
 function drawPixelHeroAnt(ctx: Px, ox: number, oy: number, antenna: number, W: number, H: number): void {
-  const body = '#b84830';
+  const body = '#c85030';
   const bodyDeep = '#7a2818';
-  const bodyLit = '#d46848';
-  const eye = '#1a1010';
-  const leg = '#5a2018';
+  const bodyLit = '#e87850';
+  const eye = '#140c0c';
+  const leg = '#4a1810';
+  const rim = '#f0c878';
 
-  // Abdomen
-  fill(ctx, ox + 2, oy + 18, 16, 14, body);
-  fill(ctx, ox + 4, oy + 16, 12, 2, body);
-  fill(ctx, ox + 4, oy + 32, 12, 2, body);
-  fill(ctx, ox + 6, oy + 20, 6, 6, bodyDeep);
-  fill(ctx, ox + 8, oy + 22, 4, 3, bodyLit);
-  // Thorax
-  fill(ctx, ox + 16, oy + 16, 14, 14, body);
-  fill(ctx, ox + 18, oy + 14, 10, 2, body);
-  fill(ctx, ox + 20, oy + 18, 6, 4, bodyLit);
+  // Abdomen (rear segment)
+  fill(ctx, ox + 0, oy + 24, 20, 18, body);
+  fill(ctx, ox + 2, oy + 22, 16, 2, body);
+  fill(ctx, ox + 2, oy + 42, 16, 2, body);
+  fill(ctx, ox + 4, oy + 26, 8, 8, bodyDeep);
+  fill(ctx, ox + 8, oy + 28, 5, 4, bodyLit);
+  // Mid / thorax
+  fill(ctx, ox + 18, oy + 20, 16, 16, body);
+  fill(ctx, ox + 20, oy + 18, 12, 2, body);
+  fill(ctx, ox + 22, oy + 22, 8, 6, bodyLit);
   // Head
-  fill(ctx, ox + 28, oy + 14, 12, 12, body);
-  fill(ctx, ox + 30, oy + 12, 8, 2, body);
-  fill(ctx, ox + 34, oy + 16, 4, 4, eye);
-  fill(ctx, ox + 35, oy + 17, 2, 2, '#3a2020');
+  fill(ctx, ox + 32, oy + 16, 16, 16, body);
+  fill(ctx, ox + 34, oy + 14, 12, 2, body);
+  fill(ctx, ox + 40, oy + 20, 6, 6, eye);
+  fill(ctx, ox + 42, oy + 22, 2, 2, '#3a2020');
   // Mandibles
-  setIf(ctx, ox + 40, oy + 18, bodyDeep, W, H);
-  setIf(ctx, ox + 41, oy + 19, bodyDeep, W, H);
-  setIf(ctx, ox + 40, oy + 20, bodyDeep, W, H);
-  setIf(ctx, ox + 41, oy + 21, bodyDeep, W, H);
-  // Antennae (animated tip)
-  setIf(ctx, ox + 32, oy + 10, bodyDeep, W, H);
-  setIf(ctx, ox + 33, oy + 7, bodyDeep, W, H);
-  setIf(ctx, ox + 34 + antenna, oy + 4, bodyLit, W, H);
-  setIf(ctx, ox + 30, oy + 10, bodyDeep, W, H);
-  setIf(ctx, ox + 28, oy + 7, bodyDeep, W, H);
-  setIf(ctx, ox + 27 - antenna, oy + 4, bodyLit, W, H);
-  // Legs (planted stance)
+  fill(ctx, ox + 46, oy + 22, 4, 2, bodyDeep);
+  fill(ctx, ox + 48, oy + 24, 3, 2, bodyDeep);
+  fill(ctx, ox + 46, oy + 26, 4, 2, bodyDeep);
+  // Antennae
+  setIf(ctx, ox + 38, oy + 12, bodyDeep, W, H);
+  setIf(ctx, ox + 40, oy + 8, bodyDeep, W, H);
+  setIf(ctx, ox + 42 + antenna, oy + 4, bodyLit, W, H);
+  setIf(ctx, ox + 36, oy + 12, bodyDeep, W, H);
+  setIf(ctx, ox + 34, oy + 8, bodyDeep, W, H);
+  setIf(ctx, ox + 32 - antenna, oy + 4, bodyLit, W, H);
+  // Legs
   for (const [lx, ly] of [
-    [6, 32],
-    [4, 36],
-    [2, 40],
-    [12, 34],
-    [10, 38],
-    [8, 42],
-    [20, 32],
-    [22, 36],
+    [4, 42],
+    [2, 46],
+    [0, 50],
+    [12, 44],
+    [10, 48],
+    [8, 52],
     [24, 40],
-    [26, 34],
-    [28, 38],
+    [26, 44],
+    [28, 48],
     [30, 42],
+    [32, 46],
+    [34, 50],
   ] as [number, number][]) {
     setIf(ctx, ox + lx, oy + ly, leg, W, H);
+    setIf(ctx, ox + lx + 1, oy + ly, leg, W, H);
   }
+  setIf(ctx, ox + 10, oy + 24, rim, W, H);
+  setIf(ctx, ox + 26, oy + 20, rim, W, H);
+  setIf(ctx, ox + 38, oy + 16, rim, W, H);
 }
 
 /** Green mantis — right flank, scythes ready. */
 function drawPixelMantis(ctx: Px, ox: number, oy: number, scythe: number, W: number, H: number): void {
-  const body = '#4a8a40';
-  const bodyDeep = '#2a5a28';
-  const bodyLit = '#6ab058';
-  const eye = '#c8e0a8';
-  const leg = '#2a4828';
+  const body = '#48a040';
+  const bodyDeep = '#246028';
+  const bodyLit = '#78d060';
+  const eye = '#d8f0b0';
+  const leg = '#1e3c1c';
+  const rim = '#e8d080';
 
-  // Tall abdomen
-  fill(ctx, ox + 10, oy + 22, 10, 28, body);
-  fill(ctx, ox + 12, oy + 24, 4, 20, bodyDeep);
-  fill(ctx, ox + 14, oy + 26, 2, 8, bodyLit);
+  // Long abdomen
+  fill(ctx, ox + 12, oy + 30, 12, 34, body);
+  fill(ctx, ox + 14, oy + 32, 6, 26, bodyDeep);
+  fill(ctx, ox + 16, oy + 36, 3, 10, bodyLit);
   // Thorax
-  fill(ctx, ox + 8, oy + 14, 14, 12, body);
-  fill(ctx, ox + 10, oy + 12, 10, 2, bodyLit);
-  // Triangular head
-  fill(ctx, ox + 10, oy + 4, 12, 10, body);
-  fill(ctx, ox + 12, oy + 2, 8, 2, body);
-  fill(ctx, ox + 14, oy + 6, 4, 4, eye);
-  fill(ctx, ox + 15, oy + 7, 2, 2, '#1a2810');
-  // Antennae
+  fill(ctx, ox + 8, oy + 18, 18, 14, body);
+  fill(ctx, ox + 10, oy + 16, 14, 2, bodyLit);
+  // Triangle head
+  fill(ctx, ox + 10, oy + 4, 16, 14, body);
+  fill(ctx, ox + 12, oy + 2, 12, 2, body);
+  fill(ctx, ox + 14, oy + 0, 8, 2, bodyLit);
+  fill(ctx, ox + 16, oy + 8, 6, 6, eye);
+  fill(ctx, ox + 18, oy + 10, 2, 2, '#102010');
   setIf(ctx, ox + 14, oy + 1, bodyDeep, W, H);
-  setIf(ctx, ox + 13, oy + 0, bodyLit, W, H);
-  setIf(ctx, ox + 18, oy + 1, bodyDeep, W, H);
-  setIf(ctx, ox + 19, oy + 0, bodyLit, W, H);
-  // Raptorial forelegs (animated)
+  setIf(ctx, ox + 12, oy + 0, bodyLit, W, H);
+  setIf(ctx, ox + 22, oy + 1, bodyDeep, W, H);
+  setIf(ctx, ox + 24, oy + 0, bodyLit, W, H);
+  // Scythe arms
   const s = scythe;
-  fill(ctx, ox + 20, oy + 14 + s, 14, 3, bodyDeep);
-  fill(ctx, ox + 30, oy + 10 + s, 3, 10, body);
-  fill(ctx, ox + 22, oy + 18 + s, 10, 2, bodyLit);
-  // Spikes
-  setIf(ctx, ox + 24, oy + 16 + s, '#1a3018', W, H);
-  setIf(ctx, ox + 28, oy + 16 + s, '#1a3018', W, H);
-  // Second arm
-  fill(ctx, ox - 2, oy + 16 - s, 12, 3, bodyDeep);
-  fill(ctx, ox - 4, oy + 12 - s, 3, 10, body);
+  fill(ctx, ox + 24, oy + 18 + s, 18, 4, bodyDeep);
+  fill(ctx, ox + 38, oy + 10 + s, 4, 14, body);
+  fill(ctx, ox + 26, oy + 22 + s, 12, 2, bodyLit);
+  setIf(ctx, ox + 28, oy + 20 + s, '#142814', W, H);
+  setIf(ctx, ox + 32, oy + 20 + s, '#142814', W, H);
+  setIf(ctx, ox + 36, oy + 20 + s, '#142814', W, H);
+  fill(ctx, ox - 6, oy + 20 - s, 16, 4, bodyDeep);
+  fill(ctx, ox - 8, oy + 12 - s, 4, 14, body);
+  setIf(ctx, ox - 4, oy + 18 - s, '#142814', W, H);
+  setIf(ctx, ox, oy + 18 - s, '#142814', W, H);
   // Standing legs
   for (const [lx, ly] of [
-    [8, 48],
-    [6, 52],
-    [4, 56],
-    [18, 48],
-    [20, 52],
-    [22, 56],
+    [10, 60],
+    [8, 66],
+    [6, 72],
+    [22, 60],
+    [24, 66],
+    [26, 72],
   ] as [number, number][]) {
     setIf(ctx, ox + lx, oy + ly, leg, W, H);
+    setIf(ctx, ox + lx + 1, oy + ly, leg, W, H);
   }
+  setIf(ctx, ox + 12, oy + 6, rim, W, H);
+  setIf(ctx, ox + 20, oy + 18, rim, W, H);
+  setIf(ctx, ox + 40, oy + 12 + s, rim, W, H);
 }
 
 /**
