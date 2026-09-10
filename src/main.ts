@@ -1,12 +1,13 @@
 import { acidRain, castleUpgrade, emergency, place, rechargeEmergency, sell, unlock, upgradeModule } from './sim/actions';
 import { AiController } from './sim/ai/controller';
 import { DIFFICULTIES, type Difficulty } from './sim/ai/profiles';
-import { COLS, LANE_LENGTH, ROWS, TICK_DT, moduleSpan } from './sim/config';
+import { COLS, LANE_LENGTH, ROWS, TICK_DT, moduleCenter, moduleSpan } from './sim/config';
+import { MODULE_BY_ID } from './sim/data/modules';
 import { UNIT_BY_ID, type Family } from './sim/data/units';
 import type { Track } from './sim/data/upgrades';
 import { createGame, type GameState } from './sim/state';
 import { step } from './sim/step';
-import { H, W, laneToPx, pxToLane, pxToOwnCell, pxToRow, rowCenter, inRect, isInLaneArea } from './ui/layout';
+import { H, W, MINERAL_HUD_X, MINERAL_HUD_Y, laneToPx, pxToLane, pxToOwnCell, pxToRow, rowCenter, inRect, isInLaneArea } from './ui/layout';
 import { ACID_CARD, render, type Button, type UiApi, type UiState } from './ui/renderer';
 
 const canvas = document.getElementById('game') as HTMLCanvasElement;
@@ -18,6 +19,11 @@ canvas.height = H;
 let game: GameState | null = null;
 let ai: AiController | null = null;
 let buttons: Button[] = [];
+/** Visual-only: farm income → flying sap droplets (auto-collect into the mineral tray). */
+let mineralSapAcc = 0;
+let mineralEarnedSeen = 0;
+let mineralSapFarmIdx = 0;
+
 
 const ui: UiState = {
   screen: 'menu',
@@ -135,6 +141,9 @@ function startGame(): void {
   ui.speed = 1;
   ui.effects = [];
   ui.message = null;
+  mineralSapAcc = 0;
+  mineralEarnedSeen = 0;
+  mineralSapFarmIdx = 0;
   for (const li of ui.laneIntel) {
     li.ant = -Infinity;
     li.beetle = -Infinity;
@@ -229,6 +238,43 @@ window.addEventListener('keydown', (e) => {
 // Loop
 // ---------------------------------------------------------------------------
 
+
+function spawnMineralSaps(g: GameState): void {
+  const me = g.players[0];
+  const earned = me.stats.mineralsEarned;
+  const delta = earned - mineralEarnedSeen;
+  mineralEarnedSeen = earned;
+  if (delta <= 0) return;
+  mineralSapAcc += delta;
+
+  const farms = g.modules.filter((m) => m.side === 0 && m.buildRemaining <= 0 && MODULE_BY_ID[m.defId]?.kind === 'resource');
+  if (!farms.length) {
+    // Still drain acc so reconnecting farms don't dump a backlog of orbs.
+    mineralSapAcc = Math.min(mineralSapAcc, 2);
+    return;
+  }
+
+  // One droplet ≈ one mineral. Cap per tick so honey pots don't spam the screen.
+  let spawned = 0;
+  while (mineralSapAcc >= 1 && spawned < 4) {
+    mineralSapAcc -= 1;
+    spawned++;
+    const farm = farms[mineralSapFarmIdx % farms.length]!;
+    mineralSapFarmIdx++;
+    const x = laneToPx(moduleCenter(farm.side, farm.col));
+    const y = rowCenter(farm.row);
+    ui.effects.push({
+      kind: 'sap',
+      x: x + (Math.random() - 0.5) * 10,
+      y: y - 6,
+      x1: MINERAL_HUD_X,
+      y1: MINERAL_HUD_Y,
+      ttl: 1.15,
+      max: 1.15,
+    });
+  }
+}
+
 function collectEffects(g: GameState): void {
   for (const ev of g.events) {
     if (ev.type === 'hit') {
@@ -275,6 +321,7 @@ function frame(now: number): void {
       steps++;
     }
     if (steps === 12) acc = 0;
+    spawnMineralSaps(game);
     updateIntel(game);
     if (game.winner !== null) ui.screen = 'end';
   }

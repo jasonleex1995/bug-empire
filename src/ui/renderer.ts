@@ -39,6 +39,8 @@ import {
   H,
   LANES_BOTTOM,
   LANE_H,
+  MINERAL_HUD_X,
+  MINERAL_HUD_Y,
   TOP_BAR_H,
   W,
   inRect,
@@ -66,9 +68,12 @@ import { drawPixelGem, drawPixelOrb, drawPixelTitle, getMenuHeroImage } from './
 export const ACID_CARD = 'acid_rain';
 
 export interface Effect {
-  kind: 'spark' | 'puff' | 'burst' | 'laneFlash' | 'laneGreen';
+  kind: 'spark' | 'puff' | 'burst' | 'laneFlash' | 'laneGreen' | 'sap';
   x: number;
   y: number;
+  /** Sap flight target (mineral counter). */
+  x1?: number;
+  y1?: number;
   row?: number;
   ttl: number;
   max: number;
@@ -407,6 +412,7 @@ function drawFog(ctx: CanvasRenderingContext2D, game: GameState): void {
 
 function drawEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
   for (const e of ui.effects) {
+    if (e.kind === 'sap') continue; // drawn above HUD chrome so flights stay visible
     const k = e.ttl / e.max;
     if (e.kind === 'spark') {
       glowCircle(ctx, e.x, e.y, 8 + (1 - k) * 6, `rgba(255,230,140,${k * 0.8})`);
@@ -432,6 +438,48 @@ function drawEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
   }
 }
 
+function drawSapEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
+  for (const e of ui.effects) {
+    if (e.kind !== 'sap') continue;
+    const k = e.ttl / e.max;
+    const t = 1 - k;
+    const ease = t * t * (3 - 2 * t);
+    const x0 = e.x;
+    const y0 = e.y;
+    const x1 = e.x1 ?? MINERAL_HUD_X;
+    const y1 = e.y1 ?? MINERAL_HUD_Y;
+    const cx = (x0 + x1) / 2;
+    const cy = Math.min(y0, y1) - 56 - Math.abs(x1 - x0) * 0.12;
+    const mt = 1 - ease;
+    const px = mt * mt * x0 + 2 * mt * ease * cx + ease * ease * x1;
+    const py = mt * mt * y0 + 2 * mt * ease * cy + ease * ease * y1;
+    const pulse = 1 + Math.sin(ease * Math.PI) * 0.25;
+    glowCircle(ctx, px, py, 18 * pulse, `rgba(232,184,74,${0.45 + k * 0.4})`);
+    // Faceted sap nugget (reads like a collectible, not a pixel speck).
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = `rgba(232,184,74,${0.75 + k * 0.25})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(7, -2);
+    ctx.lineTo(5, 7);
+    ctx.lineTo(-5, 7);
+    ctx.lineTo(-7, -2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = `rgba(255,245,200,${0.55 + k * 0.45})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(3, -1);
+    ctx.lineTo(0, 2);
+    ctx.lineTo(-3, -1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
 // ---------------------------------------------------------------------------
 // HUD and panels
 // ---------------------------------------------------------------------------
@@ -445,8 +493,8 @@ function drawTopBar(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState,
   ctx.fillStyle = hg;
   ctx.fillRect(0, 0, W, TOP_BAR_H);
 
-  drawPixelGem(ctx, 14, 8, 2.2);
-  text(ctx, `${Math.floor(me.minerals)}`, 40, 17, 14, C.mineral, 'left', 400);
+  drawPixelGem(ctx, MINERAL_HUD_X - 34, MINERAL_HUD_Y - 10, 2.4);
+  text(ctx, `${Math.floor(me.minerals)}`, MINERAL_HUD_X - 8, MINERAL_HUD_Y, 14, C.mineral, 'left', 400);
 
   drawPixelOrb(ctx, 118, 8, 2.2);
   text(ctx, `${Math.floor(me.gas)}/${GAS_CAP}`, 144, 17, 13, C.gas, 'left', 400);
@@ -529,47 +577,71 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
 
   drawCardGroupTicks(ctx);
   const cards: ModuleDef[] = [...RESOURCE_MODULES, ...DEFENSE_MODULES, ...BARRACKS_MODULES];
+
+  const fitLabel = (raw: string, maxW: number): string => {
+    const s = raw.replace(' 병영', '');
+    ctx.font = `12px ${FONT_UI}`;
+    if (ctx.measureText(s).width <= maxW) return s;
+    let out = s;
+    while (out.length > 1 && ctx.measureText(out + '…').width > maxW) out = out.slice(0, -1);
+    return out.length ? out + '…' : s.slice(0, 1);
+  };
+
   cards.forEach((def, i) => {
     const r = cardRect(i);
+    const x = Math.round(r.x);
+    const y = Math.round(r.y);
     const cost = moduleCost(game, 0, def.id);
     const locked = def.kind === 'barracks' && !isUnlocked(game, 0, def.unitId!);
     const unit = def.kind === 'barracks' ? UNIT_BY_ID[def.unitId!] : null;
     const affordable = locked ? me.gas >= unit!.unlockGas : me.minerals >= cost;
     const selected = ui.selectedCard === def.id;
-    const hovered = inRect(r, ui.hover.x, ui.hover.y);
+    const hovered = inRect({ x, y, w: r.w, h: r.h }, ui.hover.x, ui.hover.y);
     const lift = selected ? -2 : 0;
+    const yy = y + lift;
 
     // Packet body
     ctx.fillStyle = selected ? '#2a3a24' : hovered ? '#1e2a20' : '#162018';
-    rr(ctx, r.x, r.y + lift, r.w, r.h, 4);
+    rr(ctx, x, yy, r.w, r.h, 4);
     ctx.fill();
     ctx.strokeStyle = selected ? C.mineral : hovered ? KIND_COLOR[def.kind] : 'rgba(47,69,54,0.9)';
     ctx.lineWidth = selected ? 2 : 1;
-    ctx.globalAlpha = affordable ? 1 : 0.4;
     ctx.stroke();
 
-    // Glyph plate
-    ctx.fillStyle = 'rgba(0,0,0,0.32)';
-    rr(ctx, r.x + 6, r.y + lift + 5, r.w - 12, 36, 3);
+    ctx.save();
+    ctx.globalAlpha = affordable ? 1 : 0.42;
+
+    // Glyph area (no text overlap)
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    rr(ctx, x + 5, yy + 4, r.w - 10, 34, 3);
     ctx.fill();
     if (def.kind === 'barracks' && unit) {
-      drawInsect(ctx, unit.family, unit.tier, r.x + r.w / 2, r.y + lift + 24, 1, KIND_COLOR[def.kind], ui.now / 1000, i);
+      drawInsect(ctx, unit.family, unit.tier, x + r.w / 2, yy + 22, 1, KIND_COLOR[def.kind], ui.now / 1000, i);
     } else {
-      drawModuleGlyph(ctx, def.kind, def.id, r.x + r.w / 2, r.y + lift + 24, KIND_COLOR[def.kind], 1);
+      drawModuleGlyph(ctx, def.kind, def.id, x + r.w / 2, yy + 22, KIND_COLOR[def.kind], 1);
     }
 
-    // Tiny name — packet tag, not a lesson
-    text(ctx, def.name.replace(' 병영', ''), r.x + r.w / 2, r.y + lift + 50, 10, affordable ? C.text : C.dim, 'center', 500);
+    // Name plate — opaque so Galmuri stays crisp (integer px, no overlap with glyph).
+    ctx.fillStyle = 'rgba(6,10,8,0.96)';
+    ctx.fillRect(x + 2, yy + 38, r.w - 4, 16);
+    text(ctx, fitLabel(def.name, r.w - 8), x + r.w / 2, yy + 47, 12, affordable ? C.text : C.dim, 'center', 500);
 
-    // Cost badge (PvZ sun-cost energy)
-    const badgeY = r.y + lift + r.h - 14;
+    // Cost badge plate
+    ctx.fillStyle = locked ? 'rgba(16,36,32,0.98)' : 'rgba(36,28,8,0.98)';
+    rr(ctx, x + 3, yy + r.h - 22, r.w - 6, 18, 3);
+    ctx.fill();
     if (locked) {
-      text(ctx, `${unit!.unlockGas}G`, r.x + r.w / 2, badgeY, 12, affordable ? C.gas : C.dim, 'center', 700);
+      text(ctx, `${unit!.unlockGas}G`, x + r.w / 2, yy + r.h - 12, 13, affordable ? C.gas : C.dim, 'center', 700);
     } else {
-      text(ctx, `${cost}`, r.x + r.w / 2, badgeY, 13, affordable ? C.mineral : C.dim, 'center', 700);
+      text(ctx, `${cost}`, x + r.w / 2, yy + r.h - 12, 14, affordable ? C.mineral : C.dim, 'center', 700);
     }
-    if (unit) text(ctx, `T${unit.tier}`, r.x + r.w - 5, r.y + lift + 9, 9, C.mute, 'right');
-    ctx.globalAlpha = 1;
+    if (unit) {
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      rr(ctx, x + r.w - 22, yy + 4, 18, 12, 2);
+      ctx.fill();
+      text(ctx, `T${unit.tier}`, x + r.w - 13, yy + 11, 11, C.mute, 'center');
+    }
+    ctx.restore();
 
     const tooltip = [def.name, def.kind === 'barracks' ? `${cost} 미네랄 · ${FAMILY_NAME[unit!.family]} T${unit!.tier}` : `${cost} 미네랄`, def.desc];
     if (unit) {
@@ -585,8 +657,8 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
     if (def.kind === 'resource') tooltip.push('자원 모듈은 하나 지을 때마다 15% 비싸짐');
     buttons.push({
       id: `card_${def.id}`,
-      x: r.x,
-      y: r.y + lift,
+      x,
+      y: yy,
       w: r.w,
       h: r.h,
       onClick: () => (locked ? api.unlock(def.unitId!) : api.selectCard(selected ? null : def.id)),
@@ -595,28 +667,37 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
   });
 
   const r = cardRect(cards.length);
+  const x = Math.round(r.x);
+  const y = Math.round(r.y);
   const selected = ui.selectedCard === ACID_CARD;
   const affordable = me.gas >= ACID_RAIN.gas;
   const lift = selected ? -2 : 0;
+  const yy = y + lift;
   ctx.fillStyle = selected ? '#1a3228' : '#121c18';
-  rr(ctx, r.x, r.y + lift, r.w, r.h, 4);
+  rr(ctx, x, yy, r.w, r.h, 4);
   ctx.fill();
   ctx.strokeStyle = selected ? C.gas : '#2a5a44';
   ctx.lineWidth = selected ? 2 : 1;
   ctx.stroke();
-  ctx.globalAlpha = affordable ? 1 : 0.4;
-  glowCircle(ctx, r.x + r.w / 2, r.y + lift + 22, 16, C.mintGlow);
+  ctx.save();
+  ctx.globalAlpha = affordable ? 1 : 0.42;
+  glowCircle(ctx, x + r.w / 2, yy + 20, 16, C.mintGlow);
   ctx.fillStyle = C.gas;
   ctx.beginPath();
-  ctx.ellipse(r.x + r.w / 2, r.y + lift + 20, 7, 10, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + r.w / 2, yy + 18, 7, 10, 0, 0, Math.PI * 2);
   ctx.fill();
-  text(ctx, '산성비', r.x + r.w / 2, r.y + lift + 50, 10, affordable ? C.text : C.dim, 'center');
-  text(ctx, `${ACID_RAIN.gas}G`, r.x + r.w / 2, r.y + lift + r.h - 14, 13, affordable ? C.gas : C.dim, 'center', 700);
-  ctx.globalAlpha = 1;
+  ctx.fillStyle = 'rgba(6,10,8,0.96)';
+  ctx.fillRect(x + 2, yy + 38, r.w - 4, 16);
+  text(ctx, '산성비', x + r.w / 2, yy + 47, 12, affordable ? C.text : C.dim, 'center');
+  ctx.fillStyle = 'rgba(16,36,32,0.98)';
+  rr(ctx, x + 3, yy + r.h - 22, r.w - 6, 18, 3);
+  ctx.fill();
+  text(ctx, `${ACID_RAIN.gas}G`, x + r.w / 2, yy + r.h - 12, 13, affordable ? C.gas : C.dim, 'center', 700);
+  ctx.restore();
   buttons.push({
     id: 'card_acid',
-    x: r.x,
-    y: r.y + lift,
+    x,
+    y: yy,
     w: r.w,
     h: r.h,
     onClick: () => api.selectCard(selected ? null : ACID_CARD),
@@ -624,7 +705,6 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
   });
 }
 
-/** Compact per-lane family ticks on the right castle chrome. */
 function drawLaneIntelTicks(ctx: CanvasRenderingContext2D, ui: UiState): void {
   const fams: Family[] = ['ant', 'beetle', 'mantis'];
   for (let row = 0; row < ROWS; row++) {
@@ -1023,9 +1103,37 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
   drawCastles(ctx, game, ui, buttons, api);
   drawLaneIntelTicks(ctx, ui);
 
+  // Soft underground band under the square lawn (square cells leave spare height).
+  if (LANES_BOTTOM < H) {
+    const soil = ctx.createLinearGradient(0, LANES_BOTTOM, 0, H);
+    soil.addColorStop(0, '#1a2418');
+    soil.addColorStop(0.25, '#121810');
+    soil.addColorStop(1, '#080c08');
+    ctx.fillStyle = soil;
+    ctx.fillRect(0, LANES_BOTTOM, W, H - LANES_BOTTOM);
+    ctx.fillStyle = 'rgba(232,184,74,0.12)';
+    for (let sx = 0; sx < W; sx += 4) {
+      if ((sx + Math.floor(game.t * 2)) % 8 < 4) ctx.fillRect(sx, LANES_BOTTOM, 2, 1);
+    }
+    // Sparse root flecks so the spare band feels like dirt, not empty HUD.
+    ctx.save();
+    for (let i = 0; i < 40; i++) {
+      const seed = i * 47.3 + game.t * 3;
+      const x = (seed * 19) % W;
+      const y = LANES_BOTTOM + 18 + ((seed * 11) % Math.max(1, H - LANES_BOTTOM - 28));
+      ctx.strokeStyle = i % 2 === 0 ? 'rgba(70,90,55,0.14)' : 'rgba(40,50,30,0.16)';
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + 18, y + 6, x + 36, y - 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   // Top chrome over the lawn: status + seed packets (PvZ hierarchy).
   drawTopBar(ctx, game, ui, buttons, api);
   drawCards(ctx, game, ui, buttons, api);
+  drawSapEffects(ctx, ui);
   drawContextPanel(ctx, game, ui, buttons, api);
   drawMessage(ctx, ui);
 

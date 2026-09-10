@@ -4,37 +4,40 @@ export const W = 1280;
 export const H = 720;
 
 /**
- * PvZ-style chrome: slim status row + seed packet rail on top,
- * battlefield takes the rest. No permanent bottom teaching shelf.
- * (Assumes players already know card roles — tutorial is separate.)
+ * PvZ-style chrome: slim status + seed rail on top.
+ * Grid cells are square (CELL_W === LANE_H) so the lawn reads like a board, not stretched tiles.
  */
-export const TOP_BAR_H = 34;
-export const SEED_H = 78;
+export const TOP_BAR_H = 36;
+export const SEED_H = 86;
+/** Square cells — width and lane height must match. */
 export const CELL_W = 80;
-/** Tall lanes — playfield is the hero. */
-export const LANE_H = 148;
+export const LANE_H = 80;
 export const GRID_LEFT = 40;
 export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;
 
 export const LANES_BOTTOM = GRID_TOP + ROWS * LANE_H;
 
-/** Kept for shelf fade math; no permanent bottom HUD band. */
+/** No permanent bottom HUD; leftover frame is soil atmosphere under the lawn. */
 export const PANEL_TOP = H;
 
-export const CARD_W = 62;
-export const CARD_H = 70;
-export const CARD_GAP = 5;
+export const CARD_W = 72;
+export const CARD_H = 78;
+export const CARD_GAP = 4;
 /** Extra gap between card families (resource / defense / barracks / ability). */
-export const CARD_GROUP_GAP = 12;
+export const CARD_GROUP_GAP = 10;
 export const CARDS_TOP = TOP_BAR_H + 4;
-export const CARDS_LEFT = 14;
+export const CARDS_LEFT = 12;
 
 /** Floating action bar when a placed module is selected (not always-on). */
 export const CONTEXT_H = 52;
 export const CONTEXT_LEFT = 24;
 export const CONTEXT_W = W - 48;
-export const CONTEXT_TOP = Math.min(LANES_BOTTOM - CONTEXT_H - 8, H - CONTEXT_H - 10);
+export const CONTEXT_TOP = Math.min(LANES_BOTTOM + 12, H - CONTEXT_H - 10);
+
+/** Mineral counter anchor — sap droplets fly here (PvZ sun tray energy). */
+export const MINERAL_HUD_X = 52;
+export const MINERAL_HUD_Y = 18;
 
 export function laneToPx(x: number): number {
   return GRID_LEFT + x * CELL_W;
