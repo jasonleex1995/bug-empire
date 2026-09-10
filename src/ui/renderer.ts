@@ -792,6 +792,8 @@ function drawMessage(ctx: CanvasRenderingContext2D, ui: UiState): void {
 }
 
 function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[]): void {
+  // Hide chrome tooltips while the castle modal owns the screen.
+  if (ui.castlePanelOpen) return;
   const hit = buttons.find((b) => b.tooltip && inRect(b, ui.hover.x, ui.hover.y) && !b.disabled);
   if (!hit || !hit.tooltip) return;
   const lines = hit.tooltip;
