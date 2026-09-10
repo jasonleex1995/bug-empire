@@ -3,32 +3,38 @@ import { COLS, LANE_LENGTH, ROWS } from '../sim/config';
 export const W = 1280;
 export const H = 720;
 
-/** Slim top chrome — resources / HP / timer only. */
-export const TOP_BAR_H = 48;
+/**
+ * PvZ-style chrome: slim status row + seed packet rail on top,
+ * battlefield takes the rest. No permanent bottom teaching shelf.
+ * (Assumes players already know card roles — tutorial is separate.)
+ */
+export const TOP_BAR_H = 34;
+export const SEED_H = 78;
 export const CELL_W = 80;
-/** Taller lanes so the battlefield reads as the hero (Age of War / PvZ). */
-export const LANE_H = 112;
+/** Tall lanes — playfield is the hero. */
+export const LANE_H = 148;
 export const GRID_LEFT = 40;
-export const GRID_TOP = TOP_BAR_H;
+export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;
 
 export const LANES_BOTTOM = GRID_TOP + ROWS * LANE_H;
 
-/** Bottom shelf: card rail + one context strip (~23% of frame). */
-export const SHELF_H = 168;
-export const PANEL_TOP = H - SHELF_H;
-export const CARD_W = 70;
-export const CARD_H = 74;
-export const CARD_GAP = 6;
-/** Extra gap between card families (resource / defense / barracks / ability). */
-export const CARD_GROUP_GAP = 14;
-export const CARDS_TOP = PANEL_TOP + 10;
-export const CARDS_LEFT = 20;
+/** Kept for shelf fade math; no permanent bottom HUD band. */
+export const PANEL_TOP = H;
 
-export const CONTEXT_TOP = CARDS_TOP + CARD_H + 8;
-export const CONTEXT_H = 66;
-export const CONTEXT_LEFT = 20;
-export const CONTEXT_W = W - 40;
+export const CARD_W = 62;
+export const CARD_H = 70;
+export const CARD_GAP = 5;
+/** Extra gap between card families (resource / defense / barracks / ability). */
+export const CARD_GROUP_GAP = 12;
+export const CARDS_TOP = TOP_BAR_H + 4;
+export const CARDS_LEFT = 14;
+
+/** Floating action bar when a placed module is selected (not always-on). */
+export const CONTEXT_H = 52;
+export const CONTEXT_LEFT = 24;
+export const CONTEXT_W = W - 48;
+export const CONTEXT_TOP = Math.min(LANES_BOTTOM - CONTEXT_H - 8, H - CONTEXT_H - 10);
 
 export function laneToPx(x: number): number {
   return GRID_LEFT + x * CELL_W;
