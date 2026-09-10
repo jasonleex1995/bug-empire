@@ -25,6 +25,7 @@ const ui: UiState = {
   timeLimitMode: false,
   selectedCard: null,
   selectedModuleId: null,
+  castlePanelOpen: false,
   hover: { x: -1, y: -1 },
   speed: 1,
   paused: false,
@@ -64,6 +65,9 @@ const api: UiApi = {
     if (!game) return;
     const r = castleUpgrade(game, 0, f, t);
     if (!r.ok) say(reasonText(r.reason));
+  },
+  toggleCastlePanel(open) {
+    ui.castlePanelOpen = open ?? !ui.castlePanelOpen;
   },
   unlock(unitId) {
     if (!game) return;
@@ -126,6 +130,7 @@ function startGame(): void {
   ui.screen = 'game';
   ui.selectedCard = null;
   ui.selectedModuleId = null;
+  ui.castlePanelOpen = false;
   ui.paused = false;
   ui.speed = 1;
   ui.effects = [];
@@ -156,6 +161,10 @@ canvas.addEventListener('mouseleave', () => {
 
 canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
+  if (ui.castlePanelOpen) {
+    ui.castlePanelOpen = false;
+    return;
+  }
   ui.selectedCard = null;
   ui.selectedModuleId = null;
 });
@@ -207,6 +216,10 @@ window.addEventListener('keydown', (e) => {
   } else if (e.key === '1' || e.key === '2' || e.key === '3') {
     api.setSpeed(Number(e.key));
   } else if (e.key === 'Escape') {
+    if (ui.castlePanelOpen) {
+      ui.castlePanelOpen = false;
+      return;
+    }
     ui.selectedCard = null;
     ui.selectedModuleId = null;
   }

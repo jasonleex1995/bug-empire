@@ -3,22 +3,32 @@ import { COLS, LANE_LENGTH, ROWS } from '../sim/config';
 export const W = 1280;
 export const H = 720;
 
+/** Slim top chrome — resources / HP / timer only. */
+export const TOP_BAR_H = 48;
 export const CELL_W = 80;
-export const LANE_H = 84;
+/** Taller lanes so the battlefield reads as the hero (Age of War / PvZ). */
+export const LANE_H = 112;
 export const GRID_LEFT = 40;
-export const GRID_TOP = 76;
+export const GRID_TOP = TOP_BAR_H;
 export const CASTLE_W = 40;
 
 export const LANES_BOTTOM = GRID_TOP + ROWS * LANE_H;
 
-export const PANEL_TOP = LANES_BOTTOM + 12;
-export const CARD_W = 80;
-export const CARD_H = 100;
-export const CARD_GAP = 8;
-export const CARDS_TOP = PANEL_TOP + 8;
-export const CARDS_LEFT = 24;
+/** Bottom shelf: card rail + one context strip (~23% of frame). */
+export const SHELF_H = 168;
+export const PANEL_TOP = H - SHELF_H;
+export const CARD_W = 70;
+export const CARD_H = 74;
+export const CARD_GAP = 6;
+/** Extra gap between card families (resource / defense / barracks / ability). */
+export const CARD_GROUP_GAP = 14;
+export const CARDS_TOP = PANEL_TOP + 10;
+export const CARDS_LEFT = 20;
 
-export const LOWER_TOP = CARDS_TOP + CARD_H + 10;
+export const CONTEXT_TOP = CARDS_TOP + CARD_H + 8;
+export const CONTEXT_H = 66;
+export const CONTEXT_LEFT = 20;
+export const CONTEXT_W = W - 40;
 
 export function laneToPx(x: number): number {
   return GRID_LEFT + x * CELL_W;
