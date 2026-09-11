@@ -28,6 +28,14 @@ export const SELL_REFUND_RATIO = 0.5;
 /** Each owned resource module multiplies the price of the next one. */
 export const RESOURCE_PRICE_GROWTH = 1.15;
 
+/** All player-facing mineral prices snap to this step (50, 55, 175, …). */
+export const MINERAL_COST_STEP = 5;
+
+/** Round a mineral amount to the nearest multiple of {@link MINERAL_COST_STEP}. */
+export function snapMineral(n: number): number {
+  return Math.max(0, Math.round(n / MINERAL_COST_STEP) * MINERAL_COST_STEP);
+}
+
 /** Build time in seconds = clamp(cost / BUILD_TIME_DIVISOR, min, max). */
 export const BUILD_TIME_DIVISOR = 10;
 export const BUILD_TIME_MIN = 4;
