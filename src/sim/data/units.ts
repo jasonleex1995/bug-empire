@@ -46,11 +46,11 @@ export const FAMILY_SHORT: Record<Family, string> = {
   mantis: '사마',
 };
 
-/** Soft RPS multipliers on top of poison / pierce / armor mechanics. */
+/** Soft RPS multipliers — sharpened so one shared-front fight flips on composition. */
 export const FAMILY_MULT: Record<Family, Record<Family, number>> = {
-  ant: { ant: 1, beetle: 0.85, mantis: 1.25 },
-  beetle: { ant: 1.2, beetle: 1, mantis: 0.85 },
-  mantis: { ant: 0.85, beetle: 1.3, mantis: 1 },
+  ant: { ant: 1, beetle: 0.75, mantis: 1.4 },
+  beetle: { ant: 1.35, beetle: 1, mantis: 0.75 },
+  mantis: { ant: 0.75, beetle: 1.4, mantis: 1 },
 };
 
 export const UNITS: UnitDef[] = [
@@ -91,7 +91,7 @@ export const UNITS: UnitDef[] = [
     pierce: 0,
     body: 0.17,
     spawnInterval: 6.5,
-    unlockGas: 50,
+    unlockGas: 30,
     poisonDps: 4,
     poisonDuration: 3,
   },
@@ -111,7 +111,7 @@ export const UNITS: UnitDef[] = [
     pierce: 0,
     body: 0.2,
     spawnInterval: 11,
-    unlockGas: 100,
+    unlockGas: 70,
     poisonDps: 5,
     poisonDuration: 3.5,
   },
@@ -153,7 +153,7 @@ export const UNITS: UnitDef[] = [
     pierce: 0,
     body: 0.4,
     spawnInterval: 16,
-    unlockGas: 90,
+    unlockGas: 50,
     poisonDps: 0,
     poisonDuration: 0,
   },
@@ -195,7 +195,7 @@ export const UNITS: UnitDef[] = [
     pierce: 33,
     body: 0.34,
     spawnInterval: 15,
-    unlockGas: 90,
+    unlockGas: 50,
     poisonDps: 0,
     poisonDuration: 0,
   },

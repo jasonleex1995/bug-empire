@@ -2,8 +2,9 @@ import {
   BODY_RADIUS,
   CASTLE_ATTACK,
   COLS,
+  FRONT_CAPACITY,
   LANE_LENGTH,
-  LANE_CAPACITY,
+  OPEN_INTEL,
   REVEAL_RANGE,
   ROWS,
   SLOW_FACTOR,
@@ -12,12 +13,13 @@ import {
   UNDER_CONSTRUCTION_HP_RATIO,
   castleX,
   direction,
+  inBattlefield,
   inOwnTerritory,
   moduleSpan,
   otherSide,
   type Side,
 } from './config';
-import { applySlow, damageCastle, damageModule, damageUnit, effectiveStats, resolveUnitAttack, rollDamage, tickPoison } from './combat';
+import { applySlow, damageCastle, damageModule, damageUnit, effectiveStats, frontPressureBonus, resolveUnitAttack, rollDamage, tickPoison } from './combat';
 import { BARRACKS_LEVEL_SPAWN_MULT, MODULE_BY_ID } from './data/modules';
 import { UNIT_BY_ID } from './data/units';
 import type { GameState, ModuleInst, UnitInst } from './state';
@@ -45,7 +47,8 @@ function findTarget(state: GameState, u: UnitInst, reach: number, stuck: boolean
   // cell behind it are fair game out to structure reach, so reach units cannot snipe with impunity.
   const unitReach = atWall ? reach + STRUCTURE_REACH_BONUS : reach;
   for (const e of state.units) {
-    if (e.side === u.side || e.row !== u.row || e.hp <= 0) continue;
+    // Shared front: unit↔unit combat ignores spawn row (one war).
+    if (e.side === u.side || e.hp <= 0) continue;
     const rel = (e.x - u.x) * d;
     if (rel < -BODY_RADIUS && !own) continue;
     const dist = Math.abs(e.x - u.x);
@@ -59,15 +62,23 @@ function findTarget(state: GameState, u: UnitInst, reach: number, stuck: boolean
   if (!stuck) return null;
 
   const structReach = reach + STRUCTURE_REACH_BONUS;
+  const midCleared = !state.units.some((e) => {
+    if (e.side === u.side || e.hp <= 0) return false;
+    if (inOwnTerritory(u.side, e.x) || inBattlefield(e.x)) return true;
+    return u.side === 0 ? e.x <= LANE_LENGTH - COLS + 1.2 : e.x >= COLS - 1.2;
+  });
 
   for (const m of state.modules) {
-    if (m.side === u.side || m.row !== u.row || m.hp <= 0) continue;
+    if (m.side === u.side || m.hp <= 0) continue;
+    // Prefer own spawn row; after winning the shared fight, breach any row.
+    if (m.row !== u.row && !midCleared) continue;
     const span = moduleSpan(m.side, m.col);
     const center = (span[0] + span[1]) / 2;
     if ((center - u.x) * d < 0) continue;
     const dist = spanDistance(u.x, span);
     if (dist > structReach) continue;
-    if (!best || dist < best.dist) best = { kind: 'module', module: m, dist };
+    const rowBias = m.row === u.row ? 0 : 0.05;
+    if (!best || dist + rowBias < best.dist) best = { kind: 'module', module: m, dist: dist + rowBias };
   }
   if (best) return best;
 
@@ -81,7 +92,8 @@ function findTarget(state: GameState, u: UnitInst, reach: number, stuck: boolean
 function blockedByAlly(state: GameState, u: UnitInst, range: number): boolean {
   const d = direction(u.side);
   for (const a of state.units) {
-    if (a.side !== u.side || a.row !== u.row || a === u || a.hp <= 0) continue;
+    // Shared front: allies stack in x regardless of spawn row.
+    if (a.side !== u.side || a === u || a.hp <= 0) continue;
     const rel = (a.x - u.x) * d;
     if (rel <= 0 || rel >= UNIT_BY_ID[a.defId].body) continue;
     // A shorter-ranged unit may slip past a longer-ranged ally that has stopped to shoot,
@@ -92,16 +104,28 @@ function blockedByAlly(state: GameState, u: UnitInst, range: number): boolean {
   return false;
 }
 
-/** Nearest enemy module span ahead of the unit, used to stop units from walking through modules. */
+/** Nearest enemy module span ahead. Same-row first; any row once the shared mid is clear. */
 function nextEnemyModuleEdge(state: GameState, u: UnitInst): number | null {
   const d = direction(u.side);
+  const midCleared = !state.units.some((e) => {
+    if (e.side === u.side || e.hp <= 0) return false;
+    if (inOwnTerritory(u.side, e.x) || inBattlefield(e.x)) return true;
+    return u.side === 0 ? e.x <= LANE_LENGTH - COLS + 1.2 : e.x >= COLS - 1.2;
+  });
   let best: number | null = null;
+  let bestScore = Infinity;
   for (const m of state.modules) {
-    if (m.side === u.side || m.row !== u.row || m.hp <= 0) continue;
+    if (m.side === u.side || m.hp <= 0) continue;
+    if (m.row !== u.row && !midCleared) continue;
     const [a, b] = moduleSpan(m.side, m.col);
     const edge = d > 0 ? a : b;
-    if ((edge - u.x) * d < 0) continue;
-    if (best === null || (edge - u.x) * d < (best - u.x) * d) best = edge;
+    const ahead = (edge - u.x) * d;
+    if (ahead < 0) continue;
+    const score = ahead + (m.row === u.row ? 0 : 0.01);
+    if (score < bestScore) {
+      bestScore = score;
+      best = edge;
+    }
   }
   return best;
 }
@@ -130,6 +154,18 @@ function stepUnit(state: GameState, u: UnitInst, dt: number): void {
         damageCastle(state, otherSide(u.side), rollDamage(state, stats.dmg * stats.def.siegeMult));
       }
     }
+    // Winning the shared front: keep grinding forward while trading so the line can break.
+    if (target.kind === 'unit') {
+      const push = frontPressureBonus(state, u);
+      if (push > 1) {
+        let nx = u.x + d * stats.speed * dt * (push - 1) * 1.1;
+        if (wallEdge !== null) {
+          const limit = wallEdge - d * BODY_RADIUS;
+          if ((nx - limit) * d > 0) nx = limit;
+        }
+        u.x = Math.min(LANE_LENGTH, Math.max(0, nx));
+      }
+    }
     return;
   }
 
@@ -137,7 +173,7 @@ function stepUnit(state: GameState, u: UnitInst, dt: number): void {
   if (inOwnTerritory(u.side, u.x)) {
     let nearest: UnitInst | null = null;
     for (const e of state.units) {
-      if (e.side === u.side || e.row !== u.row || e.hp <= 0) continue;
+      if (e.side === u.side || e.hp <= 0) continue;
       if (!inOwnTerritory(u.side, e.x)) continue;
       if (!nearest || Math.abs(e.x - u.x) < Math.abs(nearest.x - u.x)) nearest = e;
     }
@@ -182,8 +218,8 @@ function stepModule(state: GameState, m: ModuleInst, dt: number): void {
   if (def.kind === 'barracks') {
     m.spawnTimer -= dt;
     if (m.spawnTimer <= 0) {
-      const occupied = state.units.reduce((sum, u) => (u.side === m.side && u.row === m.row ? sum + UNIT_BY_ID[u.defId].body : sum), 0);
-      if (occupied >= LANE_CAPACITY) {
+      const occupied = state.units.reduce((sum, u) => (u.side === m.side ? sum + UNIT_BY_ID[u.defId].body : sum), 0);
+      if (occupied >= FRONT_CAPACITY) {
         m.spawnTimer = 1;
         return;
       }
@@ -220,7 +256,7 @@ function stepModule(state: GameState, m: ModuleInst, dt: number): void {
     if (m.atkTimer > 0) return;
     const [a, b] = moduleSpan(m.side, m.col);
     const cx = (a + b) / 2;
-    const inRange = state.units.filter((e) => e.side !== m.side && e.row === m.row && e.hp > 0 && Math.abs(e.x - cx) <= def.attack!.range);
+    const inRange = state.units.filter((e) => e.side !== m.side && e.hp > 0 && Math.abs(e.x - cx) <= def.attack!.range && (e.row === m.row || inBattlefield(e.x)));
     if (inRange.length === 0) return;
     m.atkTimer = def.attack.interval;
     const targets = def.attack.aoe ? inRange : [inRange.reduce((p, c) => (Math.abs(c.x - cx) < Math.abs(p.x - cx) ? c : p))];
@@ -240,19 +276,16 @@ function stepCastles(state: GameState, dt: number): void {
   for (const side of [0, 1] as Side[]) {
     const p = state.players[side];
     const cx = castleX(side);
-    for (let row = 0; row < ROWS; row++) {
-      p.castleAtkTimers[row] = Math.max(0, p.castleAtkTimers[row] - dt);
-      if (p.castleAtkTimers[row] > 0) continue;
-      // The castle wall spits at the nearest few intruders in the lane: enough to hold off a lone
-      // barracks' trickle for a while, irrelevant against a real siege.
-      const targets = state.units
-        .filter((e) => e.side !== side && e.row === row && e.hp > 0 && Math.abs(e.x - cx) <= CASTLE_ATTACK.range)
-        .sort((a, b) => Math.abs(a.x - cx) - Math.abs(b.x - cx))
-        .slice(0, CASTLE_ATTACK.targets);
-      if (targets.length === 0) continue;
-      p.castleAtkTimers[row] = CASTLE_ATTACK.interval;
-      for (const e of targets) damageUnit(state, e, CASTLE_ATTACK.dmg, side, true);
-    }
+    // Shared front: one wall timer fires at the nearest intruders regardless of spawn row.
+    p.castleAtkTimers[0] = Math.max(0, p.castleAtkTimers[0] - dt);
+    if (p.castleAtkTimers[0] > 0) continue;
+    const targets = state.units
+      .filter((e) => e.side !== side && e.hp > 0 && Math.abs(e.x - cx) <= CASTLE_ATTACK.range)
+      .sort((a, b) => Math.abs(a.x - cx) - Math.abs(b.x - cx))
+      .slice(0, CASTLE_ATTACK.targets);
+    if (targets.length === 0) continue;
+    p.castleAtkTimers[0] = CASTLE_ATTACK.interval;
+    for (const e of targets) damageUnit(state, e, CASTLE_ATTACK.dmg, side, true);
   }
 }
 
@@ -260,6 +293,15 @@ function updateFog(state: GameState): void {
   for (const side of [0, 1] as Side[]) {
     const enemy = otherSide(side);
     const fog = state.players[side].fog;
+    if (OPEN_INTEL) {
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const m = state.modules.find((x) => x.side === enemy && x.row === row && x.col === col && x.hp > 0);
+          fog[row][col] = { defId: m ? m.defId : null, level: m ? m.level : 0, seenAt: state.t };
+        }
+      }
+      continue;
+    }
     const scouts = state.units.filter((u) => u.side === side && u.hp > 0);
     if (scouts.length === 0) continue;
     for (let row = 0; row < ROWS; row++) {

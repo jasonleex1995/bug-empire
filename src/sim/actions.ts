@@ -9,6 +9,7 @@ import {
   UPGRADE_TIME,
   buildTimeFor,
   inOwnTerritory,
+  snapMineral,
   type Side,
 } from './config';
 import { damageUnit, syncUnitMaxHp } from './combat';
@@ -35,7 +36,8 @@ export function moduleCost(state: GameState, side: Side, defId: string): number 
   const def = MODULE_BY_ID[defId];
   if (def.kind !== 'resource') return def.cost;
   const owned = state.modules.filter((m) => m.side === side && MODULE_BY_ID[m.defId].kind === 'resource').length;
-  return Math.round(def.cost * Math.pow(RESOURCE_PRICE_GROWTH, owned));
+  // Growth can land on 57/66/… — snap so every card badge stays on a clean 5-step.
+  return snapMineral(def.cost * Math.pow(RESOURCE_PRICE_GROWTH, owned));
 }
 
 export function canPlace(state: GameState, side: Side, row: number, col: number, defId: string): ActionResult {
@@ -79,7 +81,7 @@ export function barracksUpgradeCost(m: ModuleInst): { minerals: number; gas: num
   const def = MODULE_BY_ID[m.defId];
   const next = (m.level + 1) as 2 | 3;
   const c = BARRACKS_UPGRADE_COST[next];
-  return { minerals: Math.round(def.cost * c.mineralRatio), gas: c.gas };
+  return { minerals: snapMineral(def.cost * c.mineralRatio), gas: c.gas };
 }
 
 export function upgradeModule(state: GameState, side: Side, moduleId: number): ActionResult {
@@ -106,7 +108,7 @@ export function sell(state: GameState, side: Side, moduleId: number): ActionResu
   if (idx < 0) return fail('no module');
   const m = state.modules[idx];
   const def = MODULE_BY_ID[m.defId];
-  state.players[side].minerals += Math.round(def.cost * SELL_REFUND_RATIO);
+  state.players[side].minerals += snapMineral(def.cost * SELL_REFUND_RATIO);
   state.modules.splice(idx, 1);
   return ok;
 }

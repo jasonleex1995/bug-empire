@@ -9,9 +9,12 @@ export const H = 720;
  */
 export const TOP_BAR_H = 36;
 export const SEED_H = 86;
-/** Square cells — width and lane height must match. */
-export const CELL_W = 80;
-export const LANE_H = 80;
+/**
+ * Square cells — width and lane height must match.
+ * COLS=7 ⇒ LANE_LENGTH=17; 72px keeps the board inside 1280 with GRID_LEFT.
+ */
+export const CELL_W = 72;
+export const LANE_H = 72;
 export const GRID_LEFT = 40;
 export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;

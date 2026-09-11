@@ -9,11 +9,13 @@ import {
   GAS_CAP,
   LANE_LENGTH,
   MID,
+  OPEN_INTEL,
   REVEAL_RANGE,
   ROWS,
   SELL_REFUND_RATIO,
   UPGRADE_TIME,
   buildTimeFor,
+  inBattlefield,
   moduleSpan,
 } from '../sim/config';
 import { effectiveStats } from '../sim/combat';
@@ -233,7 +235,7 @@ function drawLanes(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState):
 
   // Quiet zone whispers — playfield stays the focus (PvZ lawn energy).
   text(ctx, '내 진영', laneToPx(COLS / 2), GRID_TOP + 16, 11, 'rgba(138,160,144,0.45)', 'center', 500);
-  text(ctx, '전장', laneToPx(COLS + MID / 2), GRID_TOP + 16, 11, 'rgba(160,120,40,0.4)', 'center', 500);
+  text(ctx, '전장 (공유)', laneToPx(COLS + MID / 2), GRID_TOP + 16, 11, 'rgba(160,120,40,0.55)', 'center', 600);
   text(ctx, '적 진영', laneToPx(LANE_LENGTH - COLS / 2), GRID_TOP + 16, 11, 'rgba(138,160,144,0.45)', 'center', 500);
 
   if (ui.selectedCard) {
@@ -282,15 +284,28 @@ function drawCastles(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState
 }
 
 function moduleVisibleToPlayer(game: GameState, m: ModuleInst): boolean {
-  if (m.side === 0) return true;
+  if (m.side === 0 || OPEN_INTEL) return true;
   const f = game.players[0].fog[m.row][m.col];
   return f !== null && game.t - f.seenAt < 0.2;
 }
 
 function unitVisibleToPlayer(game: GameState, u: UnitInst): boolean {
-  if (u.side === 0) return true;
+  if (u.side === 0 || OPEN_INTEL) return true;
   if (u.x <= LANE_LENGTH - COLS + 0.3) return true;
-  return game.units.some((s) => s.side === 0 && s.row === u.row && Math.abs(s.x - u.x) <= REVEAL_RANGE + 0.5);
+  return game.units.some((s) => s.side === 0 && Math.abs(s.x - u.x) <= REVEAL_RANGE + 0.5);
+}
+
+/** Shared front: units in the mid lerp toward the center war band. */
+function unitDrawY(u: UnitInst): number {
+  const jitter = 8 + ((u.id * 7) % 5) * 3.5 - 7;
+  const spawnY = rowCenter(u.row) + jitter;
+  if (!inBattlefield(u.x)) return spawnY;
+  const frontY = (rowCenter(0) + rowCenter(ROWS - 1)) / 2 + ((u.id * 13) % 7) - 3;
+  const midLeft = COLS;
+  const midRight = LANE_LENGTH - COLS;
+  const edge = Math.min(u.x - midLeft, midRight - u.x);
+  const blend = Math.min(1, Math.max(0, edge / (MID * 0.45)));
+  return spawnY + (frontY - spawnY) * blend;
 }
 
 function drawModule(ctx: CanvasRenderingContext2D, game: GameState, m: ModuleInst, ghost: boolean, selected: boolean): void {
@@ -347,7 +362,7 @@ function drawModule(ctx: CanvasRenderingContext2D, game: GameState, m: ModuleIns
 function drawUnit(ctx: CanvasRenderingContext2D, game: GameState, u: UnitInst): void {
   const def = UNIT_BY_ID[u.defId];
   const px = laneToPx(u.x);
-  const py = rowCenter(u.row) + 8 + ((u.id * 7) % 5) * 3.5 - 7;
+  const py = unitDrawY(u);
   const fill = u.side === 0 ? C.player : C.enemy;
   const facing: 1 | -1 = u.side === 0 ? 1 : -1;
   drawInsect(ctx, def.family, def.tier, px, py, facing, fill, game.t, u.id);
@@ -1097,7 +1112,7 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
     if (!moduleVisibleToPlayer(game, m)) continue;
     drawModule(ctx, game, m, false, m.id === ui.selectedModuleId);
   }
-  drawFog(ctx, game);
+  if (!OPEN_INTEL) drawFog(ctx, game);
   for (const u of game.units) if (unitVisibleToPlayer(game, u)) drawUnit(ctx, game, u);
   drawEffects(ctx, ui);
   drawCastles(ctx, game, ui, buttons, api);

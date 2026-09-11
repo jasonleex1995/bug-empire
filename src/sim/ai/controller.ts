@@ -58,33 +58,39 @@ export class AiController {
     const side = this.side;
     const cx = castleX(side);
     const enemy = otherSide(side);
+    // Shared front: army composition is global; row still tracks building pressure / placement.
+    const globalFam: Record<Family, number> = { ant: 0, beetle: 0, mantis: 0 };
+    for (const u of state.units) {
+      if (u.side === side || u.hp <= 0) continue;
+      if (Math.abs(u.x - cx) > COLS + MID) continue;
+      globalFam[UNIT_BY_ID[u.defId].family] += UNIT_BY_ID[u.defId].tier;
+    }
+    // Open intel: always read enemy barracks so counters can be chosen.
+    for (const m of state.modules) {
+      if (m.side !== enemy) continue;
+      const def = MODULE_BY_ID[m.defId];
+      if (def.kind === 'barracks') globalFam[UNIT_BY_ID[def.unitId!].family] += 2 * m.level;
+    }
+    const topGlobal = (Object.keys(globalFam) as Family[]).reduce((a, b) => (globalFam[b] > globalFam[a] ? b : a));
+    const dominant: Family | null = globalFam[topGlobal] > 0 ? topGlobal : null;
+
     const infos: LaneInfo[] = [];
     for (let row = 0; row < ROWS; row++) {
       let enemyHp = 0;
       let ownHp = 0;
       let nearestThreat = Infinity;
-      const famCount: Record<Family, number> = { ant: 0, beetle: 0, mantis: 0 };
       for (const u of state.units) {
+        // Threat near this row's buildings still uses spawn row for base defense.
         if (u.row !== row) continue;
         const dist = Math.abs(u.x - cx);
-        // Only count units that are in our half or the battlefield.
         if (dist > COLS + MID) continue;
         if (u.side === side) ownHp += u.hp;
         else {
           enemyHp += u.hp;
-          famCount[UNIT_BY_ID[u.defId].family] += UNIT_BY_ID[u.defId].tier;
           nearestThreat = Math.min(nearestThreat, dist);
         }
       }
-      if (this.profile.cheatVision) {
-        for (const m of state.modules) {
-          if (m.side !== enemy || m.row !== row) continue;
-          const def = MODULE_BY_ID[m.defId];
-          if (def.kind === 'barracks') famCount[UNIT_BY_ID[def.unitId!].family] += 2 * m.level;
-        }
-      }
-      const top = (Object.keys(famCount) as Family[]).reduce((a, b) => (famCount[b] > famCount[a] ? b : a));
-      infos.push({ row, enemyHp, ownHp, enemyFamily: famCount[top] > 0 ? top : null, nearestThreat });
+      infos.push({ row, enemyHp, ownHp, enemyFamily: dominant, nearestThreat });
     }
     return infos;
   }

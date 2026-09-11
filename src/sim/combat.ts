@@ -12,6 +12,7 @@ import {
   MODULE_DESTROY_GAS_RATIO,
   PASSIVE_KILL_GAS_MULT,
   GAS_CAP,
+  inBattlefield,
   inOwnTerritory,
   moduleCenter,
   type Side,
@@ -19,6 +20,23 @@ import {
 import { FAMILY_MULT, UNIT_BY_ID, type UnitDef } from './data/units';
 import { FAMILY_TRACKS, TRACKS, type TrackEffect } from './data/upgrades';
 import type { GameState, ModuleInst, UnitInst } from './state';
+
+/** Slight snowball on the shared front so mirror meatgrinders eventually break. */
+export function frontPressureBonus(state: GameState, attacker: UnitInst): number {
+  let own = 0;
+  let enemy = 0;
+  for (const u of state.units) {
+    if (u.hp <= 0 || !inBattlefield(u.x)) continue;
+    const body = UNIT_BY_ID[u.defId].body;
+    if (u.side === attacker.side) own += body;
+    else enemy += body;
+  }
+  if (enemy <= 0) return 1.15;
+  if (own > enemy * 1.25) return 1.4;
+  if (own > enemy * 1.08) return 1.2;
+  if (own > enemy) return 1.08;
+  return 1;
+}
 
 function addGas(state: GameState, side: Side, amount: number): void {
   const p = state.players[side];
@@ -90,7 +108,7 @@ export function rollDamage(state: GameState, base: number): number {
 export function unitAttackDamage(state: GameState, attacker: UnitInst, target: UnitInst): number {
   const a = effectiveStats(state, attacker);
   const t = effectiveStats(state, target);
-  const mult = FAMILY_MULT[a.def.family][t.def.family];
+  const mult = FAMILY_MULT[a.def.family][t.def.family] * frontPressureBonus(state, attacker);
   const appliedArmor = Math.max(0, t.armor - a.pierce);
   return Math.max(1, rollDamage(state, a.dmg * mult) - appliedArmor);
 }
