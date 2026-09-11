@@ -14,7 +14,7 @@ export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;
 /**
  * Square cells sized to fill ~all height under the seed rail.
- * 7 rows → 84px; LANE_LENGTH = 11 → board width 924; center with castles.
+ * 7 rows → 84px; LANE_LENGTH = 4+6+4 = 14 → board width 1176; little side margin.
  */
 export const CELL_W = 84;
 export const LANE_H = 84;

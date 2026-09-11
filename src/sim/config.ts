@@ -5,8 +5,9 @@
 export const ROWS = 7;
 /** Player/enemy build depth — 4 square columns toward the shared mid. */
 export const COLS = 4;
-/** Width of the neutral battlefield between the two grids, in cell units. */
-export const MID = 3;
+/** Width of the neutral battlefield between the two grids, in cell units.
+ * Wider mid eats the left/right canvas margins so the war front feels bigger. */
+export const MID = 6;
 /** Total lane length in cell units. Side 0 castle at x=0, side 1 castle at x=LANE_LENGTH. */
 export const LANE_LENGTH = COLS * 2 + MID;
 
