@@ -1,8 +1,8 @@
 /**
- * Tall lawn board: many horizontal lanes, shallow build depth.
+ * Tall lawn board: seven horizontal lanes, shallow build depth.
  * Fills the leftover vertical space under the PvZ seed rail (was empty soil).
  */
-export const ROWS = 8;
+export const ROWS = 7;
 /** Player/enemy build depth — 4 square columns toward the shared mid. */
 export const COLS = 4;
 /** Width of the neutral battlefield between the two grids, in cell units. */

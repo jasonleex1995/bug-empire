@@ -5,7 +5,7 @@ export const H = 720;
 
 /**
  * PvZ-style chrome: slim status + seed rail on top.
- * Grid cells are square (CELL_W === LANE_H). ROWS=8 × COLS=4 fills the tall playfield
+ * Grid cells are square (CELL_W === LANE_H). ROWS=7 × COLS=4 fills the tall playfield
  * so the bottom half is lawn lanes, not empty soil.
  */
 export const TOP_BAR_H = 36;
@@ -14,10 +14,10 @@ export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;
 /**
  * Square cells sized to fill ~all height under the seed rail.
- * LANE_LENGTH = 4+3+4 = 11 → board width 11×72; center between castles.
+ * 7 rows → 84px; LANE_LENGTH = 11 → board width 924; center with castles.
  */
-export const CELL_W = 72;
-export const LANE_H = 72;
+export const CELL_W = 84;
+export const LANE_H = 84;
 /** Center the whole castle+lawn+castle block in the canvas. */
 export const GRID_LEFT = Math.round((W - (LANE_LENGTH * CELL_W + CASTLE_W * 2)) / 2) + CASTLE_W;
 

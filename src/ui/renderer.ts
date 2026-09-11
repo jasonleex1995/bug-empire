@@ -266,7 +266,7 @@ function drawCastles(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState
   drawCastleFace(ctx, LEFT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 0, game.t);
   drawCastleFace(ctx, RIGHT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 1, game.t);
 
-  // 8 lanes: keep emergency hit targets inside each row band.
+  // Keep emergency hit targets inside each row band.
   const btnH = Math.min(32, LANE_H - 8);
   for (let row = 0; row < ROWS; row++) {
     const cy = rowCenter(row);
