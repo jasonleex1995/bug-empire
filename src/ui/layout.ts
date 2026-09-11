@@ -5,23 +5,28 @@ export const H = 720;
 
 /**
  * PvZ-style chrome: slim status + seed rail on top.
- * Grid cells are square (CELL_W === LANE_H) so the lawn reads like a board, not stretched tiles.
+ * Grid cells are square (CELL_W === LANE_H). ROWS=8 × COLS=4 fills the tall playfield
+ * so the bottom half is lawn lanes, not empty soil.
  */
 export const TOP_BAR_H = 36;
 export const SEED_H = 86;
+export const GRID_TOP = TOP_BAR_H + SEED_H;
+export const CASTLE_W = 40;
 /**
- * Square cells — width and lane height must match.
- * COLS=7 ⇒ LANE_LENGTH=17; 72px keeps the board inside 1280 with GRID_LEFT.
+ * Square cells sized to fill ~all height under the seed rail.
+ * LANE_LENGTH = 4+3+4 = 11 → board width 11×72; center between castles.
  */
 export const CELL_W = 72;
 export const LANE_H = 72;
-export const GRID_LEFT = 40;
-export const GRID_TOP = TOP_BAR_H + SEED_H;
-export const CASTLE_W = 40;
+/** Center the whole castle+lawn+castle block in the canvas. */
+export const GRID_LEFT = Math.round((W - (LANE_LENGTH * CELL_W + CASTLE_W * 2)) / 2) + CASTLE_W;
 
 export const LANES_BOTTOM = GRID_TOP + ROWS * LANE_H;
+/** Castles hug the lawn edges (not the canvas edges). */
+export const LEFT_CASTLE_X = GRID_LEFT - CASTLE_W;
+export const RIGHT_CASTLE_X = GRID_LEFT + LANE_LENGTH * CELL_W;
 
-/** No permanent bottom HUD; leftover frame is soil atmosphere under the lawn. */
+/** Almost no spare band — lawn owns the frame under the seed rail. */
 export const PANEL_TOP = H;
 
 export const CARD_W = 72;

@@ -1,6 +1,10 @@
-export const ROWS = 4;
-/** Player/enemy build depth — 7 square columns (PvZ lawn board). */
-export const COLS = 7;
+/**
+ * Tall lawn board: many horizontal lanes, shallow build depth.
+ * Fills the leftover vertical space under the PvZ seed rail (was empty soil).
+ */
+export const ROWS = 8;
+/** Player/enemy build depth — 4 square columns toward the shared mid. */
+export const COLS = 4;
 /** Width of the neutral battlefield between the two grids, in cell units. */
 export const MID = 3;
 /** Total lane length in cell units. Side 0 castle at x=0, side 1 castle at x=LANE_LENGTH. */

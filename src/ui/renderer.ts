@@ -32,6 +32,8 @@ import {
   CARD_W,
   CASTLE_W,
   CELL_W,
+  LEFT_CASTLE_X,
+  RIGHT_CASTLE_X,
   CONTEXT_H,
   CONTEXT_LEFT,
   CONTEXT_TOP,
@@ -260,26 +262,29 @@ function drawLanes(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState):
 
 function drawCastles(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
   const [me] = game.players;
-  drawCastleFace(ctx, 0, GRID_TOP, CASTLE_W, LANES_BOTTOM - GRID_TOP, 0, game.t);
-  drawCastleFace(ctx, W - CASTLE_W, GRID_TOP, CASTLE_W, LANES_BOTTOM - GRID_TOP, 1, game.t);
+  const castleH = LANES_BOTTOM - GRID_TOP;
+  drawCastleFace(ctx, LEFT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 0, game.t);
+  drawCastleFace(ctx, RIGHT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 1, game.t);
 
+  // 8 lanes: keep emergency hit targets inside each row band.
+  const btnH = Math.min(32, LANE_H - 8);
   for (let row = 0; row < ROWS; row++) {
     const cy = rowCenter(row);
     const charged = me.emergencyCharges[row];
     const b: Button = {
       id: `emg${row}`,
-      x: 5,
-      y: cy - 16,
+      x: LEFT_CASTLE_X + 5,
+      y: cy - btnH / 2,
       w: CASTLE_W - 10,
-      h: 32,
+      h: btnH,
       onClick: () => (charged ? api.emergency(row) : api.recharge(row)),
       tooltip: charged
         ? ['비상 방어 (레인 ' + (row + 1) + ')', '내 진영 안의 적 유닛 전부 제거', '레인당 1회. 클릭해서 사용']
         : ['비상 방어 재충전', `가스 ${EMERGENCY_RECHARGE_GAS}`, '클릭해서 재충전'],
       disabled: !charged && me.gas < EMERGENCY_RECHARGE_GAS,
     };
-    button(ctx, buttons, b, charged ? '!' : '+', ui, { active: charged, size: 16, color: charged ? C.mineral : C.dim });
-    text(ctx, `${row + 1}`, W - CASTLE_W / 2, cy, 13, C.dim, 'center', 600);
+    button(ctx, buttons, b, charged ? '!' : '+', ui, { active: charged, size: 14, color: charged ? C.mineral : C.dim });
+    text(ctx, `${row + 1}`, RIGHT_CASTLE_X + CASTLE_W / 2, cy, 12, C.dim, 'center', 600);
   }
 }
 
@@ -728,7 +733,7 @@ function drawLaneIntelTicks(ctx: CanvasRenderingContext2D, ui: UiState): void {
       const seen = ui.laneIntel[row][f];
       const age = seen && Number.isFinite(seen) ? (ui.now - seen) / 1000 : Infinity;
       const col = !Number.isFinite(age) ? 'rgba(90,110,96,0.35)' : age < 8 ? C.enemy : age < 30 ? C.mineral : C.mute;
-      const x = W - CASTLE_W + 10 + i * 10;
+      const x = RIGHT_CASTLE_X + 10 + i * 10;
       ctx.fillStyle = col;
       ctx.beginPath();
       ctx.arc(x, y, age < 8 ? 3.2 : 2.4, 0, Math.PI * 2);
