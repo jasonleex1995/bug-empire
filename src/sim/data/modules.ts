@@ -68,7 +68,7 @@ function barracksFor(u: UnitDef): ModuleDef {
 
 export const RESOURCE_MODULES: ModuleDef[] = [
   { id: 'aphid_farm', name: '진딧물 목장', short: '진', kind: 'resource', cost: 50, hp: 120, incomePerSec: 1.0, desc: '초당 미네랄 1.0' },
-  { id: 'honey_pot', name: '꿀단지', short: '꿀', kind: 'resource', cost: 150, hp: 180, incomePerSec: 3.5, desc: '초당 미네랄 3.5 (파괴 시 상대에게 큰 가스)' },
+  { id: 'honey_pot', name: '꿀단지', short: '꿀', kind: 'resource', cost: 175, hp: 180, incomePerSec: 3.5, desc: '초당 미네랄 3.5 (파괴 시 상대에게 큰 가스)' },
 ];
 
 export const THORN_WALL: ModuleDef = {

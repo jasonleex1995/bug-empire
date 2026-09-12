@@ -3,22 +3,49 @@ import { COLS, LANE_LENGTH, ROWS } from '../sim/config';
 export const W = 1280;
 export const H = 720;
 
-export const CELL_W = 80;
-export const LANE_H = 84;
-export const GRID_LEFT = 40;
-export const GRID_TOP = 76;
+/**
+ * PvZ-style chrome: slim status + seed rail on top.
+ * Grid cells are square (CELL_W === LANE_H). ROWS=7 × COLS=4 fills the tall playfield
+ * so the bottom half is lawn lanes, not empty soil.
+ */
+export const TOP_BAR_H = 36;
+export const SEED_H = 86;
+export const GRID_TOP = TOP_BAR_H + SEED_H;
 export const CASTLE_W = 40;
+/**
+ * Square cells sized to fill ~all height under the seed rail.
+ * 7 rows → 84px; LANE_LENGTH = 4+6+4 = 14 → board width 1176; little side margin.
+ */
+export const CELL_W = 84;
+export const LANE_H = 84;
+/** Center the whole castle+lawn+castle block in the canvas. */
+export const GRID_LEFT = Math.round((W - (LANE_LENGTH * CELL_W + CASTLE_W * 2)) / 2) + CASTLE_W;
 
 export const LANES_BOTTOM = GRID_TOP + ROWS * LANE_H;
+/** Castles hug the lawn edges (not the canvas edges). */
+export const LEFT_CASTLE_X = GRID_LEFT - CASTLE_W;
+export const RIGHT_CASTLE_X = GRID_LEFT + LANE_LENGTH * CELL_W;
 
-export const PANEL_TOP = LANES_BOTTOM + 12;
-export const CARD_W = 80;
-export const CARD_H = 100;
-export const CARD_GAP = 8;
-export const CARDS_TOP = PANEL_TOP + 8;
-export const CARDS_LEFT = 24;
+/** Almost no spare band — lawn owns the frame under the seed rail. */
+export const PANEL_TOP = H;
 
-export const LOWER_TOP = CARDS_TOP + CARD_H + 10;
+export const CARD_W = 72;
+export const CARD_H = 78;
+export const CARD_GAP = 4;
+/** Extra gap between card families (resource / defense / barracks / ability). */
+export const CARD_GROUP_GAP = 10;
+export const CARDS_TOP = TOP_BAR_H + 4;
+export const CARDS_LEFT = 12;
+
+/** Floating action bar when a placed module is selected (not always-on). */
+export const CONTEXT_H = 52;
+export const CONTEXT_LEFT = 24;
+export const CONTEXT_W = W - 48;
+export const CONTEXT_TOP = Math.min(LANES_BOTTOM + 12, H - CONTEXT_H - 10);
+
+/** Mineral counter anchor — sap droplets fly here (PvZ sun tray energy). */
+export const MINERAL_HUD_X = 52;
+export const MINERAL_HUD_Y = 18;
 
 export function laneToPx(x: number): number {
   return GRID_LEFT + x * CELL_W;

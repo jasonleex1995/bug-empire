@@ -9,11 +9,13 @@ import {
   GAS_CAP,
   LANE_LENGTH,
   MID,
+  OPEN_INTEL,
   REVEAL_RANGE,
   ROWS,
   SELL_REFUND_RATIO,
   UPGRADE_TIME,
   buildTimeFor,
+  inBattlefield,
   moduleSpan,
 } from '../sim/config';
 import { effectiveStats } from '../sim/combat';
@@ -25,17 +27,25 @@ import {
   CARDS_LEFT,
   CARDS_TOP,
   CARD_GAP,
+  CARD_GROUP_GAP,
   CARD_H,
   CARD_W,
   CASTLE_W,
   CELL_W,
+  LEFT_CASTLE_X,
+  RIGHT_CASTLE_X,
+  CONTEXT_H,
+  CONTEXT_LEFT,
+  CONTEXT_TOP,
+  CONTEXT_W,
   GRID_LEFT,
   GRID_TOP,
   H,
   LANES_BOTTOM,
   LANE_H,
-  LOWER_TOP,
-  PANEL_TOP,
+  MINERAL_HUD_X,
+  MINERAL_HUD_Y,
+  TOP_BAR_H,
   W,
   inRect,
   laneToPx,
@@ -62,9 +72,12 @@ import { drawPixelGem, drawPixelOrb, drawPixelTitle, getMenuHeroImage } from './
 export const ACID_CARD = 'acid_rain';
 
 export interface Effect {
-  kind: 'spark' | 'puff' | 'burst' | 'laneFlash' | 'laneGreen';
+  kind: 'spark' | 'puff' | 'burst' | 'laneFlash' | 'laneGreen' | 'sap';
   x: number;
   y: number;
+  /** Sap flight target (mineral counter). */
+  x1?: number;
+  y1?: number;
   row?: number;
   ttl: number;
   max: number;
@@ -77,6 +90,8 @@ export interface UiState {
   timeLimitMode: boolean;
   selectedCard: string | null;
   selectedModuleId: number | null;
+  /** Castle family upgrades open as a modal, not a permanent bottom panel. */
+  castlePanelOpen: boolean;
   hover: { x: number; y: number };
   speed: number;
   paused: boolean;
@@ -101,6 +116,7 @@ export interface UiApi {
   upgradeSelected(): void;
   sellSelected(): void;
   castleUpgrade(f: Family, t: Track): void;
+  toggleCastlePanel(open?: boolean): void;
   unlock(unitId: string): void;
   emergency(row: number): void;
   recharge(row: number): void;
@@ -219,9 +235,10 @@ function drawLanes(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState):
     ctx.stroke();
   }
 
-  text(ctx, '내 진영', laneToPx(COLS / 2), GRID_TOP - 12, 11, C.dim, 'center', 500);
-  text(ctx, '전장', laneToPx(COLS + MID / 2), GRID_TOP - 12, 11, C.mineralDim, 'center', 500);
-  text(ctx, '적 진영', laneToPx(LANE_LENGTH - COLS / 2), GRID_TOP - 12, 11, C.dim, 'center', 500);
+  // Quiet zone whispers — playfield stays the focus (PvZ lawn energy).
+  text(ctx, '내 진영', laneToPx(COLS / 2), GRID_TOP + 16, 11, 'rgba(138,160,144,0.45)', 'center', 500);
+  text(ctx, '전장 (공유)', laneToPx(COLS + MID / 2), GRID_TOP + 16, 11, 'rgba(160,120,40,0.55)', 'center', 600);
+  text(ctx, '적 진영', laneToPx(LANE_LENGTH - COLS / 2), GRID_TOP + 16, 11, 'rgba(138,160,144,0.45)', 'center', 500);
 
   if (ui.selectedCard) {
     const hx = (ui.hover.x - GRID_LEFT) / CELL_W;
@@ -245,39 +262,55 @@ function drawLanes(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState):
 
 function drawCastles(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
   const [me] = game.players;
-  drawCastleFace(ctx, 0, GRID_TOP, CASTLE_W, LANES_BOTTOM - GRID_TOP, 0, game.t);
-  drawCastleFace(ctx, W - CASTLE_W, GRID_TOP, CASTLE_W, LANES_BOTTOM - GRID_TOP, 1, game.t);
+  const castleH = LANES_BOTTOM - GRID_TOP;
+  drawCastleFace(ctx, LEFT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 0, game.t);
+  drawCastleFace(ctx, RIGHT_CASTLE_X, GRID_TOP, CASTLE_W, castleH, 1, game.t);
 
+  // Keep emergency hit targets inside each row band.
+  const btnH = Math.min(32, LANE_H - 8);
   for (let row = 0; row < ROWS; row++) {
     const cy = rowCenter(row);
     const charged = me.emergencyCharges[row];
     const b: Button = {
       id: `emg${row}`,
-      x: 5,
-      y: cy - 16,
+      x: LEFT_CASTLE_X + 5,
+      y: cy - btnH / 2,
       w: CASTLE_W - 10,
-      h: 32,
+      h: btnH,
       onClick: () => (charged ? api.emergency(row) : api.recharge(row)),
       tooltip: charged
         ? ['비상 방어 (레인 ' + (row + 1) + ')', '내 진영 안의 적 유닛 전부 제거', '레인당 1회. 클릭해서 사용']
         : ['비상 방어 재충전', `가스 ${EMERGENCY_RECHARGE_GAS}`, '클릭해서 재충전'],
       disabled: !charged && me.gas < EMERGENCY_RECHARGE_GAS,
     };
-    button(ctx, buttons, b, charged ? '!' : '+', ui, { active: charged, size: 16, color: charged ? C.mineral : C.dim });
-    text(ctx, `${row + 1}`, W - CASTLE_W / 2, cy, 13, C.dim, 'center', 600);
+    button(ctx, buttons, b, charged ? '!' : '+', ui, { active: charged, size: 14, color: charged ? C.mineral : C.dim });
+    text(ctx, `${row + 1}`, RIGHT_CASTLE_X + CASTLE_W / 2, cy, 12, C.dim, 'center', 600);
   }
 }
 
 function moduleVisibleToPlayer(game: GameState, m: ModuleInst): boolean {
-  if (m.side === 0) return true;
+  if (m.side === 0 || OPEN_INTEL) return true;
   const f = game.players[0].fog[m.row][m.col];
   return f !== null && game.t - f.seenAt < 0.2;
 }
 
 function unitVisibleToPlayer(game: GameState, u: UnitInst): boolean {
-  if (u.side === 0) return true;
+  if (u.side === 0 || OPEN_INTEL) return true;
   if (u.x <= LANE_LENGTH - COLS + 0.3) return true;
-  return game.units.some((s) => s.side === 0 && s.row === u.row && Math.abs(s.x - u.x) <= REVEAL_RANGE + 0.5);
+  return game.units.some((s) => s.side === 0 && Math.abs(s.x - u.x) <= REVEAL_RANGE + 0.5);
+}
+
+/** Shared front: units in the mid lerp toward the center war band. */
+function unitDrawY(u: UnitInst): number {
+  const jitter = 8 + ((u.id * 7) % 5) * 3.5 - 7;
+  const spawnY = rowCenter(u.row) + jitter;
+  if (!inBattlefield(u.x)) return spawnY;
+  const frontY = (rowCenter(0) + rowCenter(ROWS - 1)) / 2 + ((u.id * 13) % 7) - 3;
+  const midLeft = COLS;
+  const midRight = LANE_LENGTH - COLS;
+  const edge = Math.min(u.x - midLeft, midRight - u.x);
+  const blend = Math.min(1, Math.max(0, edge / (MID * 0.45)));
+  return spawnY + (frontY - spawnY) * blend;
 }
 
 function drawModule(ctx: CanvasRenderingContext2D, game: GameState, m: ModuleInst, ghost: boolean, selected: boolean): void {
@@ -334,7 +367,7 @@ function drawModule(ctx: CanvasRenderingContext2D, game: GameState, m: ModuleIns
 function drawUnit(ctx: CanvasRenderingContext2D, game: GameState, u: UnitInst): void {
   const def = UNIT_BY_ID[u.defId];
   const px = laneToPx(u.x);
-  const py = rowCenter(u.row) + 8 + ((u.id * 7) % 5) * 3.5 - 7;
+  const py = unitDrawY(u);
   const fill = u.side === 0 ? C.player : C.enemy;
   const facing: 1 | -1 = u.side === 0 ? 1 : -1;
   drawInsect(ctx, def.family, def.tier, px, py, facing, fill, game.t, u.id);
@@ -399,6 +432,7 @@ function drawFog(ctx: CanvasRenderingContext2D, game: GameState): void {
 
 function drawEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
   for (const e of ui.effects) {
+    if (e.kind === 'sap') continue; // drawn above HUD chrome so flights stay visible
     const k = e.ttl / e.max;
     if (e.kind === 'spark') {
       glowCircle(ctx, e.x, e.y, 8 + (1 - k) * 6, `rgba(255,230,140,${k * 0.8})`);
@@ -424,89 +458,210 @@ function drawEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
   }
 }
 
+function drawSapEffects(ctx: CanvasRenderingContext2D, ui: UiState): void {
+  for (const e of ui.effects) {
+    if (e.kind !== 'sap') continue;
+    const k = e.ttl / e.max;
+    const t = 1 - k;
+    const ease = t * t * (3 - 2 * t);
+    const x0 = e.x;
+    const y0 = e.y;
+    const x1 = e.x1 ?? MINERAL_HUD_X;
+    const y1 = e.y1 ?? MINERAL_HUD_Y;
+    const cx = (x0 + x1) / 2;
+    const cy = Math.min(y0, y1) - 56 - Math.abs(x1 - x0) * 0.12;
+    const mt = 1 - ease;
+    const px = mt * mt * x0 + 2 * mt * ease * cx + ease * ease * x1;
+    const py = mt * mt * y0 + 2 * mt * ease * cy + ease * ease * y1;
+    const pulse = 1 + Math.sin(ease * Math.PI) * 0.25;
+    glowCircle(ctx, px, py, 18 * pulse, `rgba(232,184,74,${0.45 + k * 0.4})`);
+    // Faceted sap nugget (reads like a collectible, not a pixel speck).
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = `rgba(232,184,74,${0.75 + k * 0.25})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(7, -2);
+    ctx.lineTo(5, 7);
+    ctx.lineTo(-5, 7);
+    ctx.lineTo(-7, -2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = `rgba(255,245,200,${0.55 + k * 0.45})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(3, -1);
+    ctx.lineTo(0, 2);
+    ctx.lineTo(-3, -1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
 // ---------------------------------------------------------------------------
 // HUD and panels
 // ---------------------------------------------------------------------------
 
 function drawTopBar(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
   const [me, foe] = game.players;
-  const hg = ctx.createLinearGradient(0, 0, 0, 64);
+  // Status strip only — seed packets live in the row beneath (PvZ sun bar energy).
+  const hg = ctx.createLinearGradient(0, 0, 0, TOP_BAR_H);
   hg.addColorStop(0, '#152218');
-  hg.addColorStop(1, '#101810');
+  hg.addColorStop(1, '#0c140e');
   ctx.fillStyle = hg;
-  ctx.fillRect(0, 0, W, 64);
-  ctx.fillStyle = 'rgba(93,224,192,0.08)';
-  ctx.fillRect(0, 63, W, 1);
+  ctx.fillRect(0, 0, W, TOP_BAR_H);
 
-  // Mineral gem + gas orb
-  drawPixelGem(ctx, 22, 18, 3);
-  text(ctx, `${Math.floor(me.minerals)}`, 56, 34, 16, C.mineral, 'left', 400);
+  drawPixelGem(ctx, MINERAL_HUD_X - 34, MINERAL_HUD_Y - 10, 2.4);
+  text(ctx, `${Math.floor(me.minerals)}`, MINERAL_HUD_X - 8, MINERAL_HUD_Y, 14, C.mineral, 'left', 400);
 
-  drawPixelOrb(ctx, 148, 18, 3);
-  text(ctx, `${Math.floor(me.gas)}`, 182, 28, 16, C.gas, 'left', 400);
-  text(ctx, `/ ${GAS_CAP}`, 182, 46, 11, C.dim, 'left', 400);
+  drawPixelOrb(ctx, 118, 8, 2.2);
+  text(ctx, `${Math.floor(me.gas)}/${GAS_CAP}`, 144, 17, 13, C.gas, 'left', 400);
 
-  text(ctx, '내 성', 280, 18, 11, C.dim);
-  bar(ctx, 280, 28, 210, 12, me.castleHp / CASTLE_HP, C.player);
-  text(ctx, `${Math.ceil(me.castleHp)}`, 385, 34, 11, '#0c140c', 'center', 700);
+  bar(ctx, 270, 12, 150, 8, me.castleHp / CASTLE_HP, C.player);
+  text(ctx, `${Math.ceil(me.castleHp)}`, 345, 16, 10, '#0c140c', 'center', 700);
 
   const timer = game.cfg.timeLimit !== null ? `${fmtTime(game.cfg.timeLimit - game.t)} 남음` : fmtTime(game.t);
-  text(ctx, timer, W / 2, 20, 18, C.text, 'center', 700, FONT_DISPLAY);
-  const bx = W / 2 - 110;
-  button(ctx, buttons, { id: 'pause', x: bx, y: 36, w: 60, h: 20, onClick: () => api.togglePause() }, ui.paused ? '재생' : '일시정지', ui, { active: ui.paused, size: 11 });
+  text(ctx, timer, W / 2, 10, 12, C.text, 'center', 700, FONT_DISPLAY);
+  const bx = W / 2 - 92;
+  button(ctx, buttons, { id: 'pause', x: bx, y: 18, w: 48, h: 14, onClick: () => api.togglePause() }, ui.paused ? '재생' : '일시정지', ui, { active: ui.paused, size: 10 });
   for (const [i, s] of [1, 2, 3].entries()) {
-    button(ctx, buttons, { id: `spd${s}`, x: bx + 68 + i * 52, y: 36, w: 46, h: 20, onClick: () => api.setSpeed(s) }, `${s}x`, ui, { active: ui.speed === s && !ui.paused, size: 11 });
+    button(ctx, buttons, { id: `spd${s}`, x: bx + 52 + i * 38, y: 18, w: 34, h: 14, onClick: () => api.setSpeed(s) }, `${s}x`, ui, { active: ui.speed === s && !ui.paused, size: 10 });
   }
 
-  text(ctx, '적 성', W - 500, 18, 11, C.dim);
-  bar(ctx, W - 500, 28, 210, 12, foe.castleHp / CASTLE_HP, C.enemy);
-  text(ctx, `${Math.ceil(foe.castleHp)}`, W - 395, 34, 11, '#140c0c', 'center', 700);
-  text(ctx, DIFFICULTIES[ui.difficulty].name, W - 24, 22, 13, C.dim, 'right', 600);
-  text(ctx, `킬 ${me.stats.kills}  ·  파괴 ${me.stats.modulesDestroyed}`, W - 24, 42, 12, C.mute, 'right');
+  bar(ctx, W - 430, 12, 150, 8, foe.castleHp / CASTLE_HP, C.enemy);
+  text(ctx, `${Math.ceil(foe.castleHp)}`, W - 355, 16, 10, '#140c0c', 'center', 700);
+
+  button(
+    ctx,
+    buttons,
+    {
+      id: 'castle_panel',
+      x: W - 230,
+      y: 4,
+      w: 78,
+      h: 24,
+      onClick: () => api.toggleCastlePanel(),
+      tooltip: ['성 업그레이드', '가스로 계열 전체 강화', `킬 ${me.stats.kills} · 파괴 ${me.stats.modulesDestroyed}`],
+    },
+    ui.castlePanelOpen ? '성 닫기' : '성 업글',
+    ui,
+    { active: ui.castlePanelOpen, size: 11, color: C.gas },
+  );
+  text(ctx, DIFFICULTIES[ui.difficulty].name, W - 16, 17, 11, C.dim, 'right', 600);
+}
+
+/** Card index → x with family group gaps (resource | defense | barracks | ability). */
+function cardGroupOffset(i: number): number {
+  // 0 resource | 1–3 defense | 4–11 barracks | 12 acid
+  if (i <= 0) return 0;
+  if (i <= 3) return CARD_GROUP_GAP;
+  if (i <= 11) return CARD_GROUP_GAP * 2;
+  return CARD_GROUP_GAP * 3;
 }
 
 function cardRect(i: number): Rect {
-  return { x: CARDS_LEFT + i * (CARD_W + CARD_GAP), y: CARDS_TOP, w: CARD_W, h: CARD_H };
+  return {
+    x: CARDS_LEFT + i * (CARD_W + CARD_GAP) + cardGroupOffset(i),
+    y: CARDS_TOP,
+    w: CARD_W,
+    h: CARD_H,
+  };
 }
 
+/** Thin family ticks — no teaching labels (players are assumed to know the roster). */
+function drawCardGroupTicks(ctx: CanvasRenderingContext2D): void {
+  for (const i of [1, 4, 12]) {
+    const r = cardRect(i);
+    const x = r.x - CARD_GROUP_GAP / 2;
+    ctx.fillStyle = 'rgba(232,184,74,0.22)';
+    ctx.fillRect(x, CARDS_TOP + 8, 1, CARD_H - 16);
+  }
+}
+
+/**
+ * PvZ-style seed packets: glyph + cost badge dominate.
+ * Long descriptions stay on hover tooltip only — not in chrome.
+ */
 function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
   const me = game.players[0];
+  // Seed rail backdrop
+  const band = ctx.createLinearGradient(0, TOP_BAR_H, 0, GRID_TOP);
+  band.addColorStop(0, '#101810');
+  band.addColorStop(1, '#0a100c');
+  ctx.fillStyle = band;
+  ctx.fillRect(0, TOP_BAR_H, W, GRID_TOP - TOP_BAR_H);
+  ctx.fillStyle = 'rgba(93,224,192,0.08)';
+  ctx.fillRect(0, GRID_TOP - 1, W, 1);
+
+  drawCardGroupTicks(ctx);
   const cards: ModuleDef[] = [...RESOURCE_MODULES, ...DEFENSE_MODULES, ...BARRACKS_MODULES];
+
+  const fitLabel = (raw: string, maxW: number): string => {
+    const s = raw.replace(' 병영', '');
+    ctx.font = `12px ${FONT_UI}`;
+    if (ctx.measureText(s).width <= maxW) return s;
+    let out = s;
+    while (out.length > 1 && ctx.measureText(out + '…').width > maxW) out = out.slice(0, -1);
+    return out.length ? out + '…' : s.slice(0, 1);
+  };
+
   cards.forEach((def, i) => {
     const r = cardRect(i);
+    const x = Math.round(r.x);
+    const y = Math.round(r.y);
     const cost = moduleCost(game, 0, def.id);
     const locked = def.kind === 'barracks' && !isUnlocked(game, 0, def.unitId!);
     const unit = def.kind === 'barracks' ? UNIT_BY_ID[def.unitId!] : null;
     const affordable = locked ? me.gas >= unit!.unlockGas : me.minerals >= cost;
     const selected = ui.selectedCard === def.id;
-    const hovered = inRect(r, ui.hover.x, ui.hover.y);
+    const hovered = inRect({ x, y, w: r.w, h: r.h }, ui.hover.x, ui.hover.y);
+    const lift = selected ? -2 : 0;
+    const yy = y + lift;
 
-    ctx.fillStyle = selected ? '#2e3c28' : hovered ? '#243028' : C.panel;
-    rr(ctx, r.x, r.y, r.w, r.h, 10);
+    // Packet body
+    ctx.fillStyle = selected ? '#2a3a24' : hovered ? '#1e2a20' : '#162018';
+    rr(ctx, x, yy, r.w, r.h, 4);
     ctx.fill();
-    ctx.strokeStyle = selected ? C.mineral : KIND_COLOR[def.kind];
-    ctx.lineWidth = selected ? 1.8 : 1;
-    ctx.globalAlpha = affordable ? 1 : 0.55;
+    ctx.strokeStyle = selected ? C.mineral : hovered ? KIND_COLOR[def.kind] : 'rgba(47,69,54,0.9)';
+    ctx.lineWidth = selected ? 2 : 1;
     ctx.stroke();
 
-    // Glyph plate
-    ctx.fillStyle = 'rgba(0,0,0,0.28)';
-    rr(ctx, r.x + 12, r.y + 8, 56, 44, 8);
+    ctx.save();
+    ctx.globalAlpha = affordable ? 1 : 0.42;
+
+    // Glyph area (no text overlap)
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    rr(ctx, x + 5, yy + 4, r.w - 10, 34, 3);
     ctx.fill();
     if (def.kind === 'barracks' && unit) {
-      drawInsect(ctx, unit.family, unit.tier, r.x + 40, r.y + 30, 1, KIND_COLOR[def.kind], ui.now / 1000, i);
+      drawInsect(ctx, unit.family, unit.tier, x + r.w / 2, yy + 22, 1, KIND_COLOR[def.kind], ui.now / 1000, i);
     } else {
-      drawModuleGlyph(ctx, def.kind, def.id, r.x + 40, r.y + 30, KIND_COLOR[def.kind], 1);
+      drawModuleGlyph(ctx, def.kind, def.id, x + r.w / 2, yy + 22, KIND_COLOR[def.kind], 1);
     }
-    ctx.globalAlpha = 1;
 
-    text(ctx, def.name.replace(' 병영', ''), r.x + r.w / 2, r.y + 64, 11, affordable ? C.text : C.dim, 'center', 500);
+    // Name plate — opaque so Galmuri stays crisp (integer px, no overlap with glyph).
+    ctx.fillStyle = 'rgba(6,10,8,0.96)';
+    ctx.fillRect(x + 2, yy + 38, r.w - 4, 16);
+    text(ctx, fitLabel(def.name, r.w - 8), x + r.w / 2, yy + 47, 12, affordable ? C.text : C.dim, 'center', 500);
+
+    // Cost badge plate
+    ctx.fillStyle = locked ? 'rgba(16,36,32,0.98)' : 'rgba(36,28,8,0.98)';
+    rr(ctx, x + 3, yy + r.h - 22, r.w - 6, 18, 3);
+    ctx.fill();
     if (locked) {
-      text(ctx, `해금 ${unit!.unlockGas}G`, r.x + r.w / 2, r.y + 84, 12, affordable ? C.gas : C.dim, 'center', 700);
+      text(ctx, `${unit!.unlockGas}G`, x + r.w / 2, yy + r.h - 12, 13, affordable ? C.gas : C.dim, 'center', 700);
     } else {
-      text(ctx, `${cost}`, r.x + r.w / 2, r.y + 84, 14, affordable ? C.mineral : C.dim, 'center', 700);
+      text(ctx, `${cost}`, x + r.w / 2, yy + r.h - 12, 14, affordable ? C.mineral : C.dim, 'center', 700);
     }
-    if (unit) text(ctx, `T${unit.tier}`, r.x + r.w - 8, r.y + 12, 10, C.mute, 'right');
+    if (unit) {
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      rr(ctx, x + r.w - 22, yy + 4, 18, 12, 2);
+      ctx.fill();
+      text(ctx, `T${unit.tier}`, x + r.w - 13, yy + 11, 11, C.mute, 'center');
+    }
+    ctx.restore();
 
     const tooltip = [def.name, def.kind === 'barracks' ? `${cost} 미네랄 · ${FAMILY_NAME[unit!.family]} T${unit!.tier}` : `${cost} 미네랄`, def.desc];
     if (unit) {
@@ -522,92 +677,99 @@ function drawCards(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, 
     if (def.kind === 'resource') tooltip.push('자원 모듈은 하나 지을 때마다 15% 비싸짐');
     buttons.push({
       id: `card_${def.id}`,
-      ...r,
+      x,
+      y: yy,
+      w: r.w,
+      h: r.h,
       onClick: () => (locked ? api.unlock(def.unitId!) : api.selectCard(selected ? null : def.id)),
       tooltip,
     });
   });
 
   const r = cardRect(cards.length);
+  const x = Math.round(r.x);
+  const y = Math.round(r.y);
   const selected = ui.selectedCard === ACID_CARD;
   const affordable = me.gas >= ACID_RAIN.gas;
-  ctx.fillStyle = selected ? '#1e3a2c' : '#182820';
-  rr(ctx, r.x, r.y, r.w, r.h, 10);
+  const lift = selected ? -2 : 0;
+  const yy = y + lift;
+  ctx.fillStyle = selected ? '#1a3228' : '#121c18';
+  rr(ctx, x, yy, r.w, r.h, 4);
   ctx.fill();
-  ctx.strokeStyle = selected ? C.gas : '#2f6b52';
-  ctx.lineWidth = selected ? 1.8 : 1;
+  ctx.strokeStyle = selected ? C.gas : '#2a5a44';
+  ctx.lineWidth = selected ? 2 : 1;
   ctx.stroke();
-  ctx.globalAlpha = affordable ? 1 : 0.5;
-  glowCircle(ctx, r.x + 40, r.y + 28, 22, C.mintGlow);
+  ctx.save();
+  ctx.globalAlpha = affordable ? 1 : 0.42;
+  glowCircle(ctx, x + r.w / 2, yy + 20, 16, C.mintGlow);
   ctx.fillStyle = C.gas;
   ctx.beginPath();
-  ctx.ellipse(r.x + 40, r.y + 22, 10, 14, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + r.w / 2, yy + 18, 7, 10, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.globalAlpha = 1;
-  text(ctx, '산성비', r.x + r.w / 2, r.y + 64, 11, affordable ? C.text : C.dim, 'center');
-  text(ctx, `${ACID_RAIN.gas}G`, r.x + r.w / 2, r.y + 84, 14, affordable ? C.gas : C.dim, 'center', 700);
+  ctx.fillStyle = 'rgba(6,10,8,0.96)';
+  ctx.fillRect(x + 2, yy + 38, r.w - 4, 16);
+  text(ctx, '산성비', x + r.w / 2, yy + 47, 12, affordable ? C.text : C.dim, 'center');
+  ctx.fillStyle = 'rgba(16,36,32,0.98)';
+  rr(ctx, x + 3, yy + r.h - 22, r.w - 6, 18, 3);
+  ctx.fill();
+  text(ctx, `${ACID_RAIN.gas}G`, x + r.w / 2, yy + r.h - 12, 13, affordable ? C.gas : C.dim, 'center', 700);
+  ctx.restore();
   buttons.push({
     id: 'card_acid',
-    ...r,
+    x,
+    y: yy,
+    w: r.w,
+    h: r.h,
     onClick: () => api.selectCard(selected ? null : ACID_CARD),
     tooltip: ['산성비', `가스 ${ACID_RAIN.gas}`, `선택한 레인의 적 유닛 전체에 ${ACID_RAIN.dmg} 피해`, '카드 선택 후 레인 클릭'],
   });
 }
 
-function drawUpgradePanel(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
-  const me = game.players[0];
-  const x0 = 24;
-  const y0 = LOWER_TOP;
-  text(ctx, '성 업그레이드 · 가스 · 계열 전체 즉시 적용', x0, y0 + 8, 12, C.dim);
+function drawLaneIntelTicks(ctx: CanvasRenderingContext2D, ui: UiState): void {
   const fams: Family[] = ['ant', 'beetle', 'mantis'];
-  fams.forEach((f, fi) => {
-    const y = y0 + 24 + fi * 40;
-    drawInsect(ctx, f, 1, x0 + 10, y + 14, 1, C.text, ui.now / 1000, fi + 20);
-    text(ctx, FAMILY_NAME[f], x0 + 28, y + 14, 13, C.text, 'left', 600);
-    TRACKS.forEach((t, ti) => {
-      const lvl = me.upgrades[f][t];
-      const cost = castleUpgradeCost(game, 0, f, t);
-      const track = FAMILY_TRACKS[f][t];
-      const label = cost === null ? `${track.name} MAX` : `${track.name} ${lvl}/${MAX_UPGRADE_LEVEL}  ${cost}G`;
-      const b: Button = {
-        id: `up_${f}_${t}`,
-        x: x0 + 100 + ti * 200,
-        y,
-        w: 190,
-        h: 28,
-        onClick: () => api.castleUpgrade(f, t),
-        disabled: cost === null || me.gas < cost,
-        tooltip: [`${FAMILY_NAME[f]} ${track.name}`, track.desc],
-      };
-      button(ctx, buttons, b, label, ui, { size: 11, color: cost === null ? C.mineral : C.text });
+  for (let row = 0; row < ROWS; row++) {
+    const y = rowTop(row) + 14;
+    fams.forEach((f, i) => {
+      const seen = ui.laneIntel[row][f];
+      const age = seen && Number.isFinite(seen) ? (ui.now - seen) / 1000 : Infinity;
+      const col = !Number.isFinite(age) ? 'rgba(90,110,96,0.35)' : age < 8 ? C.enemy : age < 30 ? C.mineral : C.mute;
+      const x = RIGHT_CASTLE_X + 10 + i * 10;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(x, y, age < 8 ? 3.2 : 2.4, 0, Math.PI * 2);
+      ctx.fill();
     });
-  });
+  }
 }
 
-function drawSelectionPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
-  const x0 = 560;
-  const y0 = LOWER_TOP;
-  const w = 330;
-  ctx.fillStyle = C.panel;
-  rr(ctx, x0, y0, w, 150, 10);
+/**
+ * Action strip only when a placed module is selected.
+ * No idle / card-teaching copy — selection + ghost placement carry that job.
+ */
+function drawContextPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
+  const m = game.modules.find((mm) => mm.id === ui.selectedModuleId && mm.side === 0);
+  if (!m) return;
+
+  const x0 = CONTEXT_LEFT;
+  const y0 = CONTEXT_TOP;
+  const w = CONTEXT_W;
+  const h = CONTEXT_H;
+
+  ctx.fillStyle = 'rgba(10,16,12,0.92)';
+  rr(ctx, x0, y0, w, h, 8);
   ctx.fill();
-  ctx.strokeStyle = C.panelLine;
+  ctx.strokeStyle = 'rgba(232,184,74,0.35)';
   ctx.stroke();
 
-  const m = game.modules.find((mm) => mm.id === ui.selectedModuleId && mm.side === 0);
-  if (!m) {
-    text(ctx, '모듈을 선택하면 강화 · 판매', x0 + w / 2, y0 + 70, 13, C.dim, 'center');
-    return;
-  }
   const def = MODULE_BY_ID[m.defId];
-  drawModuleGlyph(ctx, def.kind, def.id, x0 + 28, y0 + 36, KIND_COLOR[def.kind], m.level);
-  text(ctx, def.name, x0 + 52, y0 + 28, 16, C.text, 'left', 700);
-  text(ctx, `HP ${Math.ceil(m.hp)} / ${m.maxHp}`, x0 + 52, y0 + 50, 12, C.dim);
+  drawModuleGlyph(ctx, def.kind, def.id, x0 + 26, y0 + h / 2, KIND_COLOR[def.kind], m.level);
+  text(ctx, def.name, x0 + 52, y0 + 18, 14, C.text, 'left', 700);
+  text(ctx, `HP ${Math.ceil(m.hp)}/${m.maxHp}`, x0 + 52, y0 + 36, 12, C.dim);
 
   if (def.kind === 'barracks') {
     const unit = UNIT_BY_ID[def.unitId!];
     const mult = BARRACKS_LEVEL_SPAWN_MULT[m.level];
-    text(ctx, `레벨 ${m.level}/3 · 생산 ${(def.spawnInterval! * mult).toFixed(1)}s · ${FAMILY_NAME[unit.family]}`, x0 + 14, y0 + 78, 12, C.text);
+    text(ctx, `Lv${m.level}/3 · ${(def.spawnInterval! * mult).toFixed(1)}s · ${FAMILY_NAME[unit.family]}`, x0 + 200, y0 + h / 2, 12, C.text);
     const cost = barracksUpgradeCost(m);
     if (cost) {
       const can = game.players[0].minerals >= cost.minerals && game.players[0].gas >= cost.gas;
@@ -616,23 +778,21 @@ function drawSelectionPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: 
         buttons,
         {
           id: 'upgrade',
-          x: x0 + 14,
-          y: y0 + 100,
-          w: 180,
-          h: 32,
+          x: x0 + w - 300,
+          y: y0 + 9,
+          w: 170,
+          h: 34,
           onClick: () => api.upgradeSelected(),
           disabled: !can,
           tooltip: [`병영 강화 Lv${m.level + 1}`, `미네랄 ${cost.minerals} + 가스 ${cost.gas}`, `생산 주기 ×${BARRACKS_LEVEL_SPAWN_MULT[(m.level + 1) as 2 | 3]}`],
         },
         `강화  ${cost.minerals}M  ${cost.gas}G`,
         ui,
-        { size: 13, color: can ? C.mineral : C.dim },
+        { size: 12, color: can ? C.mineral : C.dim },
       );
     } else {
-      text(ctx, '최대 강화', x0 + 14, y0 + 116, 13, C.mineral);
+      text(ctx, 'MAX', x0 + w - 260, y0 + h / 2, 13, C.mineral);
     }
-  } else {
-    text(ctx, def.desc, x0 + 14, y0 + 80, 12, C.dim);
   }
 
   const refund = Math.floor(def.cost * SELL_REFUND_RATIO);
@@ -642,40 +802,62 @@ function drawSelectionPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: 
     {
       id: 'sell',
       x: x0 + w - 110,
-      y: y0 + 100,
-      w: 96,
-      h: 32,
+      y: y0 + 9,
+      w: 90,
+      h: 34,
       onClick: () => api.sellSelected(),
       tooltip: [`판매 · 미네랄 ${refund} 환불`, '가스는 돌려받지 않습니다'],
     },
     `판매 ${refund}`,
     ui,
-    { size: 13, color: C.enemy },
+    { size: 12, color: C.enemy },
   );
 }
 
-function drawIntelPanel(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState): void {
-  const x0 = 910;
-  const y0 = LOWER_TOP;
-  ctx.fillStyle = C.panel;
-  rr(ctx, x0, y0, W - x0 - 16, 150, 10);
+function drawCastleUpgradeModal(ctx: CanvasRenderingContext2D, game: GameState, ui: UiState, buttons: Button[], api: UiApi): void {
+  if (!ui.castlePanelOpen) return;
+  ctx.fillStyle = 'rgba(6,12,8,0.55)';
+  ctx.fillRect(0, 0, W, H);
+
+  const pw = 720;
+  const ph = 280;
+  const px = (W - pw) / 2;
+  const py = (H - ph) / 2 - 20;
+  ctx.fillStyle = '#121a14';
+  rr(ctx, px, py, pw, ph, 12);
   ctx.fill();
   ctx.strokeStyle = C.panelLine;
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-  text(ctx, '레인별 최근 목격', x0 + 14, y0 + 18, 12, C.dim);
+
+  text(ctx, '성 업그레이드', px + 24, py + 28, 18, C.text, 'left', 700, FONT_KO_DISPLAY);
+  text(ctx, '가스 · 계열 전체 즉시 적용', px + 24, py + 52, 12, C.dim);
+  button(ctx, buttons, { id: 'castle_close', x: px + pw - 96, y: py + 16, w: 72, h: 28, onClick: () => api.toggleCastlePanel(false) }, '닫기', ui, { size: 12 });
+
+  const me = game.players[0];
   const fams: Family[] = ['ant', 'beetle', 'mantis'];
-  fams.forEach((f, i) => text(ctx, FAMILY_SHORT[f], x0 + 70 + i * 70, y0 + 40, 11, C.mute, 'center'));
-  for (let row = 0; row < ROWS; row++) {
-    const y = y0 + 58 + row * 22;
-    text(ctx, `${row + 1}`, x0 + 24, y, 12, C.text, 'center', 600);
-    fams.forEach((f, i) => {
-      const seen = ui.laneIntel[row][f];
-      const age = seen ? (ui.now - seen) / 1000 : Infinity;
-      const label = !seen ? '—' : age < 8 ? '지금' : age < 30 ? `${Math.floor(age)}초` : '오래';
-      const col = !seen ? C.mute : age < 8 ? C.enemy : age < 30 ? C.mineral : C.dim;
-      text(ctx, label, x0 + 70 + i * 70, y, 12, col, 'center', age < 8 ? 700 : 500);
+  fams.forEach((f, fi) => {
+    const y = py + 78 + fi * 58;
+    drawInsect(ctx, f, 1, px + 36, y + 18, 1, C.text, ui.now / 1000, fi + 20);
+    text(ctx, FAMILY_NAME[f], px + 58, y + 18, 14, C.text, 'left', 600);
+    TRACKS.forEach((t, ti) => {
+      const lvl = me.upgrades[f][t];
+      const cost = castleUpgradeCost(game, 0, f, t);
+      const track = FAMILY_TRACKS[f][t];
+      const label = cost === null ? `${track.name} MAX` : `${track.name} ${lvl}/${MAX_UPGRADE_LEVEL}  ${cost}G`;
+      const b: Button = {
+        id: `up_${f}_${t}`,
+        x: px + 160 + ti * 260,
+        y,
+        w: 240,
+        h: 36,
+        onClick: () => api.castleUpgrade(f, t),
+        disabled: cost === null || me.gas < cost,
+        tooltip: [`${FAMILY_NAME[f]} ${track.name}`, track.desc],
+      };
+      button(ctx, buttons, b, label, ui, { size: 12, color: cost === null ? C.mineral : C.text });
     });
-  }
+  });
 }
 
 function drawMessage(ctx: CanvasRenderingContext2D, ui: UiState): void {
@@ -690,6 +872,8 @@ function drawMessage(ctx: CanvasRenderingContext2D, ui: UiState): void {
 }
 
 function drawTooltip(ctx: CanvasRenderingContext2D, ui: UiState, buttons: Button[]): void {
+  // Hide chrome tooltips while the castle modal owns the screen.
+  if (ui.castlePanelOpen) return;
   const hit = buttons.find((b) => b.tooltip && inRect(b, ui.hover.x, ui.hover.y) && !b.disabled);
   if (!hit || !hit.tooltip) return;
   const lines = hit.tooltip;
@@ -933,25 +1117,44 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
     if (!moduleVisibleToPlayer(game, m)) continue;
     drawModule(ctx, game, m, false, m.id === ui.selectedModuleId);
   }
-  drawFog(ctx, game);
+  if (!OPEN_INTEL) drawFog(ctx, game);
   for (const u of game.units) if (unitVisibleToPlayer(game, u)) drawUnit(ctx, game, u);
   drawEffects(ctx, ui);
   drawCastles(ctx, game, ui, buttons, api);
+  drawLaneIntelTicks(ctx, ui);
 
-  // Lower panel as a continuous soil shelf, not a floating card strip.
-  const shelf = ctx.createLinearGradient(0, PANEL_TOP, 0, H);
-  shelf.addColorStop(0, '#141c16');
-  shelf.addColorStop(1, '#0e1410');
-  ctx.fillStyle = shelf;
-  ctx.fillRect(0, PANEL_TOP, W, H - PANEL_TOP);
-  ctx.fillStyle = 'rgba(93,224,192,0.07)';
-  ctx.fillRect(0, PANEL_TOP, W, 1);
+  // Soft underground band under the square lawn (square cells leave spare height).
+  if (LANES_BOTTOM < H) {
+    const soil = ctx.createLinearGradient(0, LANES_BOTTOM, 0, H);
+    soil.addColorStop(0, '#1a2418');
+    soil.addColorStop(0.25, '#121810');
+    soil.addColorStop(1, '#080c08');
+    ctx.fillStyle = soil;
+    ctx.fillRect(0, LANES_BOTTOM, W, H - LANES_BOTTOM);
+    ctx.fillStyle = 'rgba(232,184,74,0.12)';
+    for (let sx = 0; sx < W; sx += 4) {
+      if ((sx + Math.floor(game.t * 2)) % 8 < 4) ctx.fillRect(sx, LANES_BOTTOM, 2, 1);
+    }
+    // Sparse root flecks so the spare band feels like dirt, not empty HUD.
+    ctx.save();
+    for (let i = 0; i < 40; i++) {
+      const seed = i * 47.3 + game.t * 3;
+      const x = (seed * 19) % W;
+      const y = LANES_BOTTOM + 18 + ((seed * 11) % Math.max(1, H - LANES_BOTTOM - 28));
+      ctx.strokeStyle = i % 2 === 0 ? 'rgba(70,90,55,0.14)' : 'rgba(40,50,30,0.16)';
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + 18, y + 6, x + 36, y - 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
 
+  // Top chrome over the lawn: status + seed packets (PvZ hierarchy).
   drawTopBar(ctx, game, ui, buttons, api);
   drawCards(ctx, game, ui, buttons, api);
-  drawUpgradePanel(ctx, game, ui, buttons, api);
-  drawSelectionPanel(ctx, game, ui, buttons, api);
-  drawIntelPanel(ctx, game, ui);
+  drawSapEffects(ctx, ui);
+  drawContextPanel(ctx, game, ui, buttons, api);
   drawMessage(ctx, ui);
 
   if (ui.paused && ui.screen === 'game') {
@@ -960,6 +1163,7 @@ export function render(ctx: CanvasRenderingContext2D, game: GameState | null, ui
     text(ctx, '일시정지', W / 2, GRID_TOP + (LANES_BOTTOM - GRID_TOP) / 2, 32, 'rgba(230,240,228,0.85)', 'center', 400, FONT_KO_DISPLAY);
   }
 
+  drawCastleUpgradeModal(ctx, game, ui, buttons, api);
   if (ui.screen === 'end') drawEnd(ctx, game, ui, buttons, api);
   drawTooltip(ctx, ui, buttons);
   return buttons;

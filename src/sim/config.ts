@@ -1,7 +1,13 @@
-export const ROWS = 4;
-export const COLS = 6;
-/** Width of the neutral battlefield between the two grids, in cell units. */
-export const MID = 3;
+/**
+ * Tall lawn board: seven horizontal lanes, shallow build depth.
+ * Fills the leftover vertical space under the PvZ seed rail (was empty soil).
+ */
+export const ROWS = 7;
+/** Player/enemy build depth — 4 square columns toward the shared mid. */
+export const COLS = 4;
+/** Width of the neutral battlefield between the two grids, in cell units.
+ * Wider mid eats the left/right canvas margins so the war front feels bigger. */
+export const MID = 6;
 /** Total lane length in cell units. Side 0 castle at x=0, side 1 castle at x=LANE_LENGTH. */
 export const LANE_LENGTH = COLS * 2 + MID;
 
@@ -12,10 +18,12 @@ export const START_GAS = 0;
 export const GAS_CAP = 300;
 export const CASTLE_HP = 30000;
 /**
- * Barracks in a lane stop spawning while that side's living units already occupy this much
- * lane length (sum of body sizes). Small ants swarm (~24); large beetles fill the lane with fewer.
+ * Shared-front army cap: barracks stop spawning while this side's living units already occupy
+ * this much body sum across ALL rows (one war front, not per-lane faucets).
  */
-export const LANE_CAPACITY = 3.6;
+export const FRONT_CAPACITY = 6.0;
+/** @deprecated alias — same as FRONT_CAPACITY. */
+export const LANE_CAPACITY = FRONT_CAPACITY;
 
 /** Gas awarded to the killer's side per kill, by unit tier. */
 export const KILL_GAS_BY_TIER: Record<1 | 2 | 3, number> = { 1: 2, 2: 5, 3: 10 };
@@ -27,6 +35,14 @@ export const MODULE_DESTROY_GAS_RATIO = 0.2;
 export const SELL_REFUND_RATIO = 0.5;
 /** Each owned resource module multiplies the price of the next one. */
 export const RESOURCE_PRICE_GROWTH = 1.15;
+
+/** All player-facing mineral prices snap to this step (50, 55, 175, …). */
+export const MINERAL_COST_STEP = 5;
+
+/** Round a mineral amount to the nearest multiple of {@link MINERAL_COST_STEP}. */
+export function snapMineral(n: number): number {
+  return Math.max(0, Math.round(n / MINERAL_COST_STEP) * MINERAL_COST_STEP);
+}
 
 /** Build time in seconds = clamp(cost / BUILD_TIME_DIVISOR, min, max). */
 export const BUILD_TIME_DIVISOR = 10;
@@ -42,6 +58,11 @@ export const ACID_RAIN = { gas: 60, dmg: 60 };
 
 /** Units within this distance of an enemy cell reveal it (fog of war). */
 export const REVEAL_RANGE = 1.0;
+/**
+ * Build-counterplay: both sides always see the enemy build grid.
+ * Fog is off so reading / switching compositions is the main skill.
+ */
+export const OPEN_INTEL = true;
 
 /** Kills scored inside the enemy's grid pay this much more gas: pushing is rewarded, camping is not. */
 export const AGGRESSOR_GAS_MULT = 2.0;
@@ -86,6 +107,11 @@ export function direction(side: Side): 1 | -1 {
 /** True if x lies within the grid area belonging to `side`. */
 export function inOwnTerritory(side: Side, x: number): boolean {
   return side === 0 ? x < COLS : x > LANE_LENGTH - COLS;
+}
+
+/** Neutral shared battlefield between the two build grids. */
+export function inBattlefield(x: number): boolean {
+  return x >= COLS && x <= LANE_LENGTH - COLS;
 }
 
 export function buildTimeFor(cost: number): number {
